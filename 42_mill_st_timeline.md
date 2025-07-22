@@ -38,6 +38,10 @@ Referenced Documents that are missing:
 | **Apr 27 2016** | Appendix B & ConCom agenda | ConCom meeting discussed Mill St wetlands status; spring re-inspection needed. |
 | **Mar 21 2016** | Appendix A | Karon Catrone forwards dam query to Town Counsel. |
 | **Mar 19 2016** | Appendix A & [Map/Photos](Resources/Photos/Screenshots/2016-03-19_0930.png) | Todd DeMelle -> ConCom: asks who owns/maintains Bakers Pond dam; sends GIS map & photos. |
+| **Winter 2015/16** | *Inferred from Apr 2016 email* | Initial ConCom site visit conducted (vegetation not growing; follow-up needed in spring). |
+| **2015** | [Order of Conditions](Resources/Correspondence/Town_Documents/Order_of_Conditions_42_Mill_Street.pdf) | Conservation Commission issues Order of Conditions for 42 Mill Street development. |
+| **Early 2015** | *Inferred from 2015 Order* | Delapa Properties files initial Notice of Intent or ANRAD application. |
+| **Pre-2015** | *Referenced in Apr 2016 email* | Multiple previous development attempts rejected by Conservation Commission (specific dates unknown). |
 
 ---
 
