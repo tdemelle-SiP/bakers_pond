@@ -48,3 +48,6 @@ $RECYCLE.BIN/
 .env.local
 private/
 confidential/
+
+# Trash directory
+trash/
