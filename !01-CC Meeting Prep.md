@@ -188,6 +188,39 @@ This appears to be a classic case of achieving development goals incrementally t
 
 ---
 
+## Questions for Conservation Agent Karon Catrone
+
+### Missing Key Documents
+1. **Original ANRAD application materials (November 14, 2014, DEP #338-0594)** - What exactly did Delapa propose for wetland boundaries in the initial filing?
+2. **July 8, 2020 Conservation Commission minutes** - The initial hearing for the single-family home proposal
+3. **September 9, 2020 Conservation Commission minutes** - When peer review was ordered (we received July 22, 2020 minutes instead)
+4. **October 14, 2020 Conservation Commission minutes** - Referenced in timeline but not in repository
+5. **November 18, 2021 Written Order of Conditions (Denial)** - The formal denial document with specific findings
+6. **November 2016 Settlement Agreement** - Between Delapa, Town, and DEP resolving the ANRAD appeal
+
+### Historical Context Questions
+1. **Dam ownership documentation** - What documents does the Town have regarding dam ownership? When did this become disputed?
+2. **Pre-2014 development applications** - Don Foley mentioned "3 prior denials" at the October 28, 2015 meeting - what were these attempts?
+3. **Dam maintenance history** - Has the dam ever been repaired? By whom? When? Are there any maintenance records?
+
+### Current Status Questions
+1. **Post-January 2024 status** - Has Delapa re-filed the dam NOI after being told to re-notify abutters on January 10, 2024?
+2. **SOC #338-0706 expiration verification** - Can you confirm the expiration date? (Timeline shows May 6, 2025 but SOC was issued May 6, 2022)
+3. **BETA peer review findings** - What specific issues did BETA identify with the dam project? Is their final report available?
+4. **Form 7 extension** - Was a Form 7 extension filed for SOC #338-0706 before it expired?
+
+### Procedural Questions
+1. **Settlement terms** - Why did the 2016 settlement split the house approval from dam work? Was this a ConCom requirement?
+2. **Enforcement concerns** - Has there been any unpermitted work or violations observed at 42 Mill Street?
+3. **Beaver management** - What is the Town's position on beaver removal mentioned in the July 26, 2023 minutes?
+4. **Access road specifications** - What are the exact dimensions and materials proposed for the "10-foot permanent access road"?
+
+### Outstanding Issues
+1. **Public records request** - Status of FOIA request filed June 29, 2023 (Request #unknown)
+2. **Wetland boundary verification** - Have the wetland boundaries changed since the 2016 ORAD?
+3. **Stream classification** - Is Mill Brook still classified as perennial per the 2015 peer review?
+
+---
 
 Should you have any questions regarding this letter, please contact Tyler Ferrick at Tyler.Ferrick@mass.gov
 
