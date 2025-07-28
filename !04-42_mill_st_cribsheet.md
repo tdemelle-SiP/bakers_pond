@@ -1,24 +1,13 @@
 # 42 Mill Street Crib Sheet
 
-## Latest Status (January 10, 2024)
-
-42 Mill Street – Notice of Intent – DEP # 338-0756 – Delapa – Continued from 12/13/23  Dam repair and access road  Motion made by Ms. Odeh, seconded by Mr. Harte, to close this hearing without action and without approval.  The applicant must re notify the abutters and re advertise in the paper prior to the next meeting they wish to attend. Unanimous.  
-
-### Key Issues from 2023 Conservation Commission Meetings:
-1. **Dam Ownership Dispute** (July 26, 2023): Commission acknowledged ownership is contested
-2. **Expired Permit Foundation**: Construction sequence relies on SOC (DEP #338-0706) that **EXPIRED May 6, 2025**
-3. **Extended BETA Peer Review**: 6+ months of continuances for engineering review
-4. **Community Opposition**: Multiple abutters raised concerns about water levels, beaver removal, and property impacts
-5. **Access Infrastructure**: Plan includes 10-foot wide permanent access road through wetlands
-
-### Key DEP File Numbers:
+## Key DEP File Numbers:
 - **DEP #338-0594**: Initial development attempt (2015) - Order of Conditions and Superseding Order
 - **DEP #338-0706**: Single-family home development (2020-2021) - **DENIED November 2021 by ConCom; Superseding Order issued May 2022; SOC EXPIRED May 6, 2025**
 - **DEP #338-0756**: Dam restoration project (2023-present)
 - **Docket WET-2016-022**: Appeal of DEP Superseding Order
 
 ---
-Commission meeting minutes
+## Commission meeting minutes
 https://www.townhall.westwood.ma.us/government/agendas-minutes/minutes/conservation-commission-minutes/-folder-1145#widget_14_771_706
 
 ---
