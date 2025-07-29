@@ -1,6 +1,7 @@
 # 42 Mill Street Crib Sheet
 
 ## Key DEP File Numbers:
+- **DEP #338-0303**: Pre 2015 filing
 - **DEP #338-0594**: Initial development attempt (2015) - Order of Conditions and Superseding Order
 - **DEP #338-0706**: Single-family home development (2020-2021) - **DENIED November 2021 by ConCom; Superseding Order issued May 2022; SOC EXPIRED May 6, 2025**
 - **DEP #338-0756**: Dam restoration project (2023-present)
