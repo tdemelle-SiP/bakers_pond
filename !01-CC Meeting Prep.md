@@ -64,15 +64,7 @@ The area of the pond that is open water and has been open water for all but a fe
  - What were the specific reasons for requiring re-notification in January 2024?
 - was the BETA group review of this project ever made public?  Ask BETA’s final peer‑review memo to be produced and posted before any new hearing opens. Demand it as part of the public record under G.L. c. 66 §10 Massachusetts General Laws, chapter 66, section 10 (public‑records law);
 
-### Missing Key Documents
-1. **Original ANRAD application materials (November 14, 2014, DEP #338-0594)** - What exactly did Delapa propose for wetland boundaries in the initial filing?
-2. **July 8, 2020 Conservation Commission minutes** - The initial hearing for the single-family home proposal
-3. **September 9, 2020 Conservation Commission minutes** - When peer review was ordered (we received July 22, 2020 minutes instead)
-4. **October 14, 2020 Conservation Commission minutes** - Referenced in timeline but not in repository
-5. **November 18, 2021 Written Order of Conditions (Denial)** - The formal denial document with specific findings
-6. **November 2016 Settlement Agreement** - Between Delapa, Town, and DEP resolving the ANRAD appeal
-7. **Pre-2014 development applications** - Don Foley mentioned "3 prior denials" at the October 28, 2015 meeting - what were these attempts?
-8. **BETA peer review findings** - What specific issues did BETA identify with the dam project? Is their final report available?
+
 
 
 ### Other Questions
