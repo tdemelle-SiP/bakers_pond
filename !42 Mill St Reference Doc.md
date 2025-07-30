@@ -1,6 +1,10 @@
 # 42 Mill Street Crib Sheet
 
 ---
+## Commission meeting minutes
+https://www.townhall.westwood.ma.us/government/agendas-minutes/minutes/conservation-commission-minutes/-folder-1145#widget_14_771_706
+
+---
 ## Key DEP File Numbers:
 - **DEP #338-0303**: Pre 2015 filing
 - **DEP #338-0594**: Initial development attempt (2015) - Order of Conditions and Superseding Order
@@ -46,12 +50,6 @@ RDA (if used) → ANRAD (if needed) → NOI → DEP
 - **0‑10 days after issuance** – File a **Request for Adjudicatory Hearing** with MassDEP’s Office of Appeals & Dispute Resolution (OADR).
 - **Within 30 days of OADR final decision** – Seek **judicial review** in Superior Court (M.G.L. c.30A §14).
 - **Any time before the SOC expires (~3 yrs)** – Request an **Amended SOC** from MassDEP (Policy 85‑4) or file a **new NOI**. Violations can trigger an **Enforcement Order**.
-
-
-
----
-## Commission meeting minutes
-https://www.townhall.westwood.ma.us/government/agendas-minutes/minutes/conservation-commission-minutes/-folder-1145#widget_14_771_706
 
 ---
 

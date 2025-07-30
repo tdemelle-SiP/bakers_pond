@@ -21,11 +21,14 @@ This repository contains official documents, meeting minutes, correspondence, an
 
 ## Current Status (as of July 2025)
 
+### Notice of Intent - DEP #338-0756 - Delapa Dam maintenance
 NOI to repair the dam is on the WCC docket and has been continued to September.
 
 Efforts are underway to accurately assess the intent and consequences of the proposed dam work in addition to the highly unusual superseding order of conditions granted to the applicant to develop the plot.
 
 ## Drafts for Letters Raising Specific Concerns
+
+[Re: NOI for Lot 2B Mill Street (DEP File #338‑0706) — Proposed Removal of Baker’s Pond Dam](https://docs.google.com/document/d/1yXcicqDFnLK_PvsOouZ0pOnQel_1RVmYdwbZWZFohgs/edit?usp=sharing)
 
 [Re: NOI for Lot 2B Mill Street (DEP File #338‑0706) — Omission of LUW Impacts](https://docs.google.com/document/d/10vu3tgKfR44fXp4CjzOjX-6Q1a1kYumH9iTmVbqL_pI/edit?usp=sharing)
 
