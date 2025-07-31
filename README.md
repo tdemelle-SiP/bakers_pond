@@ -12,7 +12,7 @@ This repository is a resource documenting the decades-long history of developmen
 
 ## Current Status (as of July 2025)
 
-### [Notice of Intent - DEP #338-0756 - Delapa Dam maintenance](https://westwoodtownma.iqm2.com/Citizens/Detail_LegiFile.aspx?Frame=&MeetingID=1993&MediaPosition=&ID=10036&CssClass=)
+### [Notice of Intent - DEP #338-0756 - Delapa Dam "maintenance"](https://westwoodtownma.iqm2.com/Citizens/Detail_LegiFile.aspx?Frame=&MeetingID=1993&MediaPosition=&ID=10036&CssClass=)
 NOI to repair the dam is on the WCC docket and has been continued to September.
 
 Efforts are underway to accurately assess the intent and consequences of the proposed dam work in addition to the highly unusual superseding order of conditions granted to the applicant to develop the plot.
