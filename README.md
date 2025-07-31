@@ -4,7 +4,7 @@ This repository is a resource documenting the decades-long history of developmen
 
 ---
 
-![Bakers Pond](https://photos.app.goo.gl/duQLe6nuAgYFP5zVA)
+![Bakers Pond](https://github.com/tdemelle-SiP/bakers_pond/blob/master/Research%20Images/2023-01-28_15-16.png?raw=true)
 
 **[Bakers Pond Photo Album](https://photos.app.goo.gl/K6Unm29vK9vhhPuDA)**
 
