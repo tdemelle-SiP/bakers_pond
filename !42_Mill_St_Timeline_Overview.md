@@ -1,6 +1,6 @@
 # 42 Mill Street Timeline Overview
 
-**Mrkr Key: 🟡 Critical Moment | ❌Missing File | 🔴 Not Publicly Accessible | 🐢 WCC Hearing Continued**
+**Mrkr Column Key: | 🟡 Critical Moment   | ❌Missing File   | 🔴 Not Publicly Accessible   | 🐢 WCC Hearing Continued**
 
 | Date | Document | Mrkr | Procedural/Factual Step (verbatim cite ⇢) | Legal Meaning/Summary | Environmental/Strategic Analysis |
 |------|----------|------------|-------------------------|----------------------|---------------------|
