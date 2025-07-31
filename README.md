@@ -4,7 +4,7 @@ This repository is a resource documenting the decades-long history of developmen
 
 ## Current Status (as of July 2025)
 
-### Notice of Intent - DEP #338-0756 - Delapa Dam maintenance
+### [Notice of Intent - DEP #338-0756 - Delapa Dam maintenance](https://westwoodtownma.iqm2.com/Citizens/Detail_LegiFile.aspx?Frame=&MeetingID=1993&MediaPosition=&ID=10036&CssClass=)
 NOI to repair the dam is on the WCC docket and has been continued to September.
 
 Efforts are underway to accurately assess the intent and consequences of the proposed dam work in addition to the highly unusual superseding order of conditions granted to the applicant to develop the plot.
@@ -22,13 +22,13 @@ Efforts are underway to accurately assess the intent and consequences of the pro
 
 - **[!42 Mill St Timeline Overview.md](https://github.com/tdemelle-SiP/bakers_pond/blob/master/!42_Mill_St_Timeline_Overview.md)** - Comprehensive timeline of all documents in the Dated Documents directory with notations
 
-- **`[!42 Mill St Reference Doc.md](https://github.com/tdemelle-SiP/bakers_pond/blob/master/!42%20Mill%20St%20Reference%20Doc.md)`** - Quick reference guide to the wetlands permitting process and key file numbers
+- **[!42 Mill St Reference Doc.md](https://github.com/tdemelle-SiP/bakers_pond/blob/master/!42%20Mill%20St%20Reference%20Doc.md)** - Quick reference guide to the wetlands permitting process and key file numbers
 
-- **`[Historical Maps and Deed Docs/](https://github.com/tdemelle-SiP/bakers_pond/tree/master/Historical%20Maps%20and%20Deed%20Docs)`** - Property deeds and historical maps 
+- **[Historical Maps and Deed Docs/](https://github.com/tdemelle-SiP/bakers_pond/tree/master/Historical%20Maps%20and%20Deed%20Docs)** - Property deeds and historical maps 
 
-- **`[Research Images/](https://github.com/tdemelle-SiP/bakers_pond/tree/master/Research%20Images)`** - This is mostly images I've put together to improve my understanding and to demonstrate issues I've found
+- **[Research Images/](https://github.com/tdemelle-SiP/bakers_pond/tree/master/Research%20Images)** - This is mostly images I've put together to improve my understanding and to demonstrate issues I've found
 
-- **`[Resources/](https://github.com/tdemelle-SiP/bakers_pond/tree/master/Resources)`** - Working files
+- **[Resources/](https://github.com/tdemelle-SiP/bakers_pond/tree/master/Resources)** - Working files
 
 ## Drafts for Letters Raising Specific Concerns
 
