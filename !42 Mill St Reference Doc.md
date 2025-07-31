@@ -122,11 +122,11 @@ The Massachusetts Department of Environmental Protection (DEP) serves as the sta
 
 | Last Name, First Name | Title | Role | Summary of documents they appear in |
 |----------------------|-------|------|-------------------------------------|
-| Bogue, Gary | Technical Staff | MassDEP technical review | 2016 appeal docket correspondence |
+| Bogue, Gary | Technical Staff | MassDEP Northeast Regional Office; Gary.Bogue@state.ma.us | 2016 appeal docket correspondence |
 | DeFilippis, Leslie | Staff | MassDEP Office of Appeals; leslie.defilippis@massmail.state.ma.us | 2016 appeal docket |
 | Dingle, Mike | Liaison | MassDEP appeal assignments; mike.dingle@massmail.state.ma.us | 2016 appeal correspondence |
 | Jones, Timothy | Presiding Officer | MassDEP Office of Appeals & Dispute Resolution | 2016 appeal proceedings |
-| Muldoon, Dana | Attorney | Represented MassDEP in Delapa appeal | 2016 appeal documents |
+| Muldoon, Dana | Attorney | MassDEP Office of General Counsel; Dana.Muldoon@state.ma.us | 2016 appeal documents |
 | Munster, Bridget | Case Administrator | MassDEP OADR; bridget.munster@state.ma.us | 2016 appeal docket |
 
 ### Neighbors / Community Supporters
