@@ -44,13 +44,13 @@ Efforts are underway to accurately assess the intent and consequences of the pro
 
 ## Drafts for Letters Raising Specific Concerns
 
-[Re: NOI for Lot 2B Mill Street (DEP File #338‑0706) — Proposed Removal of Baker’s Pond Dam](https://docs.google.com/document/d/1yXcicqDFnLK_PvsOouZ0pOnQel_1RVmYdwbZWZFohgs/edit?usp=sharing)
+[Re: NOI for Lot 2B Mill Street (DEP File #338-0706) — Proposed Removal of Baker's Pond Dam](https://docs.google.com/document/d/1yXcicqDFnLK_PvsOouZ0pOnQel_1RVmYdwbZWZFohgs/edit?usp=sharing)
 
-[Re: NOI for Lot 2B Mill Street (DEP File #338‑0706) — Omission of LUW Impacts](https://docs.google.com/document/d/10vu3tgKfR44fXp4CjzOjX-6Q1a1kYumH9iTmVbqL_pI/edit?usp=sharing)
+[Re: NOI for Lot 2B Mill Street (DEP File #338-0706) — Omission of LUW Impacts](https://docs.google.com/document/d/10vu3tgKfR44fXp4CjzOjX-6Q1a1kYumH9iTmVbqL_pI/edit?usp=sharing)
 
-[Re: NOI for Lot 2B Mill Street (DEP File #338‑0706) — Parcel Boundary, Dam Location, and Scale Discrepancies](https://docs.google.com/document/d/1XqBJjFqbXGKIyikNQZMzPyUSU6W0EAPF37DNyGwe-i8/edit?usp=sharing)
+[Re: NOI for Lot 2B Mill Street (DEP File #338-0706) — Parcel Boundary, Dam Location, and Scale Discrepancies](https://docs.google.com/document/d/1XqBJjFqbXGKIyikNQZMzPyUSU6W0EAPF37DNyGwe-i8/edit?usp=sharing)
 
-[Re: NOI for Lot 2B Mill Street (DEP File #338‑0706) — Expired SOC](https://docs.google.com/document/d/1rFPh2nAFR3PbEKMZM0cLZzL174oV-v5gESPvF3wq0Yc/edit?usp=sharing)
+[Re: NOI for Lot 2B Mill Street (DEP File #338-0706) — Expired SOC](https://docs.google.com/document/d/1rFPh2nAFR3PbEKMZM0cLZzL174oV-v5gESPvF3wq0Yc/edit?usp=sharing)
 
 [2025_07_29 WCC Documents Request](https://docs.google.com/document/d/1aTuwKN8ClZdpTS8MXKj5Fsh2QCiWgmMlIX4puK6gw2g/edit?usp=sharing)
 

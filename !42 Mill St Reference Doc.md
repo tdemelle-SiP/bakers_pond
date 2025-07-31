@@ -10,7 +10,7 @@ https://www.townhall.westwood.ma.us/government/agendas-minutes/minutes/conservat
 - **DEP #338-0594**: Initial development attempt (2015) - Order of Conditions and Superseding Order
 - **DEP #338-0706**: Single-family home development (2020-2021) - **DENIED November 2021 by ConCom; Superseding Order issued May 2022; SOC EXPIRED May 6, 2025**
 - **DEP #338-0756**: Dam restoration project (2023-present)
-- **Docket WET-2016-022**: MassDEP Office of Appeals & Dispute Resolution Final Decision
+- **Docket WET-2016-022**: MassDEP Office of Appeals & Dispute Resolution Final Decision
 
 ---
 https://www.mass.gov/info-details/coldwater-fish-resources
@@ -21,19 +21,19 @@ https://www.mass.gov/info-details/coldwater-fish-resources
 
 | # | Stage | Form / Abbrev. | Result |
 |---|-------|---------------|--------|
-| 1 | **Pre-screen (optional)** | **RDA** – Request for Determination of Applicability (WPA Form 1) | Conservation Commission issues **DOA** (Determination). Negative DOA = clear to proceed; Positive DOA → file NOI. |
-| 2 | **Resource-boundary confirmation (optional)** | **ANRAD** – Abbreviated Notice of Resource Area Delineation (WPA Form 4A) | Commission issues **ORAD** confirming wetland boundaries for 3 years. |
-| 3 | **Permit application** | **NOI** – Notice of Intent (WPA Form 3) | MassDEP assigns the seven‑digit **DEP File #** (e.g., 338‑0706). |
-| 4 | **Public hearing** | — | Commission reviews plans; 21‑day abutter comment window. |
-| 5 | **Decision** | **OOC** – Order of Conditions (WPA Form 5) or Denial | OOC recorded at Registry of Deeds before work starts. |
+| 1 | **Pre-screen (optional)** | **RDA** - Request for Determination of Applicability (WPA Form 1) | Conservation Commission issues **DOA** (Determination). Negative DOA = clear to proceed; Positive DOA → file NOI. |
+| 2 | **Resource-boundary confirmation (optional)** | **ANRAD** - Abbreviated Notice of Resource Area Delineation (WPA Form 4A) | Commission issues **ORAD** confirming wetland boundaries for 3 years. |
+| 3 | **Permit application** | **NOI** - Notice of Intent (WPA Form 3) | MassDEP assigns the seven-digit **DEP File #** (e.g., 338-0706). |
+| 4 | **Public hearing** | — | Commission reviews plans; 21-day abutter comment window. |
+| 5 | **Decision** | **OOC** - Order of Conditions (WPA Form 5) or Denial | OOC recorded at Registry of Deeds before work starts. |
 | 6 | **Work period** | — | Follow OOC conditions; request amendments/extensions if needed. |
-| 7 | **Close‑out** | **RCOC** – Request for Certificate of Compliance (WPA Form 8A) | Commission issues **COC**; record it to lift lien. |
+| 7 | **Close-out** | **RCOC** - Request for Certificate of Compliance (WPA Form 8A) | Commission issues **COC**; record it to lift lien. |
 
 ### Appeals and Variations
-- **SOC** – Superseding Order of Conditions if OOC is appealed to MassDEP.  
-- **Amended OOC** – for approved plan modifications.  
-- **Extension Permit** – extends an unexpired OOC (WPA Form 7).  
-- **Enforcement Order** – issued for unpermitted or non‑compliant activity (WPA Form 9).
+- **SOC** - Superseding Order of Conditions if OOC is appealed to MassDEP.  
+- **Amended OOC** - for approved plan modifications.  
+- **Extension Permit** - extends an unexpired OOC (WPA Form 7).  
+- **Enforcement Order** - issued for unpermitted or non-compliant activity (WPA Form 9).
 
 ### Typical Flow
 RDA (if used) → ANRAD (if needed) → NOI → DEP
@@ -43,13 +43,13 @@ RDA (if used) → ANRAD (if needed) → NOI → DEP
 ### Contesting an ORAD or SOC
 
 #### ORAD (Order of Resource Area Delineation)
-- **0‑10 days after issuance** – File a **Superseding ORAD** request with MassDEP (310 CMR 10.05(7)(a)).
-- **>10 days, within 3‑year validity** – Ask the local Commission for an **Amended ORAD** (no appeal if denied), or submit a **new ANRAD/NOI** to re‑open the boundary.
+- **0-10 days after issuance** - File a **Superseding ORAD** request with MassDEP (310 CMR 10.05(7)(a)).
+- **>10 days, within 3-year validity** - Ask the local Commission for an **Amended ORAD** (no appeal if denied), or submit a **new ANRAD/NOI** to re-open the boundary.
 
 #### SOC (Superseding Order of Conditions)
-- **0‑10 days after issuance** – File a **Request for Adjudicatory Hearing** with MassDEP’s Office of Appeals & Dispute Resolution (OADR).
-- **Within 30 days of OADR final decision** – Seek **judicial review** in Superior Court (M.G.L. c.30A §14).
-- **Any time before the SOC expires (~3 yrs)** – Request an **Amended SOC** from MassDEP (Policy 85‑4) or file a **new NOI**. Violations can trigger an **Enforcement Order**.
+- **0-10 days after issuance** - File a **Request for Adjudicatory Hearing** with MassDEP's Office of Appeals & Dispute Resolution (OADR).
+- **Within 30 days of OADR final decision** - Seek **judicial review** in Superior Court (M.G.L. c.30A §14).
+- **Any time before the SOC expires (~3 yrs)** - Request an **Amended SOC** from MassDEP (Policy 85-4) or file a **new NOI**. Violations can trigger an **Enforcement Order**.
 
 ---
 
