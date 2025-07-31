@@ -1,4 +1,12 @@
--------------------   2025_07_29 42 Mill St Documentation Notes   --------------------
+-------------------   Mill St Documentation Notes   --------------------
+
+---------------------------------IN MOTION---------------------------------------
+
+-doc requests to Karon/WCC
+-shared repo with Brian Donahoe
+
+
+
 
 --------------------------------------- TO DO ----------------------------------------
 1964 – Initial development of the 7.56-acre estate (future 44 Mill St). 
@@ -13,8 +21,6 @@
 
 Sept 2020 – Notice of Intent (DEP #338-0706) submitted under applicant Vinci for new home at 42 Mill St. 
 
--incorporate this document into the timeline
-C:\Users\tdeme\Repositories\bakers_pond\Dated Documents\2025_07_22_ChatGPT_Timeline Request Summary.pdf
 
 -figure out what to ask/send to:
 -DEP
@@ -27,14 +33,6 @@ C:\Users\tdeme\Repositories\bakers_pond\Dated Documents\2025_07_22_ChatGPT_Timel
 
 BUILDING DEPT - visit the office?
 -Are there any town records referencing the dam, its construction, maintenance or repair or suggesting its ownership?
-
-PLANNING BOARD
-GET
-  -2016-02-09 Meeting minutes
-  -2016-02-23 Meeting minutes
-  -ANR Plan 44 Mill St
-
-
 
 -get LLM help
 	-situation analysis
