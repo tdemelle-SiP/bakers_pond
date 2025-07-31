@@ -2,12 +2,22 @@
 
 This repository is a resource documenting the decades-long history of development attempts at 42 Mill Street in Westwood, Massachusetts. This site, located next to historic Bakers Pond, has been the subject of multiple permit applications, environmental reviews, and legal proceedings since at least 2000.
 
+---
+
+![Bakers Pond](https://photos.app.goo.gl/duQLe6nuAgYFP5zVA)
+
+**[Bakers Pond Photo Album](https://photos.app.goo.gl/K6Unm29vK9vhhPuDA)**
+
+---
+
 ## Current Status (as of July 2025)
 
 ### [Notice of Intent - DEP #338-0756 - Delapa Dam maintenance](https://westwoodtownma.iqm2.com/Citizens/Detail_LegiFile.aspx?Frame=&MeetingID=1993&MediaPosition=&ID=10036&CssClass=)
 NOI to repair the dam is on the WCC docket and has been continued to September.
 
 Efforts are underway to accurately assess the intent and consequences of the proposed dam work in addition to the highly unusual superseding order of conditions granted to the applicant to develop the plot.
+
+---
 
 ## What You'll Find Here
 
@@ -30,6 +40,8 @@ Efforts are underway to accurately assess the intent and consequences of the pro
 
 - **[Resources/](https://github.com/tdemelle-SiP/bakers_pond/tree/master/Resources)** - Working files
 
+---
+
 ## Drafts for Letters Raising Specific Concerns
 
 [Re: NOI for Lot 2B Mill Street (DEP File #338‑0706) — Proposed Removal of Baker’s Pond Dam](https://docs.google.com/document/d/1yXcicqDFnLK_PvsOouZ0pOnQel_1RVmYdwbZWZFohgs/edit?usp=sharing)
@@ -42,6 +54,7 @@ Efforts are underway to accurately assess the intent and consequences of the pro
 
 [2025_07_29 WCC Documents Request](https://docs.google.com/document/d/1aTuwKN8ClZdpTS8MXKj5Fsh2QCiWgmMlIX4puK6gw2g/edit?usp=sharing)
 
+---
 
 ## Contributing
 
@@ -49,6 +62,8 @@ This repository aims to be a complete historical record. If you have relevant pu
 - Public records (not privileged or confidential)
 - Related to 42 Mill Street development proceedings
 - Properly dated and sourced
+
+---
 
 ## Questions?
 
