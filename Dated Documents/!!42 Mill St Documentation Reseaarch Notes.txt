@@ -1,12 +1,17 @@
 -------------------   2025_07_29 42 Mill St Documentation Notes   --------------------
 
 --------------------------------------- TO DO ----------------------------------------
+1964 – Initial development of the 7.56-acre estate (future 44 Mill St). 
 
--incorporate Meeting Prep and This Research Notes Document
+1 May 1989 – $90 k deed transfer that enlarged the holding to ~7 ½ acres. 
 
--clean-up main timeline
+26 Oct 2017 – Sale of the full 7.56-acre property for $855 k. 
 
--incorporate this document's timeline into the main timeline
+2018 – 2019 – Subdivision creating the ~4-acre parcel now mapped as 28-013 (Lot 2B / 42 Mill St). 
+
+2016 – State filing titled “Wetland Delineation Plan, 42 Mill Street, Westwood” (Anthony Delapa / Delapa Properties). 
+
+Sept 2020 – Notice of Intent (DEP #338-0706) submitted under applicant Vinci for new home at 42 Mill St. 
 
 -incorporate this document into the timeline
 C:\Users\tdeme\Repositories\bakers_pond\Dated Documents\2025_07_22_ChatGPT_Timeline Request Summary.pdf
@@ -20,11 +25,16 @@ C:\Users\tdeme\Repositories\bakers_pond\Dated Documents\2025_07_22_ChatGPT_Timel
 	-neponset blah blah
 	--CONTACT NATURAL HERITAGE PROGRAM
 
+BUILDING DEPT - visit the office?
 -Are there any town records referencing the dam, its construction, maintenance or repair or suggesting its ownership?
 
-Has the order been recorded in the registry of deeds?  No work shall be undertaken until the Order has become final and then has been recorded in the Registry of Deeds or the Land Court for the district in which the land is located, within the chain of title of the affected property.
+PLANNING BOARD
+GET
+  -2016-02-09 Meeting minutes
+  -2016-02-23 Meeting minutes
+  -ANR Plan 44 Mill St
 
-Goddard's response booklet states house work will be done while dam repair is being done
+
 
 -get LLM help
 	-situation analysis
@@ -62,6 +72,11 @@ The substantive outcome
 		7. Limiting exposure to dam repair cost to $25k and then using that as a pretext for changing their aim to destroying the dam entirely.
 
 		What about repetitive continuances? What does that say and what impact does that have on the publics ability to contest or oppose the plans.
+
+Has the order been recorded in the registry of deeds?  No work shall be undertaken until the Order has become final and then has been recorded in the Registry of Deeds or the Land Court for the district in which the land is located, within the chain of title of the affected property.
+
+Goddard's response booklet states house work will be done while dam repair is being done
+
 
 	What Delapa Wanted (2014-2015):
 
