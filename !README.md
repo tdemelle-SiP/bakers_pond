@@ -56,7 +56,7 @@ Efforts are underway to accurately assess the intent and consequences of the pro
 
 ---
 Experimental ## Visual Timeline
-[View the 42 Mill Street Timeline: Public vs Private Proceedings](https://tdemelle-sip.github.io/bakers_pond/Resources/mill-street-timeline-visual.html)
+[View the 42 Mill Street Timeline: Public vs Private Proceedings](https://tdemelle-sip.github.io/bakers_pond/Resources/timeline-auto-generated.html)
 ---
 
 ## Contributing
