@@ -206,19 +206,9 @@
                     }
                 }
                 
-                // Check content for private/public indicators
-                const privateKeywords = ['executive session', 'settlement', 'appeal', 'lawsuit', 'court', 'docket', 'negotiation', 'privileged'];
-                const publicKeywords = ['wcc', 'conservation commission', 'public hearing', 'peer review', 'planning board'];
-                
-                const allText = (procedural + legal + environmental).toLowerCase();
-                
+                // If no marker found, skip this event
                 if (!eventClass) {
-                    if (privateKeywords.some(kw => allText.includes(kw))) {
-                        isPrivate = true;
-                        eventClass = 'normal-private';
-                    } else {
-                        eventClass = 'normal-public';
-                    }
+                    continue;
                 }
                 
                 // Extract key procedural text (remove quotes and clean up)
@@ -374,6 +364,12 @@
                 eventEl.className = `event ${event.eventClass} ${event.isPrivate ? 'event-below' : 'event-above'}`;
                 eventEl.style.left = x + 'px';
                 
+                // Create date label (month/day)
+                const dateLabel = document.createElement('div');
+                dateLabel.className = 'event-date-label';
+                const monthDay = new Date(event.date).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
+                dateLabel.textContent = monthDay;
+                
                 // Create tooltip
                 const tooltip = document.createElement('div');
                 tooltip.className = 'event-tooltip';
@@ -383,6 +379,7 @@
                     ${event.detail ? `<div class="event-detail">${event.detail}</div>` : ''}
                 `;
                 
+                eventEl.appendChild(dateLabel);
                 eventEl.appendChild(tooltip);
                 container.appendChild(eventEl);
                 

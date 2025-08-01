@@ -182,6 +182,22 @@ body {
     z-index: 10;
 }
 
+/* Date label above dots */
+.event-date-label {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    color: #666;
+    white-space: nowrap;
+    margin-bottom: 2px;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 1px 3px;
+    border-radius: 2px;
+}
+
 .event:hover {
     transform: scale(1.5);
     z-index: 30;
