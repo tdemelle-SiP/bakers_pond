@@ -57,6 +57,17 @@ body {
     border-top: 1px solid #34495e;
 }
 
+.date-filter-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(52, 73, 94, 0.2);
+    padding: 8px 15px;
+    border-radius: 6px;
+    border: 1px solid rgba(52, 73, 94, 0.6);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
 .filter-group {
     display: flex;
     align-items: center;
@@ -411,6 +422,106 @@ body {
 .critical-moment {
     background: #ffd700;
     border-color: #ccac00;
+}
+
+/* Case procedural event styles */
+.case-procedural {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border-width: 2px;
+    opacity: 0.9;
+}
+
+.case-procedural-above {
+    bottom: 185px; /* Further above the public section */
+}
+
+.case-procedural-below {
+    top: 185px; /* Further below the private section */
+}
+
+/* Case procedural labels */
+.case-label {
+    position: absolute;
+    font-size: 13px;
+    font-weight: bold;
+    text-align: center;
+    white-space: nowrap;
+    transform: translateX(-50%);
+    opacity: 0.9;
+}
+
+.case-label-above {
+    bottom: 195px;
+}
+
+.case-label-below {
+    top: 195px;
+}
+
+/* Procedural node labels */
+.procedural-label {
+    position: absolute;
+    font-size: 8px;
+    color: #333;
+    white-space: nowrap;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 1px 3px;
+    border-radius: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.procedural-label-above {
+    top: calc(100% + 2px);  /* Below the node */
+}
+
+.procedural-label-below {
+    top: calc(100% + 2px);  /* Below the node */
+}
+
+/* Procedural date labels */
+.procedural-date {
+    position: absolute;
+    font-size: 9px;
+    color: #666;
+    white-space: nowrap;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 1px 3px;
+    border-radius: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.procedural-date-above {
+    bottom: calc(100% + 2px);  /* Above the node */
+}
+
+.procedural-date-below {
+    bottom: calc(100% + 2px);  /* Above the node */
+}
+
+/* Different colors for each case */
+.case-0303 {
+    background: #9c27b0;
+    border-color: #7b1fa2;
+}
+
+.case-0594 {
+    background: #2196f3;
+    border-color: #1976d2;
+}
+
+.case-0706 {
+    background: #ff5722;
+    border-color: #d84315;
+}
+
+.case-0756 {
+    background: #009688;
+    border-color: #00796b;
 }
 
 /* Critical moments above timeline use green */

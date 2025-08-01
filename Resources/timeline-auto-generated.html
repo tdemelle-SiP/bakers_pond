@@ -24,13 +24,16 @@
             <div id="nav-legend" class="legend"></div>
         </div>
         <div class="nav-filter-row">
-            <div class="filter-group">
-                <label class="filter-label">From:</label>
-                <input type="date" id="filter-start-date" class="filter-input" value="2014-01-01">
-            </div>
-            <div class="filter-group">
-                <label class="filter-label">To:</label>
-                <input type="date" id="filter-end-date" class="filter-input" value="2025-12-31">
+            <div class="date-filter-group">
+                <div class="filter-group">
+                    <label class="filter-label">From:</label>
+                    <input type="date" id="filter-start-date" class="filter-input" value="2014-01-01">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">To:</label>
+                    <input type="date" id="filter-end-date" class="filter-input" value="2025-12-31">
+                </div>
+                <button id="apply-filters" class="filter-button">Apply Date Range</button>
             </div>
             <div class="filter-group">
                 <label class="filter-label">Case:</label>
@@ -49,7 +52,6 @@
                     </div>
                 </div>
             </div>
-            <button id="apply-filters" class="filter-button">Apply Filters</button>
             <button id="reset-filters" class="filter-button">Reset</button>
             <div class="filter-group" style="margin-left: 20px;">
                 <label class="filter-label">Scale:</label>
@@ -539,6 +541,39 @@
             // Add missing document indicator to legend
             legendEl.appendChild(missingLegend);
             
+            // Add case number legend if there are procedural events
+            const caseLegendItems = [
+                { caseNum: '338-0303', class: 'case-0303' },
+                { caseNum: '338-0594', class: 'case-0594' },
+                { caseNum: '338-0706', class: 'case-0706' },
+                { caseNum: '338-0756', class: 'case-0756' }
+            ];
+            
+            // Add separator
+            const separator = document.createElement('div');
+            separator.style.width = '1px';
+            separator.style.height = '20px';
+            separator.style.background = '#34495e';
+            separator.style.margin = '0 20px';
+            legendEl.appendChild(separator);
+            
+            // Add case legends
+            caseLegendItems.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'nav-legend-item';
+                div.innerHTML = `
+                    <div class="case-procedural ${item.class}" style="
+                        position: relative;
+                        width: 8px;
+                        height: 8px;
+                        border-radius: 50%;
+                        margin: 0;
+                    "></div>
+                    <span>DEP #${item.caseNum}</span>
+                `;
+                legendEl.appendChild(div);
+            });
+            
             // Create timeline container content
             const container = document.getElementById('timeline-container');
             
@@ -621,15 +656,80 @@
             const datesWithLabels = { above: new Set(), below: new Set() };
             const allDateLabels = { above: [], below: [] };
             
+            // Track case procedural events for timeline bars
+            const caseProceduralEvents = {
+                '338-0303': [],
+                '338-0594': [],
+                '338-0706': [],
+                '338-0756': []
+            };
+            
             // Debug: log event count and breakdown
             console.log(`Rendering ${events.length} events`);
             const publicCount = events.filter(e => !e.isPrivate).length;
             const privateCount = events.filter(e => e.isPrivate).length;
             console.log(`Public: ${publicCount}, Private: ${privateCount}`);
             
+            // Debug: Check first few events to see data structure
+            console.log('First 3 events with case numbers:', 
+                events.filter(e => e.caseNumber).slice(0, 3).map(e => ({
+                    date: e.dateStr,
+                    case: e.caseNumber,
+                    detail: e.detail
+                }))
+            );
+            
             events.forEach((event, index) => {
                 const daysFromStart = (event.date - startDate) / (1000 * 60 * 60 * 24);
                 const x = 50 + (daysFromStart * pixelsPerDay);
+                
+                // Check if this is a procedural event
+                // Match both **text** and text** patterns
+                let proceduralMatch = null;
+                
+                if (event.detail) {
+                    // Try standard format: **text** (WPA Form X)
+                    proceduralMatch = event.detail.match(/\*\*([^*]+)\*\*\s*\(WPA Form/);
+                    
+                    // If not found, try format without opening **: text** 
+                    if (!proceduralMatch) {
+                        proceduralMatch = event.detail.match(/^([^*]+)\*\*\s*\(WPA Form/);
+                    }
+                    
+                    // If still not found, look for any bold procedural terms
+                    if (!proceduralMatch) {
+                        // Match **text** or text** for key procedural terms
+                        proceduralMatch = event.detail.match(/(?:\*\*)?([^*]+(?:filed|issued|denied|appealed|withdrawn|signed|FORAD|ORAD|SOC|OOC|NOI|ANRAD|RDA|Settlement))\*\*/);
+                    }
+                }
+                
+                const isProcedural = proceduralMatch !== null;
+                
+                // Debug: Log events with case numbers to see what we're getting
+                if (event.caseNumber && (event.detail.includes('filed') || event.detail.includes('issued') || event.detail.includes('denied'))) {
+                    console.log('Potential procedural event:', {
+                        date: event.dateStr,
+                        case: event.caseNumber,
+                        detail: event.detail,
+                        isProcedural: isProcedural,
+                        match: proceduralMatch
+                    });
+                }
+                
+                // If procedural event and has case number, track it
+                if (isProcedural && event.caseNumber && caseProceduralEvents[event.caseNumber]) {
+                    // Extract the procedural action (e.g., "ANRAD filed", "NOI filed", etc.)
+                    const title = proceduralMatch[1].trim().replace(/^\*\*/, '');
+                    
+                    caseProceduralEvents[event.caseNumber].push({
+                        x: x,
+                        date: event.date,
+                        dateStr: event.dateStr,
+                        title: title,
+                        detail: event.detail,
+                        isPrivate: event.isPrivate
+                    });
+                }
                 
                 const eventEl = document.createElement('div');
                 eventEl.className = `event ${event.eventClass} ${event.isPrivate ? 'event-below' : 'event-above'}`;
@@ -812,6 +912,104 @@
                         container.appendChild(vertLine);
                     }
                 }
+            });
+            
+            // Add case procedural events and connections
+            Object.entries(caseProceduralEvents).forEach(([caseNum, caseEvents]) => {
+                if (caseEvents.length === 0) return;
+                
+                console.log(`Case ${caseNum} has ${caseEvents.length} procedural events:`, caseEvents);
+                
+                // Sort events by date
+                caseEvents.sort((a, b) => a.date - b.date);
+                
+                // Add procedural event markers
+                caseEvents.forEach((procEvent, idx) => {
+                    const procEl = document.createElement('div');
+                    procEl.className = `event case-procedural case-${caseNum.slice(-4)} ${procEvent.isPrivate ? 'case-procedural-below' : 'case-procedural-above'}`;
+                    procEl.style.left = procEvent.x + 'px';
+                    
+                    // Create tooltip
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'event-tooltip';
+                    tooltip.innerHTML = `
+                        <div class="event-date">DEP #${caseNum}</div>
+                        <div class="event-title">${procEvent.title}</div>
+                        <div class="event-detail">${procEvent.dateStr}</div>
+                    `;
+                    procEl.appendChild(tooltip);
+                    
+                    // Add procedural action label (below the node)
+                    const procLabel = document.createElement('div');
+                    procLabel.className = `procedural-label ${procEvent.isPrivate ? 'procedural-label-below' : 'procedural-label-above'}`;
+                    procLabel.textContent = procEvent.title;
+                    procEl.appendChild(procLabel);
+                    
+                    // Add date label (above the node)
+                    const dateLabel = document.createElement('div');
+                    dateLabel.className = `procedural-date ${procEvent.isPrivate ? 'procedural-date-below' : 'procedural-date-above'}`;
+                    const eventDate = new Date(procEvent.date);
+                    dateLabel.textContent = `${eventDate.getMonth() + 1}/${eventDate.getDate()}`;
+                    procEl.appendChild(dateLabel);
+                    
+                    container.appendChild(procEl);
+                    
+                    // Add connections between same-case procedural events
+                    if (idx > 0) {
+                        const prevEvent = caseEvents[idx - 1];
+                        
+                        // Only connect if both events are on same level (both public or both private)
+                        if (prevEvent.isPrivate === procEvent.isPrivate) {
+                            // Create SVG line from center to center
+                            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                            svg.style.position = 'absolute';
+                            svg.style.left = Math.min(prevEvent.x, procEvent.x) + 'px';
+                            svg.style.width = Math.abs(procEvent.x - prevEvent.x) + 'px';
+                            svg.style.height = '200px'; // Full container height
+                            svg.style.top = '0';
+                            svg.style.pointerEvents = 'none';
+                            svg.style.overflow = 'visible';
+                            
+                            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                            
+                            // Calculate exact center positions
+                            // Node is 8px + 2px border = 10px visual size, center is +5px from position
+                            const x1 = prevEvent.x < procEvent.x ? 5 : Math.abs(procEvent.x - prevEvent.x) + 5;
+                            const x2 = prevEvent.x < procEvent.x ? Math.abs(procEvent.x - prevEvent.x) + 5 : 5;
+                            
+                            let y1, y2;
+                            if (procEvent.isPrivate) {
+                                // Nodes at top: 185px, center at 185 + 5 = 190px
+                                y1 = y2 = 190;
+                            } else {
+                                // Nodes at bottom: 185px from 200px container = 15px from top
+                                // Center at 15 - 5 = 10px
+                                y1 = y2 = 10;
+                            }
+                            
+                            line.setAttribute('x1', x1);
+                            line.setAttribute('y1', y1);
+                            line.setAttribute('x2', x2);
+                            line.setAttribute('y2', y2);
+                            line.setAttribute('stroke', getComputedStyle(procEl).borderColor);
+                            line.setAttribute('stroke-width', '4');
+                            line.setAttribute('stroke-opacity', '0.7');
+                            
+                            svg.appendChild(line);
+                            container.appendChild(svg);
+                            
+                            // Add case number label on the middle of the line (only on first connection)
+                            if (idx === 1) {
+                                const caseLabel = document.createElement('div');
+                                caseLabel.className = `case-label ${procEvent.isPrivate ? 'case-label-below' : 'case-label-above'}`;
+                                caseLabel.style.left = (prevEvent.x + procEvent.x) / 2 + 'px';
+                                caseLabel.style.color = getComputedStyle(procEl).borderColor;
+                                caseLabel.textContent = `DEP #${caseNum}`;
+                                container.appendChild(caseLabel);
+                            }
+                        }
+                    }
+                });
             });
             
             // Calculate statistics
