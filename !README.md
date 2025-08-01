@@ -1,6 +1,6 @@
 # 42 Mill Street Development History Resource
 
-Experimental Visual Timeline [View the 42 Mill Street Timeline: Public vs Private Proceedings](https://tdemelle-sip.github.io/bakers_pond/Resources/timeline-auto-generated.html)
+[Experimental Visual Timeline](https://tdemelle-sip.github.io/bakers_pond/Resources/timeline-auto-generated.html)
 
 ---
 
