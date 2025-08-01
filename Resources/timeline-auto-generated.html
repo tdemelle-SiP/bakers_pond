@@ -78,21 +78,15 @@
         h1 {
             text-align: center;
             color: #2c3e50;
-            margin-bottom: 10px;
-            font-size: 32px;
+            margin-bottom: 20px;
+            font-size: 28px;
         }
         
-        .subtitle {
-            text-align: center;
-            color: #7f8c8d;
-            margin-bottom: 40px;
-            font-size: 18px;
-        }
         
         .timeline-container {
             position: relative;
-            margin: 40px 0;
-            height: 250px;
+            margin: 20px 0;
+            height: 160px;
             width: 100%;
             min-width: 1200px;
         }
@@ -103,7 +97,7 @@
             top: 125px;
             left: 50px;
             right: 50px;
-            height: 4px;
+            height: 2px;
             background: #34495e;
             z-index: 1;
         }
@@ -111,23 +105,23 @@
         /* Year Markers */
         .year-marker {
             position: absolute;
-            top: 110px;
+            top: 120px;
             width: 2px;
-            height: 30px;
+            height: 10px;
             background: #34495e;
             z-index: 2;
         }
         
         .year-label {
             position: absolute;
-            top: 145px;
+            top: 122px;
             transform: translateX(-50%);
             font-weight: bold;
             color: #34495e;
-            background: white;
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-size: 14px;
+            background: rgba(255,255,255,0.9);
+            padding: 0 6px;
+            font-size: 12px;
+            z-index: 3;
         }
         
         /* Events as dots */
@@ -149,11 +143,11 @@
         
         /* Event positioning */
         .event-above {
-            top: 95px;
+            top: 100px;
         }
         
         .event-below {
-            top: 155px;
+            top: 150px;
         }
         
         /* Tooltip */
@@ -231,12 +225,12 @@
         
         .connection-line.public {
             background: #4caf50;
-            top: 103px;
+            top: 108px;
         }
         
         .connection-line.private {
             background: #f44336;
-            top: 163px;
+            top: 158px;
         }
         
         /* Event styles */
@@ -366,7 +360,6 @@
     
     <div class="container">
         <h1>42 Mill Street: A Timeline of Public Defeats and Private Victories</h1>
-        <div class="subtitle">Automatically Generated from Timeline Overview Data</div>
         
         <div id="loading" class="loading">Loading timeline data...</div>
         <div id="error" class="error" style="display: none;"></div>
@@ -576,18 +569,46 @@
             container.style.width = timelineWidth + 'px';
             container.parentElement.style.width = (timelineWidth + 80) + 'px';
             
-            // Add year markers dynamically
+            // Add year markers and labels dynamically
+            const yearPositions = [];
             for (let year = startDate.getFullYear(); year <= endDate.getFullYear(); year++) {
                 const yearDate = new Date(year, 0, 1);
                 const daysFromStart = (yearDate - startDate) / (1000 * 60 * 60 * 24);
                 const x = 50 + (daysFromStart * pixelsPerDay);
                 
                 if (x >= 50 && x <= timelineWidth - 50) {
+                    // Add marker
                     const marker = document.createElement('div');
                     marker.className = 'year-marker';
                     marker.style.left = x + 'px';
-                    marker.innerHTML = `<div class="year-label">${year}</div>`;
                     container.appendChild(marker);
+                    
+                    yearPositions.push({ year, x });
+                }
+            }
+            
+            // Add year labels between markers
+            for (let i = 0; i < yearPositions.length - 1; i++) {
+                const current = yearPositions[i];
+                const next = yearPositions[i + 1];
+                const midX = (current.x + next.x) / 2;
+                
+                const label = document.createElement('div');
+                label.className = 'year-label';
+                label.style.left = midX + 'px';
+                label.textContent = current.year;
+                container.appendChild(label);
+            }
+            
+            // Add last year label if there's space
+            if (yearPositions.length > 0) {
+                const last = yearPositions[yearPositions.length - 1];
+                if (timelineWidth - last.x > 100) {
+                    const label = document.createElement('div');
+                    label.className = 'year-label';
+                    label.style.left = (last.x + timelineWidth - 50) / 2 + 'px';
+                    label.textContent = last.year;
+                    container.appendChild(label);
                 }
             }
             
