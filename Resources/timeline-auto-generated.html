@@ -369,8 +369,8 @@
         // Timeline data parser and renderer
         async function loadTimeline() {
             try {
-                // Fetch the timeline overview markdown file
-                const response = await fetch('../!42_Mill_St_Timeline_Overview.md');
+                // Fetch the timeline overview markdown file with cache busting
+                const response = await fetch('../!42_Mill_St_Timeline_Overview.md?v=' + Date.now());
                 if (!response.ok) throw new Error('Failed to load timeline data');
                 
                 const text = await response.text();
