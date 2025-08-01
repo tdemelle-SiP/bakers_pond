@@ -16,7 +16,7 @@
             background-color: #f0f0f0;
             margin: 0;
             padding: 20px;
-            padding-top: 140px;
+            padding-top: 180px;
             overflow-x: auto;
         }
         
@@ -43,6 +43,59 @@
             align-items: center;
             justify-content: space-between;
             gap: 40px;
+        }
+        
+        .nav-filter-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 10px 0;
+            border-top: 1px solid #34495e;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .filter-label {
+            color: #ccc;
+            font-size: 13px;
+        }
+        
+        .filter-input {
+            padding: 4px 8px;
+            border: 1px solid #34495e;
+            border-radius: 4px;
+            background: #1a252f;
+            color: white;
+            font-size: 13px;
+        }
+        
+        .filter-select {
+            padding: 4px 8px;
+            border: 1px solid #34495e;
+            border-radius: 4px;
+            background: #1a252f;
+            color: white;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        
+        .filter-button {
+            padding: 4px 12px;
+            border: 1px solid #34495e;
+            border-radius: 4px;
+            background: #34495e;
+            color: white;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .filter-button:hover {
+            background: #455a71;
         }
         
         .nav-link {
@@ -348,6 +401,24 @@
         <div class="nav-bottom-row">
             <div id="nav-legend" class="legend"></div>
         </div>
+        <div class="nav-filter-row">
+            <div class="filter-group">
+                <label class="filter-label">From:</label>
+                <input type="date" id="filter-start-date" class="filter-input" value="2014-01-01">
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">To:</label>
+                <input type="date" id="filter-end-date" class="filter-input" value="2025-12-31">
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Case:</label>
+                <select id="filter-case" class="filter-select">
+                    <option value="all">All Cases</option>
+                </select>
+            </div>
+            <button id="apply-filters" class="filter-button">Apply Filters</button>
+            <button id="reset-filters" class="filter-button">Reset</button>
+        </div>
     </nav>
     
     <div class="container">
@@ -360,6 +431,10 @@
     </div>
     
     <script>
+        // Global variables
+        let allEvents = [];
+        let filteredEvents = [];
+        
         // Timeline data parser and renderer
         async function loadTimeline() {
             try {
@@ -368,13 +443,21 @@
                 if (!response.ok) throw new Error('Failed to load timeline data');
                 
                 const text = await response.text();
-                const events = parseTimelineData(text);
+                allEvents = parseTimelineData(text);
                 
-                if (events.length === 0) {
+                if (allEvents.length === 0) {
                     throw new Error('No events found in timeline data');
                 }
                 
-                renderTimeline(events);
+                // Populate case number filter
+                populateCaseFilter(allEvents);
+                
+                // Initial render with all events
+                filteredEvents = allEvents;
+                renderTimeline(filteredEvents);
+                
+                // Set up filter handlers
+                setupFilterHandlers();
                 
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('timeline-content').style.display = 'block';
@@ -383,6 +466,59 @@
                 document.getElementById('error').style.display = 'block';
                 document.getElementById('error').textContent = 'Error: ' + error.message;
             }
+        }
+        
+        function populateCaseFilter(events) {
+            const caseNumbers = new Set();
+            events.forEach(event => {
+                if (event.caseNumber) {
+                    caseNumbers.add(event.caseNumber);
+                }
+            });
+            
+            const select = document.getElementById('filter-case');
+            Array.from(caseNumbers).sort().forEach(caseNum => {
+                const option = document.createElement('option');
+                option.value = caseNum;
+                option.textContent = caseNum;
+                select.appendChild(option);
+            });
+        }
+        
+        function setupFilterHandlers() {
+            document.getElementById('apply-filters').addEventListener('click', applyFilters);
+            document.getElementById('reset-filters').addEventListener('click', resetFilters);
+        }
+        
+        function applyFilters() {
+            const startDate = new Date(document.getElementById('filter-start-date').value);
+            const endDate = new Date(document.getElementById('filter-end-date').value);
+            const selectedCase = document.getElementById('filter-case').value;
+            
+            filteredEvents = allEvents.filter(event => {
+                // Date range filter
+                if (event.date < startDate || event.date > endDate) {
+                    return false;
+                }
+                
+                // Case number filter
+                if (selectedCase !== 'all' && event.caseNumber !== selectedCase) {
+                    return false;
+                }
+                
+                return true;
+            });
+            
+            renderTimeline(filteredEvents);
+        }
+        
+        function resetFilters() {
+            document.getElementById('filter-start-date').value = '2014-01-01';
+            document.getElementById('filter-end-date').value = '2025-12-31';
+            document.getElementById('filter-case').value = 'all';
+            
+            filteredEvents = allEvents;
+            renderTimeline(filteredEvents);
         }
         
         function parseTimelineData(text) {
@@ -401,9 +537,9 @@
                 
                 // Parse table row
                 const parts = line.split('|').map(p => p.trim()).filter(p => p);
-                if (parts.length < 6) continue;
+                if (parts.length < 7) continue;
                 
-                const [dateStr, document, markers, procedural, legal, environmental] = parts;
+                const [dateStr, document, caseNumber, markers, procedural, legal, environmental] = parts;
                 
                 // Parse date
                 const dateParts = dateStr.split('-');
@@ -475,7 +611,8 @@
                     detail: detail,
                     eventClass: eventClass,
                     isPrivate: isPrivate,
-                    markers: markers
+                    markers: markers,
+                    caseNumber: caseNumber
                 });
             }
             
