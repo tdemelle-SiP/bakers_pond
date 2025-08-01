@@ -1,5 +1,8 @@
 # 42 Mill Street Development History Resource
 
+#### Experimental Visual Timeline
+[View the 42 Mill Street Timeline: Public vs Private Proceedings](https://tdemelle-sip.github.io/bakers_pond/Resources/timeline-auto-generated.html)
+
 This repository is a resource documenting the decades-long history of development attempts at 42 Mill Street in Westwood, Massachusetts. This site, located next to historic Bakers Pond, has been the subject of multiple permit applications, environmental reviews, and legal proceedings since at least 2000.
 
 ---
@@ -54,9 +57,6 @@ Efforts are underway to accurately assess the intent and consequences of the pro
 
 [2025_07_29 WCC Documents Request](https://docs.google.com/document/d/1aTuwKN8ClZdpTS8MXKj5Fsh2QCiWgmMlIX4puK6gw2g/edit?usp=sharing)
 
----
-Experimental ## Visual Timeline
-[View the 42 Mill Street Timeline: Public vs Private Proceedings](https://tdemelle-sip.github.io/bakers_pond/Resources/timeline-auto-generated.html)
 ---
 
 ## Contributing
