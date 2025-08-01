@@ -16,7 +16,7 @@
             background-color: #f0f0f0;
             margin: 0;
             padding: 20px;
-            padding-top: 70px;
+            padding-top: 140px;
             overflow-x: auto;
         }
         
@@ -26,12 +26,23 @@
             left: 0;
             right: 0;
             background: #2c3e50;
-            padding: 15px 20px;
+            padding: 10px 20px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
             z-index: 1000;
+        }
+        
+        .nav-top-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .nav-bottom-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
         }
         
         .nav-link {
@@ -55,7 +66,8 @@
         }
         
         .container {
-            width: 4000px;
+            width: max-content;
+            min-width: 100%;
             margin: 0 auto;
             background: white;
             padding: 40px;
@@ -79,15 +91,16 @@
         
         .timeline-container {
             position: relative;
-            margin: 60px 0;
-            height: 700px;
-            width: 3900px;
+            margin: 40px 0;
+            height: 250px;
+            width: 100%;
+            min-width: 1200px;
         }
         
         /* The Line */
         .timeline-line {
             position: absolute;
-            top: 350px;
+            top: 125px;
             left: 50px;
             right: 50px;
             height: 4px;
@@ -98,7 +111,7 @@
         /* Year Markers */
         .year-marker {
             position: absolute;
-            top: 335px;
+            top: 110px;
             width: 2px;
             height: 30px;
             background: #34495e;
@@ -107,7 +120,7 @@
         
         .year-label {
             position: absolute;
-            top: 370px;
+            top: 145px;
             transform: translateX(-50%);
             font-weight: bold;
             color: #34495e;
@@ -136,11 +149,11 @@
         
         /* Event positioning */
         .event-above {
-            top: 320px;
+            top: 95px;
         }
         
         .event-below {
-            top: 380px;
+            top: 155px;
         }
         
         /* Tooltip */
@@ -218,12 +231,12 @@
         
         .connection-line.public {
             background: #4caf50;
-            top: 328px;
+            top: 103px;
         }
         
         .connection-line.private {
             background: #f44336;
-            top: 388px;
+            top: 163px;
         }
         
         /* Event styles */
@@ -251,15 +264,7 @@
         /* Legend */
         .legend {
             display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 6px;
-            width: fit-content;
-            margin-left: auto;
-            margin-right: auto;
+            gap: 20px;
             flex-wrap: wrap;
         }
         
@@ -270,10 +275,18 @@
         }
         
         .legend-box {
-            width: 20px;
-            height: 20px;
-            border: 3px solid;
+            width: 16px;
+            height: 16px;
+            border: 2px solid;
             border-radius: 50%;
+        }
+        
+        .nav-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: white;
+            font-size: 13px;
         }
         
         /* Labels */
@@ -289,13 +302,13 @@
         }
         
         .public-label {
-            top: 20px;
+            top: 10px;
             left: 50px;
             color: #2e7d32;
         }
         
         .private-label {
-            bottom: 20px;
+            bottom: 10px;
             left: 50px;
             color: #c62828;
         }
@@ -303,30 +316,25 @@
         /* Summary stats */
         .stats-container {
             display: flex;
-            justify-content: space-around;
-            margin-top: 40px;
-            padding: 20px;
-            background: #e3f2fd;
-            border-radius: 6px;
-            width: fit-content;
-            margin-left: auto;
-            margin-right: auto;
-            gap: 40px;
+            gap: 30px;
         }
         
         .stat-item {
-            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
         }
         
         .stat-number {
-            font-size: 36px;
+            font-size: 20px;
             font-weight: bold;
-            color: #1976d2;
+            color: #ffd700;
         }
         
         .stat-label {
-            font-size: 14px;
-            color: #666;
+            font-size: 13px;
+            color: #ccc;
         }
         
         .loading {
@@ -346,9 +354,14 @@
 </head>
 <body>
     <nav class="sticky-nav">
-        <a href="https://github.com/tdemelle-SiP/bakers_pond/blob/master/!README.md" class="nav-link">← Back to README</a>
-        <div class="nav-title">42 Mill Street Timeline (Auto-Generated)</div>
-        <div></div>
+        <div class="nav-top-row">
+            <a href="https://github.com/tdemelle-SiP/bakers_pond/blob/master/!README.md" class="nav-link">← Back to README</a>
+            <div class="nav-title">42 Mill Street Timeline (Auto-Generated)</div>
+            <div id="nav-stats" class="stats-container"></div>
+        </div>
+        <div class="nav-bottom-row">
+            <div id="nav-legend" class="legend"></div>
+        </div>
     </nav>
     
     <div class="container">
@@ -359,9 +372,7 @@
         <div id="error" class="error" style="display: none;"></div>
         
         <div id="timeline-content" style="display: none;">
-            <div class="legend" id="legend"></div>
             <div class="timeline-container" id="timeline-container"></div>
-            <div class="stats-container" id="stats"></div>
         </div>
     </div>
     
@@ -499,10 +510,10 @@
                 { class: 'normal-private', label: 'Private/Shadow' }
             ];
             
-            const legendEl = document.getElementById('legend');
+            const legendEl = document.getElementById('nav-legend');
             legendItems.forEach(item => {
                 const div = document.createElement('div');
-                div.className = 'legend-item';
+                div.className = 'nav-legend-item';
                 div.innerHTML = `
                     <div class="legend-box ${item.class}" style="
                         background: var(--bg);
@@ -548,23 +559,36 @@
                 <div class="timeline-line"></div>
             `;
             
-            // Calculate date range
-            const startDate = new Date(2014, 0, 1);
-            const endDate = new Date(2025, 11, 31);
-            const totalDays = (endDate - startDate) / (1000 * 60 * 60 * 24);
-            const pixelsPerDay = 3800 / totalDays;
+            // Calculate date range dynamically from events
+            const dates = events.map(e => e.date);
+            const minDate = new Date(Math.min(...dates));
+            const maxDate = new Date(Math.max(...dates));
             
-            // Add year markers
-            for (let year = 2014; year <= 2025; year++) {
+            // Add padding to the date range
+            const startDate = new Date(minDate.getFullYear(), 0, 1);
+            const endDate = new Date(maxDate.getFullYear() + 1, 11, 31);
+            
+            const totalDays = (endDate - startDate) / (1000 * 60 * 60 * 24);
+            const pixelsPerDay = 0.8; // Adjust this to control timeline density
+            const timelineWidth = Math.max(totalDays * pixelsPerDay + 100, 1200);
+            
+            // Set the container width dynamically
+            container.style.width = timelineWidth + 'px';
+            container.parentElement.style.width = (timelineWidth + 80) + 'px';
+            
+            // Add year markers dynamically
+            for (let year = startDate.getFullYear(); year <= endDate.getFullYear(); year++) {
                 const yearDate = new Date(year, 0, 1);
                 const daysFromStart = (yearDate - startDate) / (1000 * 60 * 60 * 24);
                 const x = 50 + (daysFromStart * pixelsPerDay);
                 
-                const marker = document.createElement('div');
-                marker.className = 'year-marker';
-                marker.style.left = x + 'px';
-                marker.innerHTML = `<div class="year-label">${year}</div>`;
-                container.appendChild(marker);
+                if (x >= 50 && x <= timelineWidth - 50) {
+                    const marker = document.createElement('div');
+                    marker.className = 'year-marker';
+                    marker.style.left = x + 'px';
+                    marker.innerHTML = `<div class="year-label">${year}</div>`;
+                    container.appendChild(marker);
+                }
             }
             
             // Add events
@@ -632,27 +656,27 @@
             };
             
             // Render stats
-            const statsEl = document.getElementById('stats');
+            const statsEl = document.getElementById('nav-stats');
             statsEl.innerHTML = `
                 <div class="stat-item">
-                    <div class="stat-number">${stats.criticalMoments}</div>
-                    <div class="stat-label">Critical Moments</div>
+                    <span class="stat-number">${stats.criticalMoments}</span>
+                    <span class="stat-label">Critical</span>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number">${stats.missingDocs}</div>
-                    <div class="stat-label">Missing Documents</div>
+                    <span class="stat-number">${stats.missingDocs}</span>
+                    <span class="stat-label">Missing</span>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number">${stats.privileged}</div>
-                    <div class="stat-label">Private/Privileged</div>
+                    <span class="stat-number">${stats.privileged}</span>
+                    <span class="stat-label">Private</span>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number">${stats.continuances}</div>
-                    <div class="stat-label">Continuances</div>
+                    <span class="stat-number">${stats.continuances}</span>
+                    <span class="stat-label">Continued</span>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number">${stats.totalEvents}</div>
-                    <div class="stat-label">Total Events</div>
+                    <span class="stat-number">${stats.totalEvents}</span>
+                    <span class="stat-label">Total</span>
                 </div>
             `;
         }
