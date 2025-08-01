@@ -123,7 +123,7 @@ body {
 .container {
     width: fit-content;
     background: white;
-    padding: 30px 40px;
+    padding: 15px 40px;
     margin: 0 20px;
     border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
@@ -131,7 +131,7 @@ body {
 
 .timeline-container {
     position: relative;
-    margin: 20px 0;
+    margin: 10px 0;
     height: 200px;
     width: 100%;
     min-width: 1200px;
@@ -170,12 +170,12 @@ body {
     z-index: 3;
 }
 
-/* Events as vertical rectangles */
+/* Events as small squares */
 .event {
     position: absolute;
     width: 5px;
-    height: 26px;
-    border-radius: 2px;
+    height: 5px;
+    border-radius: 1px;
     border: 1px solid;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -218,11 +218,11 @@ body {
 
 /* Event positioning */
 .event-above {
-    bottom: 106px; /* Rectangle positioned above line with larger gap */
+    bottom: 117px; /* Square positioned symmetrically above line */
 }
 
 .event-below {
-    top: 106px; /* Rectangle starts below line with larger gap */
+    top: 117px; /* Square positioned symmetrically below line */
 }
 
 /* Tooltip */
@@ -302,6 +302,12 @@ body {
     border-color: #ccac00;
 }
 
+/* Critical moments above timeline use green */
+.event-above.critical-moment {
+    background: #2e7d32;
+    border-color: #1b5e20;
+}
+
 
 .privileged {
     background: #f44336;
@@ -311,7 +317,6 @@ body {
 .continuance {
     background: #8bc34a;
     border-color: #689f38;
-    height: 20px; /* Slightly shorter for continuances */
 }
 
 .normal-public {
@@ -327,18 +332,18 @@ body {
 /* Connecting lines */
 .connection-line {
     position: absolute;
-    height: 2px;
+    height: 1px;
     z-index: 5;
 }
 
 .connection-line.public {
     background: #4caf50;
-    top: 81px; /* Center of rectangle above timeline (94 - 13) */
+    top: 80.5px; /* Center of square above timeline */
 }
 
 .connection-line.private {
     background: #f44336;
-    top: 119px; /* Center of rectangle below timeline (106 + 13) */
+    top: 119.5px; /* Center of square aligned with label */
 }
 
 .connection-line.cross {

@@ -470,6 +470,15 @@
             
             // Add events and track positions
             const eventPositions = [];
+            const labelPositions = { above: [], below: [] };
+            const datesWithLabels = { above: new Set(), below: new Set() };
+            const allDateLabels = { above: [], below: [] };
+            
+            // Debug: log event count and breakdown
+            console.log(`Rendering ${events.length} events`);
+            const publicCount = events.filter(e => !e.isPrivate).length;
+            const privateCount = events.filter(e => e.isPrivate).length;
+            console.log(`Public: ${publicCount}, Private: ${privateCount}`);
             
             events.forEach((event, index) => {
                 const daysFromStart = (event.date - startDate) / (1000 * 60 * 60 * 24);
@@ -479,11 +488,28 @@
                 eventEl.className = `event ${event.eventClass} ${event.isPrivate ? 'event-below' : 'event-above'}`;
                 eventEl.style.left = x + 'px';
                 
-                // Create date label (month/day)
-                const dateLabel = document.createElement('div');
-                dateLabel.className = 'event-date-label';
+                // Only create date label if we haven't already created one for this date/level
+                const labelGroup = event.isPrivate ? 'below' : 'above';
+                const dateKey = event.dateStr;
                 const monthDay = new Date(event.date).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
-                dateLabel.textContent = monthDay;
+                
+                if (!datesWithLabels[labelGroup].has(dateKey)) {
+                    // Create date label (month/day)
+                    const dateLabel = document.createElement('div');
+                    dateLabel.className = 'event-date-label';
+                    dateLabel.textContent = monthDay;
+                    
+                    // Store label info for later processing
+                    allDateLabels[labelGroup].push({
+                        element: dateLabel,
+                        x: x,
+                        date: event.date,
+                        eventEl: eventEl
+                    });
+                    
+                    // Mark this date as having a label
+                    datesWithLabels[labelGroup].add(dateKey);
+                }
                 
                 // Create tooltip
                 const tooltip = document.createElement('div');
@@ -494,7 +520,6 @@
                     ${event.detail ? `<div class="event-detail">${event.detail}</div>` : ''}
                 `;
                 
-                eventEl.appendChild(dateLabel);
                 eventEl.appendChild(tooltip);
                 
                 // Check if this event also has missing document marker
@@ -515,6 +540,58 @@
                 });
             });
             
+            // Process date labels with two-pass approach
+            ['above', 'below'].forEach(position => {
+                const labels = allDateLabels[position];
+                if (labels.length === 0) return;
+                
+                // Sort labels by x position
+                labels.sort((a, b) => a.x - b.x);
+                
+                // PASS 1: Identify clusters of overlapping NODES (5px squares)
+                const nodeClusterBoundaries = [];
+                let clusterStart = 0;
+                
+                for (let i = 1; i < labels.length; i++) {
+                    // If nodes are more than 8px apart, end the current cluster
+                    if (labels[i].x - labels[i-1].x > 8) {
+                        nodeClusterBoundaries.push({ start: clusterStart, end: i - 1 });
+                        clusterStart = i;
+                    }
+                }
+                // Add the last cluster
+                nodeClusterBoundaries.push({ start: clusterStart, end: labels.length - 1 });
+                
+                // Mark which labels to keep from node clustering
+                const keepFromNodePass = new Set();
+                nodeClusterBoundaries.forEach(cluster => {
+                    keepFromNodePass.add(cluster.start); // Always keep first
+                    if (cluster.end > cluster.start) {
+                        keepFromNodePass.add(cluster.end); // Keep last if different
+                    }
+                });
+                
+                // PASS 2: Remove any date that is within 25 pixels of a previous date
+                const finalLabelsToShow = [];
+                let lastShownX = -Infinity;
+                
+                labels.forEach((label, index) => {
+                    if (!keepFromNodePass.has(index)) return; // Skip if removed in pass 1
+                    
+                    if (label.x - lastShownX >= 25) {
+                        // This label is far enough from the last shown one
+                        finalLabelsToShow.push(label);
+                        lastShownX = label.x;
+                    }
+                    // Otherwise, skip this label (it's too close to the previous one)
+                });
+                
+                // Apply the final labels
+                finalLabelsToShow.forEach(label => {
+                    label.eventEl.appendChild(label.element);
+                });
+            });
+            
             // Add chronological connection lines
             for (let i = 0; i < eventPositions.length - 1; i++) {
                 const current = eventPositions[i];
@@ -529,8 +606,8 @@
                     container.appendChild(line);
                 } else {
                     // Different levels - diagonal line
-                    const startY = current.isPrivate ? 119 : 81;
-                    const endY = next.isPrivate ? 119 : 81;
+                    const startY = current.isPrivate ? 119.5 : 80.5;
+                    const endY = next.isPrivate ? 119.5 : 80.5;
                     const height = Math.abs(endY - startY);
                     const width = next.x - current.x;
                     
@@ -550,12 +627,45 @@
                     line.setAttribute('x2', width);
                     line.setAttribute('y2', startY < endY ? height : '0');
                     line.setAttribute('stroke', '#ff5722');
-                    line.setAttribute('stroke-width', '2');
+                    line.setAttribute('stroke-width', '1');
                     
                     svg.appendChild(line);
                     container.appendChild(svg);
                 }
             }
+            
+            // Add vertical connections for same-day events on different levels
+            const eventsByDate = {};
+            eventPositions.forEach(pos => {
+                const dateKey = pos.event.dateStr;
+                if (!eventsByDate[dateKey]) {
+                    eventsByDate[dateKey] = [];
+                }
+                eventsByDate[dateKey].push(pos);
+            });
+            
+            // Create vertical lines for dates with events on both levels
+            Object.values(eventsByDate).forEach(sameDayEvents => {
+                if (sameDayEvents.length > 1) {
+                    const publicEvents = sameDayEvents.filter(e => !e.isPrivate);
+                    const privateEvents = sameDayEvents.filter(e => e.isPrivate);
+                    
+                    if (publicEvents.length > 0 && privateEvents.length > 0) {
+                        // Events on both levels for the same day - add vertical connection
+                        const x = sameDayEvents[0].x; // All same-day events have same x position
+                        
+                        const vertLine = document.createElement('div');
+                        vertLine.style.position = 'absolute';
+                        vertLine.style.left = x + 'px';
+                        vertLine.style.top = '80.5px';
+                        vertLine.style.width = '1px';
+                        vertLine.style.height = '39px'; // Distance between centers (119.5 - 80.5)
+                        vertLine.style.background = '#9c27b0'; // Purple for same-day connections
+                        vertLine.style.zIndex = '4';
+                        container.appendChild(vertLine);
+                    }
+                }
+            });
             
             // Calculate statistics
             const stats = {
@@ -594,6 +704,19 @@
         
         // Load timeline when page loads
         window.addEventListener('load', loadTimeline);
+        
+        // Add mouse wheel horizontal scrolling
+        document.addEventListener('wheel', (e) => {
+            // Check if we're over the main content area
+            const mainContent = document.querySelector('.main-content');
+            if (mainContent && mainContent.contains(e.target)) {
+                // Prevent vertical scrolling
+                e.preventDefault();
+                
+                // Scroll horizontally instead
+                mainContent.scrollLeft += e.deltaY;
+            }
+        }, { passive: false });
     </script>
 </body>
 </html>
