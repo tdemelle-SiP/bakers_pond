@@ -40,6 +40,11 @@
             </div>
             <button id="apply-filters" class="filter-button">Apply Filters</button>
             <button id="reset-filters" class="filter-button">Reset</button>
+            <div class="filter-group" style="margin-left: 20px;">
+                <label class="filter-label">Scale:</label>
+                <input type="range" id="scale-slider" class="filter-input" min="0.2" max="3" step="0.1" value="0.8" style="width: 100px;">
+                <span id="scale-value" class="filter-label">0.8</span>
+            </div>
         </div>
     </nav>
     
@@ -111,6 +116,16 @@
         function setupFilterHandlers() {
             document.getElementById('apply-filters').addEventListener('click', applyFilters);
             document.getElementById('reset-filters').addEventListener('click', resetFilters);
+            
+            // Scale slider handler
+            const scaleSlider = document.getElementById('scale-slider');
+            const scaleValue = document.getElementById('scale-value');
+            
+            scaleSlider.addEventListener('input', (e) => {
+                const scale = parseFloat(e.target.value);
+                scaleValue.textContent = scale.toFixed(1);
+                renderTimeline(filteredEvents, scale);
+            });
         }
         
         function applyFilters() {
@@ -232,7 +247,7 @@
             return events.sort((a, b) => a.date - b.date);
         }
         
-        function renderTimeline(events) {
+        function renderTimeline(events, customScale = null) {
             // Create legend
             const legendItems = [
                 { class: 'critical-moment', label: 'Critical Moment (🟡)' },
@@ -302,7 +317,7 @@
             const endDate = new Date(maxDate.getFullYear() + 1, 11, 31);
             
             const totalDays = (endDate - startDate) / (1000 * 60 * 60 * 24);
-            const pixelsPerDay = 0.8; // Adjust this to control timeline density
+            const pixelsPerDay = customScale || parseFloat(document.getElementById('scale-slider')?.value) || 0.8;
             const timelineWidth = Math.max(totalDays * pixelsPerDay + 100, 1200);
             
             // Set the container width dynamically
@@ -352,9 +367,8 @@
                 }
             }
             
-            // Add events
-            let publicEvents = [];
-            let privateEvents = [];
+            // Add events and track positions
+            const eventPositions = [];
             
             events.forEach((event, index) => {
                 const daysFromStart = (event.date - startDate) / (1000 * 60 * 60 * 24);
@@ -383,35 +397,54 @@
                 eventEl.appendChild(tooltip);
                 container.appendChild(eventEl);
                 
-                // Track for connections
-                if (event.isPrivate) {
-                    privateEvents.push({ x, event });
-                } else {
-                    publicEvents.push({ x, event });
-                }
+                // Track position for connections
+                eventPositions.push({
+                    x: x,
+                    isPrivate: event.isPrivate,
+                    event: event
+                });
             });
             
-            // Add connection lines
-            // Connect public events
-            for (let i = 0; i < publicEvents.length - 1; i++) {
-                const start = publicEvents[i].x;
-                const end = publicEvents[i + 1].x;
-                const line = document.createElement('div');
-                line.className = 'connection-line public';
-                line.style.left = start + 'px';
-                line.style.width = (end - start) + 'px';
-                container.appendChild(line);
-            }
-            
-            // Connect private events
-            for (let i = 0; i < privateEvents.length - 1; i++) {
-                const start = privateEvents[i].x;
-                const end = privateEvents[i + 1].x;
-                const line = document.createElement('div');
-                line.className = 'connection-line private';
-                line.style.left = start + 'px';
-                line.style.width = (end - start) + 'px';
-                container.appendChild(line);
+            // Add chronological connection lines
+            for (let i = 0; i < eventPositions.length - 1; i++) {
+                const current = eventPositions[i];
+                const next = eventPositions[i + 1];
+                
+                if (current.isPrivate === next.isPrivate) {
+                    // Same level - horizontal line
+                    const line = document.createElement('div');
+                    line.className = `connection-line ${current.isPrivate ? 'private' : 'public'}`;
+                    line.style.left = current.x + 'px';
+                    line.style.width = (next.x - current.x) + 'px';
+                    container.appendChild(line);
+                } else {
+                    // Different levels - diagonal line
+                    const startY = current.isPrivate ? 158 : 108;
+                    const endY = next.isPrivate ? 158 : 108;
+                    const height = Math.abs(endY - startY);
+                    const width = next.x - current.x;
+                    
+                    // Create SVG for diagonal line
+                    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    svg.style.position = 'absolute';
+                    svg.style.left = current.x + 'px';
+                    svg.style.top = Math.min(startY, endY) + 'px';
+                    svg.style.width = width + 'px';
+                    svg.style.height = height + 'px';
+                    svg.style.zIndex = '5';
+                    svg.style.pointerEvents = 'none';
+                    
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', '0');
+                    line.setAttribute('y1', startY < endY ? '0' : height);
+                    line.setAttribute('x2', width);
+                    line.setAttribute('y2', startY < endY ? height : '0');
+                    line.setAttribute('stroke', '#ff5722');
+                    line.setAttribute('stroke-width', '2');
+                    
+                    svg.appendChild(line);
+                    container.appendChild(svg);
+                }
             }
             
             // Calculate statistics
