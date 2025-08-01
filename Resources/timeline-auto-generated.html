@@ -528,7 +528,7 @@
             // Skip header lines and find the table
             let inTable = false;
             for (const line of lines) {
-                if (line.includes('| Date | Document | Mrkr |')) {
+                if (line.includes('| Date | Document | Case # | Mrkr |')) {
                     inTable = true;
                     continue;
                 }
