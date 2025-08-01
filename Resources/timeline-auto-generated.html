@@ -174,8 +174,12 @@
                 if (line.trim() === '' || line.startsWith('|------')) continue;
                 
                 // Parse table row
-                const parts = line.split('|').map(p => p.trim()).filter(p => p);
-                if (parts.length < 7) continue;
+                const parts = line
+                    .split('|')          // keep every cell, even empty ones
+                    .slice(1, -1)        // throw away the leading & trailing '' from the |…| row
+                    .map(p => p.trim());
+                
+                if (parts.length !== 7) continue;  // guard, but will now pass for blank-case rows
                 
                 const [dateStr, document, caseNumber, markers, procedural, legal, environmental] = parts;
                 
@@ -259,6 +263,7 @@
             ];
             
             const legendEl = document.getElementById('nav-legend');
+            legendEl.innerHTML = ''; // Clear existing legend items
             legendItems.forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'nav-legend-item';
