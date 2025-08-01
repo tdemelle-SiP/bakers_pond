@@ -120,37 +120,45 @@
         /* Events as dots */
         .event {
             position: absolute;
-            width: 20px;
-            height: 20px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
             border: 3px solid;
             cursor: pointer;
             transition: all 0.3s ease;
             z-index: 10;
-            transform: translate(-50%, -50%);
         }
         
         .event:hover {
-            transform: translate(-50%, -50%) scale(1.5);
+            transform: scale(1.5);
             z-index: 30;
+        }
+        
+        /* Event positioning */
+        .event-above {
+            top: 320px;
+        }
+        
+        .event-below {
+            top: 380px;
         }
         
         /* Tooltip */
         .event-tooltip {
             position: absolute;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.95);
             color: white;
             padding: 12px 16px;
             border-radius: 6px;
             font-size: 13px;
-            white-space: nowrap;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease;
             z-index: 40;
-            max-width: 300px;
-            white-space: normal;
+            width: 250px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            left: 50%;
+            transform: translateX(-50%);
         }
         
         .event:hover .event-tooltip {
@@ -160,105 +168,81 @@
         /* Position tooltip above or below based on event position */
         .event-above .event-tooltip {
             bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
         }
         
         .event-below .event-tooltip {
             top: 30px;
-            left: 50%;
-            transform: translateX(-50%);
         }
         
         /* Public Events (Above the Line) */
         .public-event {
             background: #4caf50;
             border-color: #2e7d32;
-            top: 320px;
         }
         
         .public-denial {
             background: #2e7d32;
             border-color: #1b5e20;
             box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.3);
-            top: 320px;
         }
         
         /* Private Events (Below the Line) */
         .private-event {
             background: #f44336;
             border-color: #c62828;
-            top: 380px;
         }
         
         .missing-doc {
             background: #e91e63;
             border-color: #880e4f;
             border-style: dashed;
-            top: 380px;
         }
         
         .obscuring-event {
             background: #ff6f00;
             border-color: #e65100;
             box-shadow: 0 0 0 3px rgba(255, 111, 0, 0.3);
-            top: 380px;
         }
         
         /* Connecting lines */
         .connection-line {
             position: absolute;
             height: 2px;
-            background: #666;
             z-index: 5;
-            transform-origin: left center;
         }
         
         .connection-line.public {
             background: #4caf50;
-            top: 320px;
+            top: 328px;
         }
         
         .connection-line.private {
             background: #f44336;
-            top: 380px;
+            top: 388px;
         }
         
-        /* Event connectors */
-        .connector {
-            position: absolute;
-            width: 3px;
+        .connection-line.cross {
             background: #ff5722;
-            z-index: 5;
+            height: 3px;
         }
         
-        .connector-arrow {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background: #ff5722;
-            transform: rotate(45deg);
-            right: -10px;
-            bottom: -10px;
-        }
-        
-        /* Event positioning helpers */
+        /* Event styles */
         .event-date {
             font-weight: bold;
             font-size: 11px;
-            color: #666;
-            margin-bottom: 4px;
+            color: #fdd835;
+            margin-bottom: 6px;
         }
         
         .event-title {
             font-weight: bold;
-            margin-bottom: 2px;
-            font-size: 13px;
+            margin-bottom: 4px;
+            font-size: 14px;
         }
         
         .event-detail {
-            font-size: 11px;
-            color: #555;
+            font-size: 12px;
+            color: #ccc;
             font-style: italic;
         }
         
@@ -450,6 +434,29 @@
                 <div class="year-label">2025</div>
             </div>
             
+            <!-- Connection Lines -->
+            <!-- Private/Shadow timeline connections -->
+            <div class="connection-line private" style="left: 120px; width: 60px;"></div>
+            <div class="connection-line private" style="left: 180px; width: 300px;"></div>
+            <div class="connection-line private" style="left: 780px; width: 60px;"></div>
+            <div class="connection-line private" style="left: 840px; width: 60px;"></div>
+            <div class="connection-line private" style="left: 1520px; width: 460px;"></div>
+            <div class="connection-line private" style="left: 2040px; width: 60px;"></div>
+            <div class="connection-line private" style="left: 2100px; width: 60px;"></div>
+            <div class="connection-line private" style="left: 2160px; width: 120px;"></div>
+            <div class="connection-line private" style="left: 2520px; width: 60px;"></div>
+            
+            <!-- Public timeline connections -->
+            <div class="connection-line public" style="left: 320px; width: 100px;"></div>
+            <div class="connection-line public" style="left: 620px; width: 100px;"></div>
+            <div class="connection-line public" style="left: 1020px; width: 700px;"></div>
+            <div class="connection-line public" style="left: 1920px; width: 300px;"></div>
+            <div class="connection-line public" style="left: 2420px; width: 300px;"></div>
+            
+            <!-- Cross connections showing private influence on public -->
+            <div class="connection-line cross" style="left: 810px; top: 328px; width: 2px; height: 60px; transform: rotate(0deg);"></div>
+            <div class="connection-line cross" style="left: 2250px; top: 328px; width: 2px; height: 60px; transform: rotate(0deg);"></div>
+            
             <!-- 2014 Events -->
             <div class="event missing-doc event-below" style="left: 120px;">
                 <div class="event-tooltip">
@@ -459,65 +466,78 @@
                 </div>
             </div>
             
-            <div class="event missing-doc" style="left: 180px; top: 500px;">
-                <div class="event-date">Nov 14, 2014</div>
-                <div class="event-title">❌ Missing ANRAD App</div>
-                <div class="event-detail">DEP #338-0594</div>
+            <div class="event missing-doc event-below" style="left: 180px;">
+                <div class="event-tooltip">
+                    <div class="event-date">Nov 14, 2014</div>
+                    <div class="event-title">❌ Missing ANRAD App</div>
+                    <div class="event-detail">DEP #338-0594</div>
+                </div>
             </div>
             
             <!-- 2015 Events -->
-            <div class="event public-event" style="left: 320px; top: 220px;">
-                <div class="event-date">Oct 21, 2015</div>
-                <div class="event-title">GEC Peer Review</div>
-                <div class="event-detail">Dam 60 yrs old, perennial stream, potential vernal pools</div>
+            <div class="event public-event event-above" style="left: 320px;">
+                <div class="event-tooltip">
+                    <div class="event-date">Oct 21, 2015</div>
+                    <div class="event-title">GEC Peer Review</div>
+                    <div class="event-detail">Dam 60 yrs old, perennial stream, potential vernal pools</div>
+                </div>
             </div>
             
-            <div class="event public-denial" style="left: 420px; top: 120px;">
-                <div class="event-date">Oct 28, 2015</div>
-                <div class="event-title">WCC DENIES ANRAD</div>
-                <div class="event-detail">Unanimous - boundaries inaccurate</div>
+            <div class="event public-denial event-above" style="left: 420px;">
+                <div class="event-tooltip">
+                    <div class="event-date">Oct 28, 2015</div>
+                    <div class="event-title">WCC DENIES ANRAD</div>
+                    <div class="event-detail">Unanimous - boundaries inaccurate</div>
+                </div>
             </div>
             
-            <div class="event private-event" style="left: 480px; top: 430px;">
-                <div class="event-date">Dec 9, 2015</div>
-                <div class="event-title">🔴 Watsky requests direct talks</div>
-                <div class="event-detail">Shifts to privileged forum</div>
+            <div class="event private-event event-below" style="left: 480px;">
+                <div class="event-tooltip">
+                    <div class="event-date">Dec 9, 2015</div>
+                    <div class="event-title">🔴 Watsky requests direct talks</div>
+                    <div class="event-detail">Shifts to privileged forum</div>
+                </div>
             </div>
             
             <!-- 2016 Events -->
-            <div class="event public-event" style="left: 620px; top: 220px;">
-                <div class="event-date">Feb 23, 2016</div>
-                <div class="event-title">Planning Board Denies ANR</div>
-                <div class="event-detail">Must go through subdivision</div>
+            <div class="event public-event event-above" style="left: 620px;">
+                <div class="event-tooltip">
+                    <div class="event-date">Feb 23, 2016</div>
+                    <div class="event-title">Planning Board Denies ANR</div>
+                    <div class="event-detail">Must go through subdivision</div>
+                </div>
             </div>
             
-            <div class="event public-denial" style="left: 720px; top: 120px;">
-                <div class="event-date">Aug 25, 2016</div>
-                <div class="event-title">DEP UPHOLDS DENIAL</div>
-                <div class="event-detail">Mill Brook perennial, wellhead protection area</div>
+            <div class="event public-denial event-above" style="left: 720px;">
+                <div class="event-tooltip">
+                    <div class="event-date">Aug 25, 2016</div>
+                    <div class="event-title">DEP UPHOLDS DENIAL</div>
+                    <div class="event-detail">Mill Brook perennial, wellhead protection area</div>
+                </div>
             </div>
             
-            <div class="event private-event" style="left: 780px; top: 430px;">
-                <div class="event-date">Sep 15, 2016</div>
-                <div class="event-title">🔴 Delapa Appeals</div>
-                <div class="event-detail">WET-2016-022</div>
+            <div class="event private-event event-below" style="left: 780px;">
+                <div class="event-tooltip">
+                    <div class="event-date">Sep 15, 2016</div>
+                    <div class="event-title">🔴 Delapa Appeals</div>
+                    <div class="event-detail">WET-2016-022</div>
+                </div>
             </div>
             
-            <div class="event obscuring-event" style="left: 840px; top: 500px;">
-                <div class="event-date">Nov 9, 2016</div>
-                <div class="event-title">🔴 Executive Session</div>
-                <div class="event-detail">Settlement negotiations begin</div>
+            <div class="event obscuring-event event-below" style="left: 840px;">
+                <div class="event-tooltip">
+                    <div class="event-date">Nov 9, 2016</div>
+                    <div class="event-title">🔴 Executive Session</div>
+                    <div class="event-detail">Settlement negotiations begin</div>
+                </div>
             </div>
             
-            <div class="event missing-doc" style="left: 900px; top: 570px;">
-                <div class="event-date">Nov-Dec 2016</div>
-                <div class="event-title">❌ Settlement Agreements</div>
-                <div class="event-detail">Multiple docs missing</div>
-            </div>
-            
-            <!-- Connector from denial to settlement -->
-            <div class="connector" style="left: 810px; top: 150px; height: 350px;">
-                <div class="connector-arrow"></div>
+            <div class="event missing-doc event-below" style="left: 900px;">
+                <div class="event-tooltip">
+                    <div class="event-date">Nov-Dec 2016</div>
+                    <div class="event-title">❌ Settlement Agreements</div>
+                    <div class="event-detail">Multiple docs missing</div>
+                </div>
             </div>
             
             <!-- Pattern annotation -->
@@ -526,17 +546,21 @@
             </div>
             
             <!-- 2017 Event -->
-            <div class="event public-event" style="left: 1020px; top: 220px;">
-                <div class="event-date">Jan 11, 2017</div>
-                <div class="event-title">WCC Signs ORAD</div>
-                <div class="event-detail">Bylaw only, 3-year validity</div>
+            <div class="event public-event event-above" style="left: 1020px;">
+                <div class="event-tooltip">
+                    <div class="event-date">Jan 11, 2017</div>
+                    <div class="event-title">WCC Signs ORAD</div>
+                    <div class="event-detail">Bylaw only, 3-year validity</div>
+                </div>
             </div>
             
             <!-- 2020-2021 Events -->
-            <div class="event obscuring-event" style="left: 1520px; top: 430px;">
-                <div class="event-date">June-Oct 2020</div>
-                <div class="event-title">Wrong Applicant Name</div>
-                <div class="event-detail">Vinci instead of Delapa</div>
+            <div class="event obscuring-event event-below" style="left: 1520px;">
+                <div class="event-tooltip">
+                    <div class="event-date">June-Oct 2020</div>
+                    <div class="event-title">Wrong Applicant Name</div>
+                    <div class="event-detail">Vinci instead of Delapa</div>
+                </div>
             </div>
             
             <!-- Continuance bar -->
@@ -544,58 +568,69 @@
                 17+ HEARING CONTINUANCES
             </div>
             
-            <div class="event public-event" style="left: 1720px; top: 220px;">
-                <div class="event-date">Oct 8, 2020</div>
-                <div class="event-title">GEC Finds Scale Error</div>
-                <div class="event-detail">Stamped plan incorrect</div>
+            <div class="event public-event event-above" style="left: 1720px;">
+                <div class="event-tooltip">
+                    <div class="event-date">Oct 8, 2020</div>
+                    <div class="event-title">GEC Finds Scale Error</div>
+                    <div class="event-detail">Stamped plan incorrect</div>
+                </div>
             </div>
             
-            <div class="event public-denial" style="left: 1920px; top: 120px;">
-                <div class="event-date">Nov 10, 2021</div>
-                <div class="event-title">WCC DENIES NOI 7-0</div>
-                <div class="event-detail">Site too difficult, 26,638 sf impact</div>
+            <div class="event public-denial event-above" style="left: 1920px;">
+                <div class="event-tooltip">
+                    <div class="event-date">Nov 10, 2021</div>
+                    <div class="event-title">WCC DENIES NOI 7-0</div>
+                    <div class="event-detail">Site too difficult, 26,638 sf impact</div>
+                </div>
             </div>
             
-            <div class="event private-event" style="left: 1980px; top: 430px;">
-                <div class="event-date">Nov 30, 2021</div>
-                <div class="event-title">🔴 Goddard Appeals to DEP</div>
-                <div class="event-detail">Seeks SOC</div>
+            <div class="event private-event event-below" style="left: 1980px;">
+                <div class="event-tooltip">
+                    <div class="event-date">Nov 30, 2021</div>
+                    <div class="event-title">🔴 Goddard Appeals to DEP</div>
+                    <div class="event-detail">Seeks SOC</div>
+                </div>
             </div>
             
             <!-- 2022 Events -->
-            <div class="event missing-doc" style="left: 2040px; top: 500px;">
-                <div class="event-date">Jan 6, 2022</div>
-                <div class="event-title">❌ DEP Site Visit Notes</div>
-                <div class="event-detail">Critical inspection missing</div>
+            <div class="event missing-doc event-below" style="left: 2040px;">
+                <div class="event-tooltip">
+                    <div class="event-date">Jan 6, 2022</div>
+                    <div class="event-title">❌ DEP Site Visit Notes</div>
+                    <div class="event-detail">Critical inspection missing</div>
+                </div>
             </div>
             
-            <div class="event private-event" style="left: 2100px; top: 570px;">
-                <div class="event-date">Jan 12, 2022</div>
-                <div class="event-title">🔴 Lawsuit Filed</div>
-                <div class="event-detail">Superior Court pressure</div>
+            <div class="event private-event event-below" style="left: 2100px;">
+                <div class="event-tooltip">
+                    <div class="event-date">Jan 12, 2022</div>
+                    <div class="event-title">🔴 Lawsuit Filed</div>
+                    <div class="event-detail">Superior Court pressure</div>
+                </div>
             </div>
             
-            <div class="event missing-doc" style="left: 2160px; top: 430px;">
-                <div class="event-date">Feb-Mar 2022</div>
-                <div class="event-title">❌ Cut/Fill Data</div>
-                <div class="event-detail">Technical data missing</div>
+            <div class="event missing-doc event-below" style="left: 2160px;">
+                <div class="event-tooltip">
+                    <div class="event-date">Feb-Mar 2022</div>
+                    <div class="event-title">❌ Cut/Fill Data</div>
+                    <div class="event-detail">Technical data missing</div>
+                </div>
             </div>
             
-            <div class="event public-event" style="left: 2220px; top: 220px;">
-                <div class="event-date">May 6, 2022</div>
-                <div class="event-title">DEP Issues SOC</div>
-                <div class="event-detail">Overrules WCC denial</div>
+            <div class="event public-event event-above" style="left: 2220px;">
+                <div class="event-tooltip">
+                    <div class="event-date">May 6, 2022</div>
+                    <div class="event-title">DEP Issues SOC</div>
+                    <div class="event-detail">Overrules WCC denial</div>
+                </div>
             </div>
             
-            <div class="event obscuring-event" style="left: 2280px; top: 500px;">
-                <div class="event-date">Oct 26, 2022</div>
-                <div class="event-title">🔴 Settlement Forces WCC</div>
-                <div class="event-detail">Must adopt SOC as own decision</div>
-            </div>
-            
-            <!-- Connector showing the laundering -->
-            <div class="connector" style="left: 2250px; top: 250px; height: 250px;">
-                <div class="connector-arrow"></div>
+            <div class="event obscuring-event event-below" style="left: 2280px;">
+                <div class="event-tooltip">
+                    <div class="event-date">Oct 26, 2022</div>
+                    <div class="event-title">🔴 Settlement Forces WCC</div>
+                    <div class="event-detail">Must adopt SOC as own decision</div>
+                </div>
             </div>
             
             <!-- Pattern annotation -->
@@ -604,28 +639,36 @@
             </div>
             
             <!-- 2023-2025 Events -->
-            <div class="event public-event" style="left: 2420px; top: 220px;">
-                <div class="event-date">July 2023</div>
-                <div class="event-title">Dam Ownership Questions</div>
-                <div class="event-detail">Public finally asks who owns dam</div>
+            <div class="event public-event event-above" style="left: 2420px;">
+                <div class="event-tooltip">
+                    <div class="event-date">July 2023</div>
+                    <div class="event-title">Dam Ownership Questions</div>
+                    <div class="event-detail">Public finally asks who owns dam</div>
+                </div>
             </div>
             
-            <div class="event obscuring-event" style="left: 2520px; top: 430px;">
-                <div class="event-date">2023-2025</div>
-                <div class="event-title">42 Mill → 0 Mill St</div>
-                <div class="event-detail">Address change obscures records</div>
+            <div class="event obscuring-event event-below" style="left: 2520px;">
+                <div class="event-tooltip">
+                    <div class="event-date">2023-2025</div>
+                    <div class="event-title">42 Mill → 0 Mill St</div>
+                    <div class="event-detail">Address change obscures records</div>
+                </div>
             </div>
             
-            <div class="event missing-doc" style="left: 2580px; top: 500px;">
-                <div class="event-date">2023</div>
-                <div class="event-title">❌ BETA Final Review</div>
-                <div class="event-detail">Dam project peer review</div>
+            <div class="event missing-doc event-below" style="left: 2580px;">
+                <div class="event-tooltip">
+                    <div class="event-date">2023</div>
+                    <div class="event-title">❌ BETA Final Review</div>
+                    <div class="event-detail">Dam project peer review</div>
+                </div>
             </div>
             
-            <div class="event public-event" style="left: 2720px; top: 120px;">
-                <div class="event-date">May 6, 2025</div>
-                <div class="event-title">SOC EXPIRES</div>
-                <div class="event-detail">No extension filed</div>
+            <div class="event public-event event-above" style="left: 2720px;">
+                <div class="event-tooltip">
+                    <div class="event-date">May 6, 2025</div>
+                    <div class="event-title">SOC EXPIRES</div>
+                    <div class="event-detail">No extension filed</div>
+                </div>
             </div>
         </div>
         
