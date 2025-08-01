@@ -45,6 +45,12 @@
                 <input type="range" id="scale-slider" class="filter-input" min="0.2" max="3" step="0.1" value="0.8" style="width: 100px;">
                 <span id="scale-value" class="filter-label">0.8</span>
             </div>
+            <div class="filter-group">
+                <label class="filter-label">
+                    <input type="checkbox" id="fit-to-window" style="margin-right: 5px;">
+                    Fit to window
+                </label>
+            </div>
         </div>
     </nav>
     
@@ -62,6 +68,7 @@
         // Global variables
         let allEvents = [];
         let filteredEvents = [];
+        let currentDateRange = null;
         
         // Timeline data parser and renderer
         async function loadTimeline() {
@@ -80,9 +87,20 @@
                 // Populate case number filter
                 populateCaseFilter(allEvents);
                 
-                // Initial render with all events
+                // Initial render with all events and saved scale
                 filteredEvents = allEvents;
-                renderTimeline(filteredEvents);
+                
+                // Check if fit-to-window is enabled
+                const fitToWindowEnabled = localStorage.getItem('timeline-fit-to-window') === 'true';
+                if (fitToWindowEnabled) {
+                    // First render to establish date range
+                    renderTimeline(filteredEvents);
+                    // Then calculate and apply fit scale
+                    setTimeout(calculateAndApplyFitScale, 0);
+                } else {
+                    const savedScale = localStorage.getItem('timeline-scale');
+                    renderTimeline(filteredEvents, savedScale ? parseFloat(savedScale) : null);
+                }
                 
                 // Set up filter handlers
                 setupFilterHandlers();
@@ -121,10 +139,55 @@
             const scaleSlider = document.getElementById('scale-slider');
             const scaleValue = document.getElementById('scale-value');
             
+            // Load saved scale from localStorage
+            const savedScale = localStorage.getItem('timeline-scale');
+            if (savedScale) {
+                const scale = parseFloat(savedScale);
+                scaleSlider.value = scale;
+                scaleValue.textContent = scale.toFixed(1);
+            }
+            
             scaleSlider.addEventListener('input', (e) => {
                 const scale = parseFloat(e.target.value);
                 scaleValue.textContent = scale.toFixed(1);
+                
+                // Save scale to localStorage
+                localStorage.setItem('timeline-scale', scale);
+                
+                // Disable fit-to-window when manually adjusting scale
+                document.getElementById('fit-to-window').checked = false;
+                localStorage.setItem('timeline-fit-to-window', 'false');
+                
                 renderTimeline(filteredEvents, scale);
+            });
+            
+            // Fit to window handler
+            const fitToWindow = document.getElementById('fit-to-window');
+            
+            // Load saved fit-to-window preference
+            const savedFitToWindow = localStorage.getItem('timeline-fit-to-window') === 'true';
+            fitToWindow.checked = savedFitToWindow;
+            
+            fitToWindow.addEventListener('change', (e) => {
+                localStorage.setItem('timeline-fit-to-window', e.target.checked);
+                
+                if (e.target.checked) {
+                    calculateAndApplyFitScale();
+                } else {
+                    // Revert to saved scale or default
+                    const savedScale = localStorage.getItem('timeline-scale');
+                    const scale = savedScale ? parseFloat(savedScale) : 0.8;
+                    scaleSlider.value = scale;
+                    scaleValue.textContent = scale.toFixed(1);
+                    renderTimeline(filteredEvents, scale);
+                }
+            });
+            
+            // Listen for window resize to maintain fit
+            window.addEventListener('resize', () => {
+                if (fitToWindow.checked) {
+                    calculateAndApplyFitScale();
+                }
             });
         }
         
@@ -157,6 +220,31 @@
             
             filteredEvents = allEvents;
             renderTimeline(filteredEvents);
+        }
+        
+        function calculateAndApplyFitScale() {
+            if (filteredEvents.length === 0) return;
+            
+            // Get viewport width
+            const viewportWidth = window.innerWidth - 140; // Account for padding and margins
+            
+            // Calculate required scale to fit timeline
+            if (currentDateRange) {
+                const { startDate, endDate, totalDays } = currentDateRange;
+                // Calculate scale that would fit the timeline in viewport
+                const requiredScale = (viewportWidth - 100) / totalDays;
+                
+                // Clamp to slider range
+                const clampedScale = Math.max(0.2, Math.min(3, requiredScale));
+                
+                // Update slider and render
+                const scaleSlider = document.getElementById('scale-slider');
+                const scaleValue = document.getElementById('scale-value');
+                scaleSlider.value = clampedScale;
+                scaleValue.textContent = clampedScale.toFixed(1);
+                
+                renderTimeline(filteredEvents, clampedScale);
+            }
         }
         
         function parseTimelineData(text) {
@@ -206,7 +294,6 @@
                 // Determine event type based on markers and content
                 const markerTypes = {
                     '🟡': 'critical-moment',
-                    '❌': 'missing-file',
                     '🔴': 'privileged',
                     '🐢': 'continuance'
                 };
@@ -214,18 +301,18 @@
                 let eventClass = '';
                 let isPrivate = false;
                 
-                // Check markers
+                // Check markers (❌ is now only a secondary indicator)
                 for (const [marker, className] of Object.entries(markerTypes)) {
                     if (markers.includes(marker)) {
                         eventClass = className;
-                        if (marker === '🔴' || marker === '❌') {
+                        if (marker === '🔴') {
                             isPrivate = true;
                         }
                         break;
                     }
                 }
                 
-                // If no marker found, skip this event
+                // If no primary marker found, skip this event
                 if (!eventClass) {
                     continue;
                 }
@@ -255,12 +342,14 @@
             // Create legend
             const legendItems = [
                 { class: 'critical-moment', label: 'Critical Moment (🟡)' },
-                { class: 'missing-file', label: 'Missing Document (❌)' },
                 { class: 'privileged', label: 'Not Publicly Accessible (🔴)' },
-                { class: 'continuance', label: 'Hearing Continued (🐢)' },
-                { class: 'normal-public', label: 'Public Process' },
-                { class: 'normal-private', label: 'Private/Shadow' }
+                { class: 'continuance', label: 'Hearing Continued (🐢)' }
             ];
+            
+            // Add missing document indicator to legend
+            const missingLegend = document.createElement('div');
+            missingLegend.className = 'nav-legend-item';
+            missingLegend.innerHTML = '<span style="color: #d32f2f; font-weight: bold; font-size: 12px;">✕</span><span style="margin-left: 8px;">Missing Document (❌)</span>';
             
             const legendEl = document.getElementById('nav-legend');
             legendEl.innerHTML = ''; // Clear existing legend items
@@ -302,6 +391,9 @@
                 legendEl.appendChild(div);
             });
             
+            // Add missing document indicator to legend
+            legendEl.appendChild(missingLegend);
+            
             // Create timeline container content
             const container = document.getElementById('timeline-container');
             
@@ -322,6 +414,10 @@
             const endDate = new Date(maxDate.getFullYear() + 1, 11, 31);
             
             const totalDays = (endDate - startDate) / (1000 * 60 * 60 * 24);
+            
+            // Store date range globally for fit-to-window calculations
+            currentDateRange = { startDate, endDate, totalDays };
+            
             const pixelsPerDay = customScale || parseFloat(document.getElementById('scale-slider')?.value) || 0.8;
             const timelineWidth = Math.max(totalDays * pixelsPerDay + 100, 1200);
             
@@ -400,6 +496,15 @@
                 
                 eventEl.appendChild(dateLabel);
                 eventEl.appendChild(tooltip);
+                
+                // Check if this event also has missing document marker
+                if (event.markers.includes('❌')) {
+                    const missingX = document.createElement('div');
+                    missingX.className = 'missing-indicator';
+                    missingX.textContent = '✕';
+                    eventEl.appendChild(missingX);
+                }
+                
                 container.appendChild(eventEl);
                 
                 // Track position for connections
