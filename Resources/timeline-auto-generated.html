@@ -34,9 +34,20 @@
             </div>
             <div class="filter-group">
                 <label class="filter-label">Case:</label>
-                <select id="filter-case" class="filter-select">
-                    <option value="all">All Cases</option>
-                </select>
+                <div class="case-filter-container">
+                    <button id="case-filter-button" class="case-filter-button">
+                        <span id="case-filter-text">All Cases</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div id="case-filter-dropdown" class="case-filter-dropdown" style="display: none;">
+                        <div class="case-filter-controls">
+                            <button class="select-all-btn" onclick="selectAllCases()">Select All</button>
+                            <button class="clear-all-btn" onclick="clearAllCases()">Clear All</button>
+                        </div>
+                        <div id="filter-case" class="case-checkbox-list">
+                        </div>
+                    </div>
+                </div>
             </div>
             <button id="apply-filters" class="filter-button">Apply Filters</button>
             <button id="reset-filters" class="filter-button">Reset</button>
@@ -69,6 +80,50 @@
         let allEvents = [];
         let filteredEvents = [];
         let currentDateRange = null;
+        
+        // Case filter dropdown functions
+        function toggleCaseDropdown() {
+            const dropdown = document.getElementById('case-filter-dropdown');
+            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        function selectAllCases() {
+            document.querySelectorAll('#filter-case input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = true;
+            });
+            updateCaseFilterText();
+            applyFilters(); // Apply filters immediately
+        }
+        
+        function clearAllCases() {
+            document.querySelectorAll('#filter-case input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            updateCaseFilterText();
+            applyFilters(); // Apply filters immediately
+        }
+        
+        function updateCaseFilterText() {
+            const checkboxes = document.querySelectorAll('#filter-case input[type="checkbox"]');
+            const checkedBoxes = document.querySelectorAll('#filter-case input[type="checkbox"]:checked');
+            const filterText = document.getElementById('case-filter-text');
+            
+            if (checkedBoxes.length === 0) {
+                filterText.textContent = 'No cases selected';
+            } else if (checkedBoxes.length === checkboxes.length) {
+                filterText.textContent = 'All Cases';
+            } else {
+                filterText.textContent = checkedBoxes.length + ' case(s) selected';
+            }
+        }
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const container = document.querySelector('.case-filter-container');
+            if (container && !container.contains(event.target)) {
+                document.getElementById('case-filter-dropdown').style.display = 'none';
+            }
+        });
         
         // Timeline data parser and renderer
         async function loadTimeline() {
@@ -117,18 +172,94 @@
         function populateCaseFilter(events) {
             const caseNumbers = new Set();
             events.forEach(event => {
-                if (event.caseNumber) {
+                if (event.caseNumber && event.caseNumber.trim() !== '') {
                     caseNumbers.add(event.caseNumber);
                 }
             });
             
-            const select = document.getElementById('filter-case');
-            Array.from(caseNumbers).sort().forEach(caseNum => {
-                const option = document.createElement('option');
-                option.value = caseNum;
-                option.textContent = caseNum;
-                select.appendChild(option);
+            const container = document.getElementById('filter-case');
+            container.innerHTML = ''; // Clear existing content
+            
+            // Check if there are any events without case numbers
+            const hasUnassignedEvents = events.some(event => !event.caseNumber || event.caseNumber.trim() === '');
+            
+            // Add checkbox for unassigned events first if they exist
+            if (hasUnassignedEvents) {
+                const label = document.createElement('label');
+                label.className = 'case-checkbox-label';
+                
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.value = 'UNASSIGNED';
+                checkbox.checked = true; // Default to all selected
+                checkbox.className = 'case-checkbox';
+                checkbox.addEventListener('change', () => {
+                    updateCaseFilterText();
+                    applyFilters(); // Apply filters immediately
+                });
+                
+                label.appendChild(checkbox);
+                label.appendChild(document.createTextNode(' Unassigned'));
+                container.appendChild(label);
+            }
+            
+            // Add the known DEP case numbers in chronological order
+            const knownCases = [
+                { value: '338-0303', text: 'DEP #338-0303' },
+                { value: '338-0594', text: 'DEP #338-0594' },
+                { value: '338-0706', text: 'DEP #338-0706' },
+                { value: '338-0756', text: 'DEP #338-0756' }
+            ];
+            
+            // Add checkboxes for known cases that exist in the data
+            knownCases.forEach(caseInfo => {
+                if (caseNumbers.has(caseInfo.value)) {
+                    const label = document.createElement('label');
+                    label.className = 'case-checkbox-label';
+                    
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.value = caseInfo.value;
+                    checkbox.checked = true; // Default to all selected
+                    checkbox.className = 'case-checkbox';
+                    checkbox.addEventListener('change', () => {
+                        updateCaseFilterText();
+                        applyFilters(); // Apply filters immediately
+                    });
+                    
+                    label.appendChild(checkbox);
+                    label.appendChild(document.createTextNode(' ' + caseInfo.text));
+                    container.appendChild(label);
+                }
             });
+            
+            // Add any other case numbers not in our known list (excluding WET numbers)
+            Array.from(caseNumbers).sort().forEach(caseNum => {
+                if (!knownCases.some(k => k.value === caseNum) && !caseNum.startsWith('WET')) {
+                    const label = document.createElement('label');
+                    label.className = 'case-checkbox-label';
+                    
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.value = caseNum;
+                    checkbox.checked = true; // Default to all selected
+                    checkbox.className = 'case-checkbox';
+                    checkbox.addEventListener('change', () => {
+                        updateCaseFilterText();
+                        applyFilters(); // Apply filters immediately
+                    });
+                    
+                    label.appendChild(checkbox);
+                    label.appendChild(document.createTextNode(' DEP #' + caseNum));
+                    container.appendChild(label);
+                }
+            });
+            
+            // Add click handler to the filter button
+            document.getElementById('case-filter-button').addEventListener('click', toggleCaseDropdown);
+            
+            // Initialize the filter text
+            updateCaseFilterText();
         }
         
         function setupFilterHandlers() {
@@ -194,7 +325,10 @@
         function applyFilters() {
             const startDate = new Date(document.getElementById('filter-start-date').value);
             const endDate = new Date(document.getElementById('filter-end-date').value);
-            const selectedCase = document.getElementById('filter-case').value;
+            
+            // Get all checked case checkboxes
+            const checkedCases = Array.from(document.querySelectorAll('#filter-case input[type="checkbox"]:checked'))
+                .map(checkbox => checkbox.value);
             
             filteredEvents = allEvents.filter(event => {
                 // Date range filter
@@ -202,21 +336,32 @@
                     return false;
                 }
                 
-                // Case number filter
-                if (selectedCase !== 'all' && event.caseNumber !== selectedCase) {
-                    return false;
-                }
-                
-                return true;
+                // Case number filter - simple check if the event's case (or UNASSIGNED) is in checked list
+                const eventCase = event.caseNumber && event.caseNumber.trim() !== '' ? event.caseNumber : 'UNASSIGNED';
+                return checkedCases.includes(eventCase);
             });
             
-            renderTimeline(filteredEvents);
+            // Preserve current scale and scroll position when filtering
+            const currentScale = parseFloat(document.getElementById('scale-slider').value);
+            const mainContent = document.querySelector('.main-content');
+            const currentScroll = mainContent ? mainContent.scrollLeft : 0;
+            
+            renderTimeline(filteredEvents, currentScale);
+            
+            // Restore scroll position after render
+            if (mainContent) {
+                mainContent.scrollLeft = currentScroll;
+            }
         }
         
         function resetFilters() {
             document.getElementById('filter-start-date').value = '2014-01-01';
             document.getElementById('filter-end-date').value = '2025-12-31';
-            document.getElementById('filter-case').value = 'all';
+            
+            // Check all case checkboxes
+            document.querySelectorAll('#filter-case input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = true;
+            });
             
             filteredEvents = allEvents;
             renderTimeline(filteredEvents);
@@ -397,8 +542,10 @@
             // Create timeline container content
             const container = document.getElementById('timeline-container');
             
-            // Add labels
+            // Add labels and background sections
             container.innerHTML = `
+                <div class="timeline-section-background public-section"></div>
+                <div class="timeline-section-background private-section"></div>
                 <div class="section-label public-label">PUBLIC PROCEEDINGS</div>
                 <div class="section-label private-label">SHADOW PROCEEDINGS</div>
                 <div class="timeline-line"></div>

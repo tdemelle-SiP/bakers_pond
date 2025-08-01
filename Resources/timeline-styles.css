@@ -18,7 +18,9 @@ body {
     justify-content: flex-start;
     padding-top: 160px;
     overflow-x: auto;
-    overflow-y: auto;
+    overflow-y: hidden; /* Prevent vertical scroll, which can cause centering issues */
+    /* Reserve space for horizontal scrollbar to prevent vertical shift */
+    padding-bottom: 20px; /* Approximate scrollbar height */
 }
 
 .sticky-nav {
@@ -85,6 +87,95 @@ body {
     cursor: pointer;
 }
 
+/* Case filter dropdown styles */
+.case-filter-container {
+    position: relative;
+    display: inline-block;
+}
+
+.case-filter-button {
+    padding: 4px 12px;
+    border: 1px solid #34495e;
+    border-radius: 4px;
+    background: #1a252f;
+    color: white;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 150px;
+    justify-content: space-between;
+}
+
+.case-filter-button:hover {
+    background: #2c3e50;
+}
+
+.dropdown-arrow {
+    font-size: 10px;
+}
+
+.case-filter-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 4px;
+    background: #1a252f;
+    border: 1px solid #34495e;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    min-width: 200px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.case-filter-controls {
+    display: flex;
+    gap: 8px;
+    padding: 8px;
+    border-bottom: 1px solid #34495e;
+}
+
+.select-all-btn, .clear-all-btn {
+    flex: 1;
+    padding: 4px 8px;
+    font-size: 11px;
+    border: 1px solid #34495e;
+    background: #2c3e50;
+    color: white;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.select-all-btn:hover, .clear-all-btn:hover {
+    background: #34495e;
+}
+
+.case-checkbox-list {
+    padding: 8px;
+}
+
+.case-checkbox-label {
+    display: flex;
+    align-items: center;
+    color: white;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 4px 0;
+    white-space: nowrap;
+}
+
+.case-checkbox {
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+.case-checkbox-label:hover {
+    color: #ffd700;
+}
+
 .filter-button {
     padding: 4px 12px;
     border: 1px solid #34495e;
@@ -146,6 +237,26 @@ body {
     height: 2px;
     background: #34495e;
     z-index: 1;
+}
+
+/* Background sections for public/private proceedings */
+.timeline-section-background {
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 0;
+}
+
+.public-section {
+    top: 40px;  /* Start lower */
+    height: 60px;  /* 60% of original 100px */
+    background: rgba(46, 125, 50, 0.08); /* More pronounced green */
+}
+
+.private-section {
+    top: 100px;
+    height: 60px;  /* 60% of original ~100px */
+    background: rgba(198, 40, 40, 0.08); /* More pronounced red */
 }
 
 /* Year Markers */
