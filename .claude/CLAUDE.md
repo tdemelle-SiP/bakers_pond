@@ -31,6 +31,11 @@ Contains official documents including:
 - Preserve the chronological nature of timeline entries when making updates
 - Maintain consistency in date formatting (YYYY-MM-DD) throughout documents
 
+### Screenshots Location
+When the user mentions sharing a screenshot, always check:
+- Windows path: `C:\Users\tdeme\Repositories\bakers_pond\Resources\Working_Files\development_screenshots`
+- WSL path: `/mnt/c/Users/tdeme/Repositories/bakers_pond/Resources/Working_Files/development_screenshots`
+
 ### Key Topics and Context
 - **Bakers Pond Dam**: Historical structure with contested ownership between property owner and Town of Westwood
 - **Wetland Delineation**: Environmental boundaries that affect property development
