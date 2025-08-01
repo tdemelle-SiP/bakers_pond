@@ -106,7 +106,7 @@ body {
     font-size: 16px;
     padding: 8px 16px;
     border-radius: 4px;
-    background: #1a252f;
+    background: #3498db;
     transition: background 0.3s ease;
 }
 
@@ -132,7 +132,7 @@ body {
 .timeline-container {
     position: relative;
     margin: 20px 0;
-    height: 160px;
+    height: 200px;
     width: 100%;
     min-width: 1200px;
 }
@@ -140,7 +140,7 @@ body {
 /* The Line */
 .timeline-line {
     position: absolute;
-    top: 125px;
+    top: 100px; /* Center in 200px container */
     left: 50px;
     right: 50px;
     height: 2px;
@@ -151,7 +151,7 @@ body {
 /* Year Markers */
 .year-marker {
     position: absolute;
-    top: 120px;
+    top: 95px;
     width: 2px;
     height: 10px;
     background: #34495e;
@@ -160,7 +160,7 @@ body {
 
 .year-label {
     position: absolute;
-    top: 122px;
+    top: 97px;
     transform: translateX(-50%);
     font-weight: bold;
     color: #34495e;
@@ -183,20 +183,31 @@ body {
     transform: translateX(-50%);
 }
 
-/* Date label above rectangles */
+/* Date labels - separate classes for above/below positioning */
 .event-date-label {
     position: absolute;
-    bottom: 100%;
     left: 50%;
     transform: translateX(-50%);
     font-size: 9px;
     color: #666;
     white-space: nowrap;
-    margin-bottom: 4px;
     font-weight: 500;
     background: rgba(255, 255, 255, 0.9);
     padding: 1px 3px;
     border-radius: 2px;
+    z-index: 8;
+}
+
+/* For events above timeline: date goes at very top */
+.event-above .event-date-label {
+    bottom: calc(100% + 16px);
+    margin-bottom: 2px;
+}
+
+/* For events below timeline: date goes at very bottom */
+.event-below .event-date-label {
+    top: calc(100% + 16px);
+    margin-top: 2px;
 }
 
 .event:hover {
@@ -207,11 +218,11 @@ body {
 
 /* Event positioning */
 .event-above {
-    top: 112px; /* Center 26px rectangle above line */
+    bottom: 106px; /* Rectangle positioned above line with larger gap */
 }
 
 .event-below {
-    top: 127px; /* Center 26px rectangle below line */
+    top: 106px; /* Rectangle starts below line with larger gap */
 }
 
 /* Tooltip */
@@ -248,14 +259,25 @@ body {
 /* Missing document indicator */
 .missing-indicator {
     position: absolute;
-    top: 100%;
     left: 50%;
     transform: translateX(-50%);
-    margin-top: 2px;
     font-size: 10px;
     color: #d32f2f;
     font-weight: bold;
     cursor: pointer;
+    z-index: 7;
+}
+
+/* For events above timeline: X goes in middle (between date and rectangle) */
+.event-above .missing-indicator {
+    bottom: calc(100% + 2px);
+    margin-bottom: 0;
+}
+
+/* For events below timeline: X goes in middle (between rectangle and date) */
+.event-below .missing-indicator {
+    top: calc(100% + 2px);
+    margin-top: 0;
 }
 
 .missing-indicator:hover::after {
@@ -311,12 +333,12 @@ body {
 
 .connection-line.public {
     background: #4caf50;
-    top: 108px;
+    top: 81px; /* Center of rectangle above timeline (94 - 13) */
 }
 
 .connection-line.private {
     background: #f44336;
-    top: 158px;
+    top: 119px; /* Center of rectangle below timeline (106 + 13) */
 }
 
 .connection-line.cross {
@@ -382,15 +404,25 @@ body {
 }
 
 .public-label {
-    top: 85px;
-    left: 50px;
+    top: 60px;
+    left: 10px;
     color: #2e7d32;
+    font-size: 11px;
+    font-weight: 600;
+    background: transparent;
+    box-shadow: none;
+    padding: 2px 6px;
 }
 
 .private-label {
-    top: 140px;
-    left: 50px;
+    top: 120px;
+    left: 10px;
     color: #c62828;
+    font-size: 11px;
+    font-weight: 600;
+    background: transparent;
+    box-shadow: none;
+    padding: 2px 6px;
 }
 
 /* Summary stats */
