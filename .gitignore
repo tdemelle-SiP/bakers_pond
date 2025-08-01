@@ -54,3 +54,6 @@ trash/
 
 # Working directory
 Resources/Working_Files/
+
+# Claude AI workspace configuration
+.claude/
