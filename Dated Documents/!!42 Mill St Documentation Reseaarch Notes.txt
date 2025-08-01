@@ -7,6 +7,9 @@
 -reached out to Suffolk U Environmental Law & Policy Clinic 
 
 --------------------------------------- TO DO ----------------------------------------
+
+--- incorporate mill st plot history ---
+
 1964 – Initial development of the 7.56-acre estate (future 44 Mill St). 
 
 1 May 1989 – $90 k deed transfer that enlarged the holding to ~7 ½ acres. 
@@ -31,6 +34,45 @@ Sept 2020 – Notice of Intent (DEP #338-0706) submitted under applicant Vinci f
 
 BUILDING DEPT - visit the office?
 -Are there any town records referencing the dam, its construction, maintenance or repair or suggesting its ownership?
+
+
+---
+The repetitive continuances aren't just exhausting public participation - they're running out the clock on institutional memory. How many conservation commission members from 2014 are still serving? How many concerned neighbors have moved? Each continuance is a small erasure.
+---
+
+Is this true?
+"By getting an ORAD under local bylaw only, they've created a precedent that exists nowhere in the regulatory framework. Future applicants can now point to this - "well, you gave Delapa a bylaw-only ORAD after DEP said no." It's a new category of approval that weakens the entire system."
+
+From the search results and legal framework I found, there is a clear distinction between state Wetlands Protection Act authority and local bylaw authority. The Parkview Electronics Trust case shows that local commissions can act under local bylaws even when DEP finds no state jurisdiction. But that's different from what happened here.
+
+In this case:
+
+The Commission denied the ANRAD
+DEP upheld that denial on appeal
+Then through settlement, they gave an ORAD anyway but "under bylaw only"
+
+This is different from Parkview where there were conflicting determinations between state and local. Here, both state and local INITIALLY agreed (both denied). Then the local reversed itself through settlement.
+
+I can't definitively say it's unprecedented without reviewing all Massachusetts wetlands settlements, but it does appear to be highly unusual and problematic.
+
+Typically, when DEP upholds a local denial, that reinforces the local decision - both levels of review agreed the wetlands were more extensive than claimed. The normal "bylaw only" scenarios occur when:
+
+DEP finds no state jurisdiction but the local commission finds local jurisdiction (like in Parkview)
+Local bylaws explicitly protect resources not covered by state law
+
+But here, you have both authorities initially agreeing (denial at both levels), then the local commission reversing itself through settlement to grant something the state explicitly rejected. This creates a weird precedent where:
+
+Scientific determinations can be negotiated away if you threaten to sue
+Local commissions can essentially override DEP denials by claiming "bylaw only" authority
+The appeal process becomes meaningless - why appeal to DEP if you can just threaten litigation locally?
+
+The danger is that future applicants could argue: "The Commission has previously granted boundary delineations through settlement even after DEP upheld denials, as long as it's under local authority only."
+
+Whether this is truly "unprecedented" would require comprehensive research, but it certainly appears to be an abuse of the dual regulatory system. The bylaw-only designation seems like a fig leaf to avoid acknowledging they're granting what both authorities already determined was scientifically unjustified.
+
+It's procedural laundering - taking a denied application and washing it through settlement negotiations until it comes out clean on the other side.
+
+---
 
 -get LLM help
 	-situation analysis

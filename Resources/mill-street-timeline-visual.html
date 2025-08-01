@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>42 Mill Street Timeline: Public vs Private</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            overflow-x: auto;
+        }
+        
+        .container {
+            width: 3000px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 40px;
+            font-size: 18px;
+        }
+        
+        .timeline-container {
+            position: relative;
+            margin: 60px 0;
+            height: 700px;
+            width: 2900px;
+        }
+        
+        /* The Line */
+        .timeline-line {
+            position: absolute;
+            top: 350px;
+            left: 50px;
+            right: 50px;
+            height: 4px;
+            background: #34495e;
+            z-index: 1;
+        }
+        
+        /* Year Markers */
+        .year-marker {
+            position: absolute;
+            top: 335px;
+            width: 2px;
+            height: 30px;
+            background: #34495e;
+            z-index: 2;
+        }
+        
+        .year-label {
+            position: absolute;
+            top: 370px;
+            transform: translateX(-50%);
+            font-weight: bold;
+            color: #34495e;
+            background: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+        
+        /* Events */
+        .event {
+            position: absolute;
+            padding: 12px 16px;
+            border-radius: 6px;
+            border: 2px solid;
+            font-size: 13px;
+            line-height: 1.3;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 180px;
+            z-index: 10;
+        }
+        
+        .event:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 20;
+        }
+        
+        /* Public Events (Above the Line) */
+        .public-event {
+            background: #e8f5e9;
+            border-color: #4caf50;
+        }
+        
+        .public-denial {
+            background: #c8e6c9;
+            border-color: #2e7d32;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
+        }
+        
+        /* Private Events (Below the Line) */
+        .private-event {
+            background: #ffebee;
+            border-color: #f44336;
+        }
+        
+        .missing-doc {
+            background: #fce4ec;
+            border-color: #c62828;
+            border-style: dashed;
+            opacity: 0.8;
+        }
+        
+        .obscuring-event {
+            background: #fff8e1;
+            border-color: #ff6f00;
+            border-width: 3px;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(255, 111, 0, 0.3);
+        }
+        
+        /* Event connectors */
+        .connector {
+            position: absolute;
+            width: 3px;
+            background: #ff5722;
+            z-index: 5;
+        }
+        
+        .connector-arrow {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ff5722;
+            transform: rotate(45deg);
+            right: -10px;
+            bottom: -10px;
+        }
+        
+        /* Event positioning helpers */
+        .event-date {
+            font-weight: bold;
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        
+        .event-title {
+            font-weight: bold;
+            margin-bottom: 2px;
+            font-size: 13px;
+        }
+        
+        .event-detail {
+            font-size: 11px;
+            color: #555;
+            font-style: italic;
+        }
+        
+        /* Legend */
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend-box {
+            width: 24px;
+            height: 24px;
+            border: 2px solid;
+            border-radius: 4px;
+        }
+        
+        /* Labels */
+        .section-label {
+            position: absolute;
+            font-weight: bold;
+            font-size: 18px;
+            color: #555;
+            background: rgba(255,255,255,0.9);
+            padding: 8px 16px;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .public-label {
+            top: 20px;
+            left: 50px;
+            color: #2e7d32;
+        }
+        
+        .private-label {
+            bottom: 20px;
+            left: 50px;
+            color: #c62828;
+        }
+        
+        /* Pattern highlights */
+        .pattern-annotation {
+            position: absolute;
+            padding: 8px 12px;
+            background: #ffeb3b;
+            border: 2px solid #f57f17;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 15;
+        }
+        
+        /* Summary stats */
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 40px;
+            padding: 20px;
+            background: #e3f2fd;
+            border-radius: 6px;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            gap: 40px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #1976d2;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        /* Continuance indicator */
+        .continuance-bar {
+            position: absolute;
+            height: 30px;
+            background: repeating-linear-gradient(
+                45deg,
+                #ffa726,
+                #ffa726 10px,
+                #ffb74d 10px,
+                #ffb74d 20px
+            );
+            border: 2px solid #f57c00;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+            color: #e65100;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>42 Mill Street: A Timeline of Public Defeats and Private Victories</h1>
+        <div class="subtitle">How Environmental Protection Was Systematically Undermined Through Shadow Proceedings</div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-box" style="background: #e8f5e9; border-color: #4caf50;"></div>
+                <span>Public Process</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: #c8e6c9; border-color: #2e7d32;"></div>
+                <span>Public Denial</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: #ffebee; border-color: #f44336;"></div>
+                <span>Private/Shadow</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: #fce4ec; border-color: #c62828; border-style: dashed;"></div>
+                <span>Missing Document</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: #fff8e1; border-color: #ff6f00;"></div>
+                <span>Obscuring Action</span>
+            </div>
+        </div>
+        
+        <div class="timeline-container">
+            <!-- Labels -->
+            <div class="section-label public-label">PUBLIC PROCEEDINGS</div>
+            <div class="section-label private-label">SHADOW PROCEEDINGS</div>
+            
+            <!-- The Line -->
+            <div class="timeline-line"></div>
+            
+            <!-- Year Markers -->
+            <div class="year-marker" style="left: 100px;">
+                <div class="year-label">2014</div>
+            </div>
+            <div class="year-marker" style="left: 400px;">
+                <div class="year-label">2015</div>
+            </div>
+            <div class="year-marker" style="left: 700px;">
+                <div class="year-label">2016</div>
+            </div>
+            <div class="year-marker" style="left: 1000px;">
+                <div class="year-label">2017</div>
+            </div>
+            <div class="year-marker" style="left: 1300px;">
+                <div class="year-label">2018</div>
+            </div>
+            <div class="year-marker" style="left: 1600px;">
+                <div class="year-label">2020</div>
+            </div>
+            <div class="year-marker" style="left: 1900px;">
+                <div class="year-label">2021</div>
+            </div>
+            <div class="year-marker" style="left: 2200px;">
+                <div class="year-label">2022</div>
+            </div>
+            <div class="year-marker" style="left: 2500px;">
+                <div class="year-label">2023</div>
+            </div>
+            <div class="year-marker" style="left: 2800px;">
+                <div class="year-label">2025</div>
+            </div>
+            
+            <!-- 2014 Events -->
+            <div class="event missing-doc" style="left: 120px; top: 430px;">
+                <div class="event-date">Oct 27, 2014</div>
+                <div class="event-title">❌ Missing Wetland Plan</div>
+                <div class="event-detail">Initial delineation missing</div>
+            </div>
+            
+            <div class="event missing-doc" style="left: 180px; top: 500px;">
+                <div class="event-date">Nov 14, 2014</div>
+                <div class="event-title">❌ Missing ANRAD App</div>
+                <div class="event-detail">DEP #338-0594</div>
+            </div>
+            
+            <!-- 2015 Events -->
+            <div class="event public-event" style="left: 320px; top: 220px;">
+                <div class="event-date">Oct 21, 2015</div>
+                <div class="event-title">GEC Peer Review</div>
+                <div class="event-detail">Dam 60 yrs old, perennial stream, potential vernal pools</div>
+            </div>
+            
+            <div class="event public-denial" style="left: 420px; top: 120px;">
+                <div class="event-date">Oct 28, 2015</div>
+                <div class="event-title">WCC DENIES ANRAD</div>
+                <div class="event-detail">Unanimous - boundaries inaccurate</div>
+            </div>
+            
+            <div class="event private-event" style="left: 480px; top: 430px;">
+                <div class="event-date">Dec 9, 2015</div>
+                <div class="event-title">🔴 Watsky requests direct talks</div>
+                <div class="event-detail">Shifts to privileged forum</div>
+            </div>
+            
+            <!-- 2016 Events -->
+            <div class="event public-event" style="left: 620px; top: 220px;">
+                <div class="event-date">Feb 23, 2016</div>
+                <div class="event-title">Planning Board Denies ANR</div>
+                <div class="event-detail">Must go through subdivision</div>
+            </div>
+            
+            <div class="event public-denial" style="left: 720px; top: 120px;">
+                <div class="event-date">Aug 25, 2016</div>
+                <div class="event-title">DEP UPHOLDS DENIAL</div>
+                <div class="event-detail">Mill Brook perennial, wellhead protection area</div>
+            </div>
+            
+            <div class="event private-event" style="left: 780px; top: 430px;">
+                <div class="event-date">Sep 15, 2016</div>
+                <div class="event-title">🔴 Delapa Appeals</div>
+                <div class="event-detail">WET-2016-022</div>
+            </div>
+            
+            <div class="event obscuring-event" style="left: 840px; top: 500px;">
+                <div class="event-date">Nov 9, 2016</div>
+                <div class="event-title">🔴 Executive Session</div>
+                <div class="event-detail">Settlement negotiations begin</div>
+            </div>
+            
+            <div class="event missing-doc" style="left: 900px; top: 570px;">
+                <div class="event-date">Nov-Dec 2016</div>
+                <div class="event-title">❌ Settlement Agreements</div>
+                <div class="event-detail">Multiple docs missing</div>
+            </div>
+            
+            <!-- Connector from denial to settlement -->
+            <div class="connector" style="left: 810px; top: 150px; height: 350px;">
+                <div class="connector-arrow"></div>
+            </div>
+            
+            <!-- Pattern annotation -->
+            <div class="pattern-annotation" style="left: 650px; top: 300px;">
+                Pattern #1: Lose publicly → Go private
+            </div>
+            
+            <!-- 2017 Event -->
+            <div class="event public-event" style="left: 1020px; top: 220px;">
+                <div class="event-date">Jan 11, 2017</div>
+                <div class="event-title">WCC Signs ORAD</div>
+                <div class="event-detail">Bylaw only, 3-year validity</div>
+            </div>
+            
+            <!-- 2020-2021 Events -->
+            <div class="event obscuring-event" style="left: 1520px; top: 430px;">
+                <div class="event-date">June-Oct 2020</div>
+                <div class="event-title">Wrong Applicant Name</div>
+                <div class="event-detail">Vinci instead of Delapa</div>
+            </div>
+            
+            <!-- Continuance bar -->
+            <div class="continuance-bar" style="left: 1650px; top: 260px; width: 350px;">
+                17+ HEARING CONTINUANCES
+            </div>
+            
+            <div class="event public-event" style="left: 1720px; top: 220px;">
+                <div class="event-date">Oct 8, 2020</div>
+                <div class="event-title">GEC Finds Scale Error</div>
+                <div class="event-detail">Stamped plan incorrect</div>
+            </div>
+            
+            <div class="event public-denial" style="left: 1920px; top: 120px;">
+                <div class="event-date">Nov 10, 2021</div>
+                <div class="event-title">WCC DENIES NOI 7-0</div>
+                <div class="event-detail">Site too difficult, 26,638 sf impact</div>
+            </div>
+            
+            <div class="event private-event" style="left: 1980px; top: 430px;">
+                <div class="event-date">Nov 30, 2021</div>
+                <div class="event-title">🔴 Goddard Appeals to DEP</div>
+                <div class="event-detail">Seeks SOC</div>
+            </div>
+            
+            <!-- 2022 Events -->
+            <div class="event missing-doc" style="left: 2040px; top: 500px;">
+                <div class="event-date">Jan 6, 2022</div>
+                <div class="event-title">❌ DEP Site Visit Notes</div>
+                <div class="event-detail">Critical inspection missing</div>
+            </div>
+            
+            <div class="event private-event" style="left: 2100px; top: 570px;">
+                <div class="event-date">Jan 12, 2022</div>
+                <div class="event-title">🔴 Lawsuit Filed</div>
+                <div class="event-detail">Superior Court pressure</div>
+            </div>
+            
+            <div class="event missing-doc" style="left: 2160px; top: 430px;">
+                <div class="event-date">Feb-Mar 2022</div>
+                <div class="event-title">❌ Cut/Fill Data</div>
+                <div class="event-detail">Technical data missing</div>
+            </div>
+            
+            <div class="event public-event" style="left: 2220px; top: 220px;">
+                <div class="event-date">May 6, 2022</div>
+                <div class="event-title">DEP Issues SOC</div>
+                <div class="event-detail">Overrules WCC denial</div>
+            </div>
+            
+            <div class="event obscuring-event" style="left: 2280px; top: 500px;">
+                <div class="event-date">Oct 26, 2022</div>
+                <div class="event-title">🔴 Settlement Forces WCC</div>
+                <div class="event-detail">Must adopt SOC as own decision</div>
+            </div>
+            
+            <!-- Connector showing the laundering -->
+            <div class="connector" style="left: 2250px; top: 250px; height: 250px;">
+                <div class="connector-arrow"></div>
+            </div>
+            
+            <!-- Pattern annotation -->
+            <div class="pattern-annotation" style="left: 2050px; top: 300px;">
+                Pattern #2: Administrative Laundering
+            </div>
+            
+            <!-- 2023-2025 Events -->
+            <div class="event public-event" style="left: 2420px; top: 220px;">
+                <div class="event-date">July 2023</div>
+                <div class="event-title">Dam Ownership Questions</div>
+                <div class="event-detail">Public finally asks who owns dam</div>
+            </div>
+            
+            <div class="event obscuring-event" style="left: 2520px; top: 430px;">
+                <div class="event-date">2023-2025</div>
+                <div class="event-title">42 Mill → 0 Mill St</div>
+                <div class="event-detail">Address change obscures records</div>
+            </div>
+            
+            <div class="event missing-doc" style="left: 2580px; top: 500px;">
+                <div class="event-date">2023</div>
+                <div class="event-title">❌ BETA Final Review</div>
+                <div class="event-detail">Dam project peer review</div>
+            </div>
+            
+            <div class="event public-event" style="left: 2720px; top: 120px;">
+                <div class="event-date">May 6, 2025</div>
+                <div class="event-title">SOC EXPIRES</div>
+                <div class="event-detail">No extension filed</div>
+            </div>
+        </div>
+        
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Public Denials</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Private Reversals</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">23</div>
+                <div class="stat-label">Missing Documents</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">17+</div>
+                <div class="stat-label">Continuances</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">11</div>
+                <div class="stat-label">Years of Attempts</div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 20px; background: #fff3cd; border-left: 4px solid #ff9800; border-radius: 4px; width: fit-content; margin-left: auto; margin-right: auto;">
+            <strong>The Pattern is Clear:</strong> Every public environmental victory (above the line) is followed by shadow proceedings (below the line) that reverse the outcome. The missing documents cluster precisely at the moments when these reversals occur, preventing public understanding of how decisions changed. The final settlement forces the town to erase its own opposition from the record.
+        </div>
+    </div>
+</body>
+</html>
