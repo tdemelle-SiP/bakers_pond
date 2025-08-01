@@ -55,6 +55,9 @@ Efforts are underway to accurately assess the intent and consequences of the pro
 [2025_07_29 WCC Documents Request](https://docs.google.com/document/d/1aTuwKN8ClZdpTS8MXKj5Fsh2QCiWgmMlIX4puK6gw2g/edit?usp=sharing)
 
 ---
+Experimental ## Visual Timeline
+[View the 42 Mill Street Timeline: Public vs Private Proceedings](https://tdemelle-sip.github.io/bakers_pond/Resources/mill-street-timeline-visual.html)
+---
 
 ## Contributing
 
