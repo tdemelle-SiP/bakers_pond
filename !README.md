@@ -45,6 +45,8 @@ Efforts are underway to accurately assess the intent and consequences of the pro
 **[Resources/](https://github.com/tdemelle-SiP/bakers_pond/tree/master/Resources)** - Working files
 
 ---
+![Bakers Pond](https://github.com/tdemelle-SiP/bakers_pond/blob/master/Research%20Images/IMG_2514.jpg
+?raw=true)
 
 ## Drafts for Letters Raising Specific Concerns
 
