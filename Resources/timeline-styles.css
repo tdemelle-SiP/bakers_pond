@@ -436,11 +436,11 @@ body {
 }
 
 .case-procedural-above {
-    top: 100px; /* Case timeline well above main timeline */
+    top: 120px; /* Case timeline well above main timeline */
 }
 
 .case-procedural-below {
-    top: 111px; /* Private nodes 11px lower than public nodes */
+    top: 131px; /* Private nodes 11px lower than public nodes */
 }
 
 /* Case procedural labels */
@@ -455,33 +455,51 @@ body {
 }
 
 .case-label-above {
-    top: 30px; /* Well above case nodes at 100px */
+    top: 30px; /* Well above case nodes at 120px */
 }
 
 .case-label-below {
-    top: 195px;
+    top: 215px;
 }
 
-/* Procedural node labels */
-.procedural-label {
+/* Case title labels (year and name above case number) */
+.case-title {
     position: absolute;
-    font-size: 12px;
+    font-size: 26px;
+    font-weight: bold;
+    text-align: center;
+    white-space: nowrap;
+    transform: translateX(-50%);
+    top: 5px;
+    opacity: 0.9;
+}
+
+/* Node labels (ANRD, NOI, etc) */
+.node-label {
+    position: absolute;
+    font-size: 11px;
     font-weight: 500;
     color: #333;
     white-space: nowrap;
     background: rgba(255, 255, 255, 0.95);
     padding: 2px 6px;
     border-radius: 3px;
-    left: 50%;
-    transform: translateX(-50%);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    z-index: 11;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-.procedural-label-above {
+.node-label:hover {
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 12;
+}
+
+.node-label-above {
     bottom: calc(100% + 2px);  /* Above the node */
 }
 
-.procedural-label-below {
+.node-label-below {
     top: calc(100% + 2px);  /* Below the node */
 }
 
@@ -655,8 +673,8 @@ body {
     text-align: right;
 }
 
-.procedural-label {
-    top: 105px;  /* Aligned with case timeline area */
+.timeline-title {
+    top: 125px;  /* Aligned with case timeline area */
     right: auto;
     left: 245px;  /* Right-aligned at timeline start */
     transform: translateX(-100%) translateY(-50%);  /* Align right edge to timeline start */

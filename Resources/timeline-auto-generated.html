@@ -221,10 +221,10 @@
             
             // Add the known DEP case numbers in chronological order
             const knownCases = [
-                { value: '338-0303', text: 'DEP #338-0303' },
-                { value: '338-0594', text: 'DEP #338-0594' },
-                { value: '338-0706', text: 'DEP #338-0706' },
-                { value: '338-0756', text: 'DEP #338-0756' }
+                { value: '338-0303', text: 'DEP #338-0303 | 2001 Initial' },
+                { value: '338-0594', text: 'DEP #338-0594 | 2014 House' },
+                { value: '338-0706', text: 'DEP #338-0706 | 2020 House' },
+                { value: '338-0756', text: 'DEP #338-0756 | 2023 Dam' }
             ];
             
             // Add checkboxes for known cases that exist in the data
@@ -408,6 +408,9 @@
                 checkbox.checked = true;
             });
             
+            // Update the case filter text to show "All Cases"
+            updateCaseFilterText();
+            
             // Clear saved filter values from localStorage
             localStorage.removeItem('timeline-start-date');
             localStorage.removeItem('timeline-end-date');
@@ -420,14 +423,14 @@
         function calculateAndApplyFitScale() {
             if (filteredEvents.length === 0) return;
             
-            // Get viewport width
-            const viewportWidth = window.innerWidth - 140; // Account for padding and margins
+            // Timeline starts at 250px offset, need some buffer
+            const availableWidth = window.innerWidth - 350;
             
             // Calculate required scale to fit timeline
             if (currentDateRange) {
                 const { startDate, endDate, totalDays } = currentDateRange;
-                // Calculate scale that would fit the timeline in viewport
-                const requiredScale = (viewportWidth - 100) / totalDays;
+                // We don't need to account for the 300px padding because that's AFTER the timeline content
+                const requiredScale = availableWidth / totalDays;
                 
                 // Clamp to slider range
                 const clampedScale = Math.max(0.2, Math.min(3, requiredScale));
@@ -596,7 +599,7 @@
                 <div class="timeline-section-background private-section"></div>
                 <div class="section-label public-label">PUBLIC PROCEEDINGS</div>
                 <div class="section-label private-label">SHADOW PROCEEDINGS</div>
-                <div class="section-label procedural-label">PROCEDURAL TIMELINE</div>
+                <div class="section-label timeline-title">PROCEDURAL TIMELINE</div>
                 <div class="timeline-line"></div>
             `;
             
@@ -682,6 +685,14 @@
                 '338-0594': [],
                 '338-0706': [],
                 '338-0756': []
+            };
+            
+            // Case info for labels
+            const caseInfo = {
+                '338-0303': { year: '2001', name: 'Initial' },
+                '338-0594': { year: '2014', name: 'House' },
+                '338-0706': { year: '2020', name: 'House' },
+                '338-0756': { year: '2023', name: 'Dam' }
             };
             
             // Debug: log event count and breakdown
@@ -920,7 +931,24 @@
             });
             
             // PASS 3: Render case procedural events and connections
-            const caseLabelPositions = []; // Track case label positions for collision detection
+            
+            // Helper function to measure actual rendered dimensions
+            function measureAbbrev(abbrev, isPrivate) {
+                const el = document.createElement('div');
+                el.className = `node-label ${isPrivate ? 'node-label-below' : 'node-label-above'}`;
+                el.style.position = 'absolute';
+                el.style.visibility = 'hidden';
+                el.style.transform = 'none';
+                el.textContent = abbrev;
+                document.body.appendChild(el);
+                const { width, height } = el.getBoundingClientRect();
+                document.body.removeChild(el);
+                return { width: Math.ceil(width), height: Math.ceil(height) };
+            }
+            
+            // Phase 1: Collect all procedural events and label data
+            const allProcEvents = [];
+            const allLabelData = [];
             
             Object.entries(caseProceduralEvents).forEach(([caseNum, caseEvents]) => {
                 if (caseEvents.length === 0) return;
@@ -930,8 +958,187 @@
                 // Sort events by date
                 caseEvents.sort((a, b) => a.date - b.date);
                 
-                // Add procedural event markers
+                // Process each procedural event
                 caseEvents.forEach((procEvent, idx) => {
+                    // Store event data for rendering later
+                    allProcEvents.push({
+                        caseNum,
+                        procEvent,
+                        idx,
+                        caseEvents
+                    });
+                    
+                    // Calculate label data
+                    let abbreviation = procEvent.title;
+                    if (procEvent.title.includes('ANRAD')) {
+                        abbreviation = 'ANRAD';
+                    } else if (procEvent.title.includes('ANR')) {
+                        abbreviation = 'ANR';
+                    } else if (procEvent.title.includes('SORAD')) {
+                        abbreviation = 'SORAD';
+                    } else if (procEvent.title.includes('ORAD')) {
+                        abbreviation = 'ORAD';
+                    } else if (procEvent.title.includes('FORAD')) {
+                        abbreviation = 'FORAD';
+                    } else if (procEvent.title.includes('NOI')) {
+                        abbreviation = 'NOI';
+                    } else if (procEvent.title.includes('OOC')) {
+                        abbreviation = 'OOC';
+                    } else if (procEvent.title.includes('SOC')) {
+                        abbreviation = 'SOC';
+                    } else if (procEvent.title.includes('RDA')) {
+                        abbreviation = 'RDA';
+                    } else if (procEvent.title.includes('Extension')) {
+                        abbreviation = 'EXT';
+                    } else if (procEvent.title.includes('denied')) {
+                        abbreviation = 'DENY';
+                    } else if (procEvent.title.includes('Settlement')) {
+                        abbreviation = 'SETTL';
+                    } else if (procEvent.title.includes('Privileged')) {
+                        abbreviation = 'PRIV';
+                    } else if (procEvent.title.includes('approves')) {
+                        abbreviation = 'APPV';
+                    }
+                    
+                    // Measure actual rendered dimensions
+                    const { width: labelWidth, height: labelHeight } = measureAbbrev(abbreviation, procEvent.isPrivate);
+                    const nodeY = procEvent.isPrivate ? 131 : 120;
+                    const baseY = procEvent.isPrivate ? nodeY + 20 : nodeY - 30;
+                    const baseX = procEvent.x - labelWidth / 2;
+                    
+                    allLabelData.push({
+                        caseNum,
+                        procEvent,
+                        abbreviation,
+                        width: labelWidth,
+                        height: labelHeight,
+                        nodeY,
+                        baseX,
+                        baseY,
+                        x: baseX, // Will be adjusted by collision detection
+                        y: baseY  // Will be adjusted by collision detection
+                    });
+                });
+            });
+            
+            // Phase 2: Resolve label collisions globally
+            const maxIterations = 25;
+            const minGap = 6; // horizontal breathing room
+            let iteration = 0;
+            let hadCollision = true;
+            
+            while (hadCollision && iteration < maxIterations) {
+                hadCollision = false;
+                
+                for (let i = 0; i < allLabelData.length; i++) {
+                    for (let j = i + 1; j < allLabelData.length; j++) {
+                        const a = allLabelData[i], b = allLabelData[j];
+                        
+                        // AABB overlap with horizontal gap
+                        const hOverlap = Math.min(a.x + a.width, b.x + b.width) - Math.max(a.x, b.x);
+                        const vOverlap = Math.min(a.y + a.height, b.y + b.height) - Math.max(a.y, b.y);
+                        
+                        if (hOverlap > -minGap && vOverlap > 0) {
+                            hadCollision = true;
+                            
+                            // push apart horizontally
+                            const push = (Math.max(hOverlap, 0) + minGap) / 2 + 2;
+                            if (a.x <= b.x) { a.x -= push; b.x += push; }
+                            else            { a.x += push; b.x -= push; }
+                            
+                            // tiny vertical stagger to break repeated ties (keeps in each band)
+                            const dy = 1; // 1px nudge is visually invisible but breaks equality
+                            if (a.y === b.y) {
+                                a.y += (a.procEvent.isPrivate ? dy : -dy);
+                                b.y += (b.procEvent.isPrivate ? dy : -dy);
+                            }
+                            
+                            // clamp to container bounds
+                            const minX = 250;
+                            const maxX = 250 + timelineWidth - 1;
+                            a.x = Math.max(minX, Math.min(a.x, maxX - a.width));
+                            b.x = Math.max(minX, Math.min(b.x, maxX - b.width));
+                        }
+                    }
+                }
+                iteration++;
+            }
+            
+            // Phase 2.5 — Order-preserving packing (no crossing + no overlap)
+            (function packLabelsOrderPreserving(){
+                const GAP = 6;
+                const MIN_X = 250;
+                const MAX_X = 250 + timelineWidth - 1;
+                
+                function pack(bandIsBelow){
+                    // Build items with desired centers from Phase-2 output
+                    const items = allLabelData
+                        .filter(ld => ld.procEvent.isPrivate === bandIsBelow)
+                        .sort((a,b) => a.procEvent.x - b.procEvent.x) // node order
+                        .map(ld => {
+                            const w = ld.width;
+                            const desiredC = ld.x + w / 2; // from collision solver
+                            return {
+                                ld,
+                                w,
+                                minC: MIN_X + w / 2,
+                                maxC: MAX_X - w / 2,
+                                c: desiredC,          // working center
+                                desiredC
+                            };
+                        });
+                    
+                    if (items.length === 0) return;
+                    
+                    // Forward pass: enforce increasing centers + gap
+                    for (let i = 0; i < items.length; i++) {
+                        if (i > 0) {
+                            const prev = items[i - 1], cur = items[i];
+                            const need = prev.c + (prev.w + cur.w) / 2 + GAP;
+                            cur.c = Math.max(cur.c, need);
+                        }
+                        items[i].c = Math.max(items[i].c, items[i].minC);
+                    }
+                    
+                    // Backward pass: clamp to right bound and propagate left
+                    for (let i = items.length - 1; i >= 0; i--) {
+                        const cur = items[i];
+                        cur.c = Math.min(cur.c, cur.maxC);
+                        if (i < items.length - 1) {
+                            const next = items[i + 1];
+                            const allow = next.c - (cur.w + next.w) / 2 - GAP;
+                            cur.c = Math.min(cur.c, allow);
+                        }
+                        cur.c = Math.max(cur.c, cur.minC);
+                    }
+                    
+                    // Optional settle loop: nudge toward desired centers without breaking constraints
+                    for (let iter = 0; iter < 2; iter++) {
+                        // pull right
+                        for (let i = 1; i < items.length; i++) {
+                            const prev = items[i - 1], cur = items[i];
+                            const target = Math.max(cur.desiredC, prev.c + (prev.w + cur.w) / 2 + GAP, cur.minC);
+                            cur.c = Math.min(cur.c + Math.max(0, target - cur.c), cur.maxC);
+                        }
+                        // pull left
+                        for (let i = items.length - 2; i >= 0; i--) {
+                            const cur = items[i], next = items[i + 1];
+                            const target = Math.min(cur.desiredC, next.c - (cur.w + next.w) / 2 - GAP, cur.maxC);
+                            cur.c = Math.max(cur.c - Math.max(0, cur.c - target), cur.minC);
+                        }
+                    }
+                    
+                    // Write back x from centers
+                    for (const it of items) it.ld.x = Math.round(it.c - it.w / 2);
+                }
+                
+                pack(false); // above band
+                pack(true);  // below band
+            })();
+            
+            // Phase 3: Render all elements with resolved positions
+            // First render nodes
+            allProcEvents.forEach(({caseNum, procEvent, idx, caseEvents}) => {
                     const procEl = document.createElement('div');
                     procEl.className = `event case-procedural case-${caseNum.slice(-4)} ${procEvent.isPrivate ? 'case-procedural-below' : 'case-procedural-above'}`;
                     procEl.style.left = procEvent.x + 'px';
@@ -974,96 +1181,34 @@
                     `;
                     procEl.appendChild(tooltip);
                     
-                    // Add abbreviated label with leader line
+                    // Find the resolved label position from allLabelData
+                    const labelData = allLabelData.find(ld => 
+                        ld.procEvent === procEvent && 
+                        ld.caseNum === caseNum
+                    );
+                    
+                    if (!labelData) {
+                        console.error('Could not find label data for event', procEvent);
+                        return; // Skip this event
+                    }
+                    
+                    // Create label using stored data
                     const procLabel = document.createElement('div');
-                    procLabel.style.position = 'absolute';
-                    procLabel.style.fontSize = '11px';
-                    procLabel.style.fontWeight = '500';
-                    procLabel.style.padding = '2px 6px';
-                    procLabel.style.background = 'rgba(255, 255, 255, 0.95)';
-                    procLabel.style.borderRadius = '3px';
-                    procLabel.style.whiteSpace = 'nowrap';
-                    procLabel.style.zIndex = '11';
-                    procLabel.style.cursor = 'pointer';
+                    procLabel.className = `node-label ${procEvent.isPrivate ? 'node-label-below' : 'node-label-above'}`;
+                    procLabel.textContent = labelData.abbreviation;
+                    procLabel.title = `${procEvent.title} - ${procEvent.dateStr}`;
                     
-                    // Create abbreviation from title
-                    let abbreviation = procEvent.title;
-                    if (procEvent.title.includes('ANRAD')) {
-                        abbreviation = 'ANRAD';
-                    } else if (procEvent.title.includes('ANR')) {
-                        abbreviation = 'ANR';
-                    } else if (procEvent.title.includes('SORAD')) {
-                        abbreviation = 'SORAD';
-                    } else if (procEvent.title.includes('ORAD')) {
-                        abbreviation = 'ORAD';
-                    } else if (procEvent.title.includes('FORAD')) {
-                        abbreviation = 'FORAD';
-                    } else if (procEvent.title.includes('NOI')) {
-                        abbreviation = 'NOI';
-                    } else if (procEvent.title.includes('OOC')) {
-                        abbreviation = 'OOC';
-                    } else if (procEvent.title.includes('SOC')) {
-                        abbreviation = 'SOC';
-                    } else if (procEvent.title.includes('RDA')) {
-                        abbreviation = 'RDA';
-                    } else if (procEvent.title.includes('Extension')) {
-                        abbreviation = 'EXT';
-                    } else if (procEvent.title.includes('expires')) {
-                        abbreviation = 'EXP';
-                    } else if (procEvent.title.includes('Privileged')) {
-                        abbreviation = 'PRIV';
-                    } else if (procEvent.title.includes('approves')) {
-                        abbreviation = 'APPV';
-                    }
+                    // Use the pre-resolved positions
+                    const labelX = labelData.x;
+                    const labelY = labelData.y;
+                    const labelWidth = labelData.width;
+                    const labelHeight = labelData.height;
+                    const nodeY = procEvent.isPrivate ? 131 : 120;
                     
-                    procLabel.textContent = abbreviation;
-                    
-                    // Add tooltip to label
-                    procLabel.title = procEvent.title + ' - ' + procEvent.dateStr;
-                    
-                    // Add hover effect for label
-                    procLabel.addEventListener('mouseenter', () => {
-                        procLabel.style.background = 'rgba(255, 255, 255, 1)';
-                        procLabel.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
-                    });
-                    procLabel.addEventListener('mouseleave', () => {
-                        procLabel.style.background = 'rgba(255, 255, 255, 0.95)';
-                        procLabel.style.boxShadow = 'none';
-                    });
-                    
-                    // Calculate label position with collision detection
-                    const labelWidth = abbreviation.length * 7 + 12; // Approximate width
-                    const labelHeight = 20;
-                    const nodeY = procEvent.isPrivate ? 111 : 100;
-                    const labelY = procEvent.isPrivate ? nodeY + 20 : nodeY - 30;
-                    
-                    let labelX = procEvent.x - labelWidth / 2;
-                    
-                    // Check for collisions and adjust
-                    let hasCollision = true;
-                    let attempts = 0;
-                    while (hasCollision && attempts < 5) {
-                        hasCollision = false;
-                        for (const existing of caseLabelPositions) {
-                            if (Math.abs(labelY - existing.y) < labelHeight &&
-                                labelX < existing.x + existing.width &&
-                                labelX + labelWidth > existing.x) {
-                                hasCollision = true;
-                                // Shift right or left based on which side has more space
-                                if (labelX < existing.x) {
-                                    labelX = existing.x - labelWidth - 5;
-                                } else {
-                                    labelX = existing.x + existing.width + 5;
-                                }
-                                break;
-                            }
-                        }
-                        attempts++;
-                    }
-                    
-                    // Position the label
+                    // Position the label (dynamic positioning requires inline styles)
                     procLabel.style.left = labelX + 'px';
                     procLabel.style.top = labelY + 'px';
+                    procLabel.style.transform = 'none'; // Override the CSS transform since we're positioning absolutely
                     
                     // Calculate leader line endpoints
                     const nodeCenter = procEvent.x;
@@ -1094,14 +1239,6 @@
                         svg.appendChild(line);
                         container.appendChild(svg);
                     }
-                    
-                    // Store label position
-                    caseLabelPositions.push({
-                        x: labelX,
-                        y: labelY,
-                        width: labelWidth,
-                        height: labelHeight
-                    });
                     
                     container.appendChild(procLabel);
                     
@@ -1134,19 +1271,19 @@
                             let y1, y2;
                             // Set Y coordinates based on whether each event is private
                             if (prevEvent.isPrivate) {
-                                // Previous private node at 111px, center at 111 + 5 = 116px
-                                y1 = 116;
+                                // Previous private node at 131px, center at 131 + 5 = 136px
+                                y1 = 136;
                             } else {
-                                // Previous public node at 100px, center at 100 + 5 = 105px
-                                y1 = 105;
+                                // Previous public node at 120px, center at 120 + 5 = 125px
+                                y1 = 125;
                             }
                             
                             if (procEvent.isPrivate) {
-                                // Current private node at 111px, center at 111 + 5 = 116px
-                                y2 = 116;
+                                // Current private node at 131px, center at 131 + 5 = 136px
+                                y2 = 136;
                             } else {
-                                // Current public node at 100px, center at 100 + 5 = 105px
-                                y2 = 105;
+                                // Current public node at 120px, center at 120 + 5 = 125px
+                                y2 = 125;
                             }
                             
                             line.setAttribute('x1', x1);
@@ -1172,8 +1309,9 @@
                         }
                     }
                 });
-                
-                // Add label for all cases positioned 90px to the right of the first procedural event
+            
+            // Add labels for all cases positioned 90px to the right of the first procedural event
+            Object.entries(caseProceduralEvents).forEach(([caseNum, caseEvents]) => {
                 if (caseEvents.length > 0) {
                     const firstEvent = caseEvents[0];
                     const caseLabel = document.createElement('div');
@@ -1191,6 +1329,16 @@
                     caseLabel.style.color = caseColor;
                     caseLabel.textContent = `DEP #${caseNum}`;
                     container.appendChild(caseLabel);
+                    
+                    // Add year and name label above the case number
+                    if (caseInfo[caseNum]) {
+                        const infoLabel = document.createElement('div');
+                        infoLabel.className = 'case-title';
+                        infoLabel.style.left = (firstEvent.x + 90) + 'px'; // Dynamic positioning
+                        infoLabel.style.color = caseColor; // Dynamic color
+                        infoLabel.textContent = `${caseInfo[caseNum].year} ${caseInfo[caseNum].name}`;
+                        container.appendChild(infoLabel);
+                    }
                     
                     // For single-event cases, draw a line extending to the right
                     if (caseEvents.length === 1) {
@@ -1218,7 +1366,7 @@
                         line.setAttribute('x2', (currentX - singleEvent.x) + 'px');
                         
                         // Y position based on whether event is private
-                        const y = singleEvent.isPrivate ? '116' : '105'; // Center of node
+                        const y = singleEvent.isPrivate ? '136' : '125'; // Center of node
                         line.setAttribute('y1', y);
                         line.setAttribute('y2', y);
                         
