@@ -608,7 +608,8 @@
             // Add padding to the date range
             // Start 60 days before first event instead of January 1st
             const startDate = new Date(minDate.getTime() - (60 * 24 * 60 * 60 * 1000));
-            const endDate = new Date(maxDate.getFullYear() + 1, 11, 31);
+            // End 60 days after last event to match start padding
+            const endDate = new Date(maxDate.getTime() + (60 * 24 * 60 * 60 * 1000));
             
             const totalDays = (endDate - startDate) / (1000 * 60 * 60 * 24);
             
@@ -616,7 +617,7 @@
             currentDateRange = { startDate, endDate, totalDays };
             
             const pixelsPerDay = customScale || parseFloat(document.getElementById('scale-slider')?.value) || 0.8;
-            const timelineWidth = Math.max(totalDays * pixelsPerDay + 100, 1200);
+            const timelineWidth = Math.max(totalDays * pixelsPerDay + 300, 1200);
             
             // Set the container width dynamically
             container.style.width = timelineWidth + 'px';
@@ -626,7 +627,12 @@
             const yearPositions = [];
             
             // Calculate the visible portion of each year
-            for (let year = startDate.getFullYear(); year <= endDate.getFullYear() + 1; year++) {
+            // Only show year labels for years that contain events or are between event years
+            const eventYears = new Set(events.map(e => e.date.getFullYear()));
+            const firstEventYear = minDate.getFullYear();
+            const lastEventYear = maxDate.getFullYear();
+            
+            for (let year = startDate.getFullYear(); year <= lastEventYear; year++) {
                 const yearStart = new Date(year, 0, 1);
                 const yearEnd = new Date(year + 1, 0, 1);
                 
@@ -647,16 +653,19 @@
                         container.appendChild(marker);
                     }
                     
-                    // Add year label centered in the visible portion of the year
-                    const visibleStartX = Math.max(250, yearStartX);
-                    const visibleEndX = Math.min(timelineWidth + 250, yearEndX);
-                    const labelX = (visibleStartX + visibleEndX) / 2;
-                    
-                    const label = document.createElement('div');
-                    label.className = 'year-label';
-                    label.style.left = labelX + 'px';
-                    label.textContent = year;
-                    container.appendChild(label);
+                    // Only add year label if this year is within the event range
+                    if (year >= firstEventYear && year <= lastEventYear) {
+                        // Add year label centered in the visible portion of the year
+                        const visibleStartX = Math.max(250, yearStartX);
+                        const visibleEndX = Math.min(timelineWidth + 250, yearEndX);
+                        const labelX = (visibleStartX + visibleEndX) / 2;
+                        
+                        const label = document.createElement('div');
+                        label.className = 'year-label';
+                        label.style.left = labelX + 'px';
+                        label.textContent = year;
+                        container.appendChild(label);
+                    }
                 }
             }
             
@@ -1186,8 +1195,10 @@
                     // For single-event cases, draw a line extending to the right
                     if (caseEvents.length === 1) {
                         const singleEvent = caseEvents[0];
+                        // Extend line to either current date or end of timeline, whichever is earlier
                         const currentDate = new Date();
-                        const daysFromStart = (currentDate - startDate) / (1000 * 60 * 60 * 24);
+                        const lineEndDate = currentDate > endDate ? endDate : currentDate;
+                        const daysFromStart = (lineEndDate - startDate) / (1000 * 60 * 60 * 24);
                         const currentX = 250 + (daysFromStart * pixelsPerDay);
                         
                         // Create SVG line from center of node extending right

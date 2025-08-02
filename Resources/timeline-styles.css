@@ -245,7 +245,7 @@ body {
     position: absolute;
     top: 300px; /* Lower in 400px container */
     left: 250px;
-    right: 50px;
+    right: 0;
     height: 2px;
     background: #34495e;
     z-index: 1;
