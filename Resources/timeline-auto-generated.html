@@ -596,6 +596,7 @@
                 <div class="timeline-section-background private-section"></div>
                 <div class="section-label public-label">PUBLIC PROCEEDINGS</div>
                 <div class="section-label private-label">SHADOW PROCEEDINGS</div>
+                <div class="section-label procedural-label">PROCEDURAL TIMELINE</div>
                 <div class="timeline-line"></div>
             `;
             
@@ -605,7 +606,8 @@
             const maxDate = new Date(Math.max(...dates));
             
             // Add padding to the date range
-            const startDate = new Date(minDate.getFullYear(), 0, 1);
+            // Start 60 days before first event instead of January 1st
+            const startDate = new Date(minDate.getTime() - (60 * 24 * 60 * 60 * 1000));
             const endDate = new Date(maxDate.getFullYear() + 1, 11, 31);
             
             const totalDays = (endDate - startDate) / (1000 * 60 * 60 * 24);
@@ -622,46 +624,42 @@
             
             // Add year markers and labels dynamically
             const yearPositions = [];
-            for (let year = startDate.getFullYear(); year <= endDate.getFullYear(); year++) {
-                const yearDate = new Date(year, 0, 1);
-                const daysFromStart = (yearDate - startDate) / (1000 * 60 * 60 * 24);
-                const x = 50 + (daysFromStart * pixelsPerDay);
+            
+            // Calculate the visible portion of each year
+            for (let year = startDate.getFullYear(); year <= endDate.getFullYear() + 1; year++) {
+                const yearStart = new Date(year, 0, 1);
+                const yearEnd = new Date(year + 1, 0, 1);
                 
-                if (x >= 50 && x <= timelineWidth - 50) {
-                    // Add marker
-                    const marker = document.createElement('div');
-                    marker.className = 'year-marker';
-                    marker.style.left = x + 'px';
-                    container.appendChild(marker);
+                // Calculate where this year appears on the timeline
+                const yearStartDays = Math.max(0, (yearStart - startDate) / (1000 * 60 * 60 * 24));
+                const yearEndDays = Math.min(totalDays, (yearEnd - startDate) / (1000 * 60 * 60 * 24));
+                
+                const yearStartX = 250 + (yearStartDays * pixelsPerDay);
+                const yearEndX = 250 + (yearEndDays * pixelsPerDay);
+                
+                // Only process years that are at least partially visible
+                if (yearEndX > 250 && yearStartX < timelineWidth + 250) {
+                    // Add marker at year boundary if it's within the timeline
+                    if (yearStartX >= 250 && yearStartX <= timelineWidth + 250) {
+                        const marker = document.createElement('div');
+                        marker.className = 'year-marker';
+                        marker.style.left = yearStartX + 'px';
+                        container.appendChild(marker);
+                    }
                     
-                    yearPositions.push({ year, x });
-                }
-            }
-            
-            // Add year labels between markers
-            for (let i = 0; i < yearPositions.length - 1; i++) {
-                const current = yearPositions[i];
-                const next = yearPositions[i + 1];
-                const midX = (current.x + next.x) / 2;
-                
-                const label = document.createElement('div');
-                label.className = 'year-label';
-                label.style.left = midX + 'px';
-                label.textContent = current.year;
-                container.appendChild(label);
-            }
-            
-            // Add last year label if there's space
-            if (yearPositions.length > 0) {
-                const last = yearPositions[yearPositions.length - 1];
-                if (timelineWidth - last.x > 100) {
+                    // Add year label centered in the visible portion of the year
+                    const visibleStartX = Math.max(250, yearStartX);
+                    const visibleEndX = Math.min(timelineWidth + 250, yearEndX);
+                    const labelX = (visibleStartX + visibleEndX) / 2;
+                    
                     const label = document.createElement('div');
                     label.className = 'year-label';
-                    label.style.left = (last.x + timelineWidth - 50) / 2 + 'px';
-                    label.textContent = last.year;
+                    label.style.left = labelX + 'px';
+                    label.textContent = year;
                     container.appendChild(label);
                 }
             }
+            
             
             // Add events and track positions
             const eventPositions = [];
@@ -695,7 +693,7 @@
             // PASS 1: Regular timeline events
             events.forEach((event, index) => {
                 const daysFromStart = (event.date - startDate) / (1000 * 60 * 60 * 24);
-                const x = 50 + (daysFromStart * pixelsPerDay);
+                const x = 250 + (daysFromStart * pixelsPerDay);
                 
                 const eventEl = document.createElement('div');
                 // For private events, always use 'privileged' class for red color
@@ -878,7 +876,7 @@
             // PASS 2: Collect procedural events for case timelines
             events.forEach(event => {
                 const daysFromStart = (event.date - startDate) / (1000 * 60 * 60 * 24);
-                const x = 50 + (daysFromStart * pixelsPerDay);
+                const x = 250 + (daysFromStart * pixelsPerDay);
                 
                 // Check if this is a procedural event
                 const isProcedural = event.caseNumber && event.detail !== '—';
@@ -1162,25 +1160,76 @@
                             svg.appendChild(line);
                             container.appendChild(svg);
                             
-                            // Add case number label on the middle of the line (only on first connection)
-                            if (idx === 1) {
-                                const caseLabel = document.createElement('div');
-                                caseLabel.className = 'case-label case-label-above';
-                                caseLabel.style.left = (prevEvent.x + procEvent.x) / 2 + 'px';
-                                // Use the case's original color (not the line color)
-                                const caseColorClass = `case-${caseNum.slice(-4)}`;
-                                const tempEl = document.createElement('div');
-                                tempEl.className = caseColorClass;
-                                document.body.appendChild(tempEl);
-                                const caseColor = getComputedStyle(tempEl).backgroundColor;
-                                document.body.removeChild(tempEl);
-                                caseLabel.style.color = caseColor;
-                                caseLabel.textContent = `DEP #${caseNum}`;
-                                container.appendChild(caseLabel);
-                            }
                         }
                     }
                 });
+                
+                // Add label for all cases positioned 90px to the right of the first procedural event
+                if (caseEvents.length > 0) {
+                    const firstEvent = caseEvents[0];
+                    const caseLabel = document.createElement('div');
+                    caseLabel.className = 'case-label case-label-above';
+                    // Position label to the right of the first node, offset by 90px
+                    caseLabel.style.left = (firstEvent.x + 90) + 'px';
+                    
+                    // Use the case's original color
+                    const caseColorClass = `case-${caseNum.slice(-4)}`;
+                    const tempEl = document.createElement('div');
+                    tempEl.className = caseColorClass;
+                    document.body.appendChild(tempEl);
+                    const caseColor = getComputedStyle(tempEl).backgroundColor;
+                    document.body.removeChild(tempEl);
+                    caseLabel.style.color = caseColor;
+                    caseLabel.textContent = `DEP #${caseNum}`;
+                    container.appendChild(caseLabel);
+                    
+                    // For single-event cases, draw a line extending to the right
+                    if (caseEvents.length === 1) {
+                        const singleEvent = caseEvents[0];
+                        const currentDate = new Date();
+                        const daysFromStart = (currentDate - startDate) / (1000 * 60 * 60 * 24);
+                        const currentX = 250 + (daysFromStart * pixelsPerDay);
+                        
+                        // Create SVG line from center of node extending right
+                        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                        svg.style.position = 'absolute';
+                        svg.style.left = singleEvent.x + 'px';
+                        svg.style.width = (currentX - singleEvent.x) + 'px';
+                        svg.style.height = '400px'; // Full container height
+                        svg.style.top = '0';
+                        svg.style.pointerEvents = 'none';
+                        svg.style.overflow = 'visible';
+                        
+                        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                        
+                        // Start from center of node (5px offset)
+                        line.setAttribute('x1', '5');
+                        line.setAttribute('x2', (currentX - singleEvent.x) + 'px');
+                        
+                        // Y position based on whether event is private
+                        const y = singleEvent.isPrivate ? '116' : '105'; // Center of node
+                        line.setAttribute('y1', y);
+                        line.setAttribute('y2', y);
+                        
+                        // Line color follows the node's status
+                        let strokeColor = '#999'; // Default gray
+                        if (singleEvent.status === 'pending') {
+                            strokeColor = '#ffd700'; // Yellow
+                        } else if (singleEvent.status === 'denied') {
+                            strokeColor = '#f44336'; // Red
+                        } else if (singleEvent.status === 'approved') {
+                            strokeColor = '#4caf50'; // Green
+                        }
+                        
+                        line.setAttribute('stroke', strokeColor);
+                        line.setAttribute('stroke-width', '4');
+                        line.setAttribute('stroke-opacity', '0.7');
+                        line.setAttribute('stroke-dasharray', '8 4'); // Dashed to show ongoing
+                        
+                        svg.appendChild(line);
+                        container.appendChild(svg);
+                    }
+                }
             });
             
             // Calculate statistics

@@ -16,7 +16,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding-top: 160px;
+    padding-top: 190px; /* Increased to account for header border and offset */
     overflow-x: auto;
     overflow-y: hidden; /* Prevent vertical scroll, which can cause centering issues */
     /* Reserve space for horizontal scrollbar to prevent vertical shift */
@@ -25,14 +25,15 @@ body {
 
 .sticky-nav {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
+    top: 15px;
+    left: 15px;
+    right: 15px;
     background: #2c3e50;
     padding: 10px 20px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     z-index: 1000;
     flex-shrink: 0;
+    border: 15px solid white;
 }
 
 .nav-top-row {
@@ -243,7 +244,7 @@ body {
 .timeline-line {
     position: absolute;
     top: 300px; /* Lower in 400px container */
-    left: 50px;
+    left: 250px;
     right: 50px;
     height: 2px;
     background: #34495e;
@@ -253,7 +254,7 @@ body {
 /* Background sections for public/private proceedings */
 .timeline-section-background {
     position: absolute;
-    left: 0;
+    left: 250px;
     right: 0;
     z-index: 0;
 }
@@ -627,25 +628,45 @@ body {
 }
 
 .public-label {
-    top: 260px;
-    left: 10px;
+    top: 270px;  /* Center of green section: 240px + 30px (half of 60px height) */
+    right: auto;
+    left: 245px;  /* Right-aligned at timeline start */
+    transform: translateX(-100%) translateY(-50%);  /* Align right edge to timeline start */
     color: #2e7d32;
-    font-size: 11px;
+    font-size: 22px;
     font-weight: 600;
     background: transparent;
     box-shadow: none;
     padding: 2px 6px;
+    text-align: right;
 }
 
 .private-label {
-    top: 320px;
-    left: 10px;
+    top: 330px;  /* Center of red section: 300px + 30px (half of 60px height) */
+    right: auto;
+    left: 245px;  /* Right-aligned at timeline start */
+    transform: translateX(-100%) translateY(-50%);  /* Align right edge to timeline start */
     color: #c62828;
-    font-size: 11px;
+    font-size: 22px;
     font-weight: 600;
     background: transparent;
     box-shadow: none;
     padding: 2px 6px;
+    text-align: right;
+}
+
+.procedural-label {
+    top: 105px;  /* Aligned with case timeline area */
+    right: auto;
+    left: 245px;  /* Right-aligned at timeline start */
+    transform: translateX(-100%) translateY(-50%);  /* Align right edge to timeline start */
+    color: #1976d2;  /* Blue color to match case timeline colors */
+    font-size: 22px;
+    font-weight: 600;
+    background: transparent;
+    box-shadow: none;
+    padding: 2px 6px;
+    text-align: right;
 }
 
 /* Summary stats */
