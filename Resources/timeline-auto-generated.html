@@ -144,23 +144,33 @@
                 // Populate case number filter
                 populateCaseFilter(allEvents);
                 
-                // Initial render with all events and saved scale
-                filteredEvents = allEvents;
-                
-                // Check if fit-to-window is enabled
-                const fitToWindowEnabled = localStorage.getItem('timeline-fit-to-window') === 'true';
-                if (fitToWindowEnabled) {
-                    // First render to establish date range
-                    renderTimeline(filteredEvents);
-                    // Then calculate and apply fit scale
-                    setTimeout(calculateAndApplyFitScale, 0);
-                } else {
-                    const savedScale = localStorage.getItem('timeline-scale');
-                    renderTimeline(filteredEvents, savedScale ? parseFloat(savedScale) : null);
-                }
-                
-                // Set up filter handlers
+                // Set up filter handlers first to load saved preferences
                 setupFilterHandlers();
+                
+                // Apply saved filters if they exist
+                const savedStartDate = localStorage.getItem('timeline-start-date');
+                const savedEndDate = localStorage.getItem('timeline-end-date');
+                const savedCases = localStorage.getItem('timeline-selected-cases');
+                
+                if (savedStartDate || savedEndDate || savedCases) {
+                    // Apply saved filters
+                    applyFilters();
+                } else {
+                    // Initial render with all events and saved scale
+                    filteredEvents = allEvents;
+                    
+                    // Check if fit-to-window is enabled
+                    const fitToWindowEnabled = localStorage.getItem('timeline-fit-to-window') === 'true';
+                    if (fitToWindowEnabled) {
+                        // First render to establish date range
+                        renderTimeline(filteredEvents);
+                        // Then calculate and apply fit scale
+                        setTimeout(calculateAndApplyFitScale, 0);
+                    } else {
+                        const savedScale = localStorage.getItem('timeline-scale');
+                        renderTimeline(filteredEvents, savedScale ? parseFloat(savedScale) : null);
+                    }
+                }
                 
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('timeline-content').style.display = 'block';
@@ -197,6 +207,10 @@
                 checkbox.className = 'case-checkbox';
                 checkbox.addEventListener('change', () => {
                     updateCaseFilterText();
+                    // Save selected cases when changed
+                    const checkedCases = Array.from(document.querySelectorAll('#filter-case input[type="checkbox"]:checked'))
+                        .map(cb => cb.value);
+                    localStorage.setItem('timeline-selected-cases', JSON.stringify(checkedCases));
                     applyFilters(); // Apply filters immediately
                 });
                 
@@ -268,6 +282,26 @@
             document.getElementById('apply-filters').addEventListener('click', applyFilters);
             document.getElementById('reset-filters').addEventListener('click', resetFilters);
             
+            // Load saved date range from localStorage
+            const savedStartDate = localStorage.getItem('timeline-start-date');
+            const savedEndDate = localStorage.getItem('timeline-end-date');
+            if (savedStartDate) {
+                document.getElementById('filter-start-date').value = savedStartDate;
+            }
+            if (savedEndDate) {
+                document.getElementById('filter-end-date').value = savedEndDate;
+            }
+            
+            // Load saved case selections from localStorage
+            const savedCases = localStorage.getItem('timeline-selected-cases');
+            if (savedCases) {
+                const selectedCases = JSON.parse(savedCases);
+                document.querySelectorAll('#filter-case input[type="checkbox"]').forEach(checkbox => {
+                    checkbox.checked = selectedCases.includes(checkbox.value);
+                });
+                updateCaseFilterText();
+            }
+            
             // Scale slider handler
             const scaleSlider = document.getElementById('scale-slider');
             const scaleValue = document.getElementById('scale-value');
@@ -325,12 +359,21 @@
         }
         
         function applyFilters() {
-            const startDate = new Date(document.getElementById('filter-start-date').value);
-            const endDate = new Date(document.getElementById('filter-end-date').value);
+            const startDateInput = document.getElementById('filter-start-date');
+            const endDateInput = document.getElementById('filter-end-date');
+            const startDate = new Date(startDateInput.value);
+            const endDate = new Date(endDateInput.value);
+            
+            // Save date range to localStorage
+            localStorage.setItem('timeline-start-date', startDateInput.value);
+            localStorage.setItem('timeline-end-date', endDateInput.value);
             
             // Get all checked case checkboxes
             const checkedCases = Array.from(document.querySelectorAll('#filter-case input[type="checkbox"]:checked'))
                 .map(checkbox => checkbox.value);
+            
+            // Save selected cases to localStorage
+            localStorage.setItem('timeline-selected-cases', JSON.stringify(checkedCases));
             
             filteredEvents = allEvents.filter(event => {
                 // Date range filter
@@ -364,6 +407,11 @@
             document.querySelectorAll('#filter-case input[type="checkbox"]').forEach(checkbox => {
                 checkbox.checked = true;
             });
+            
+            // Clear saved filter values from localStorage
+            localStorage.removeItem('timeline-start-date');
+            localStorage.removeItem('timeline-end-date');
+            localStorage.removeItem('timeline-selected-cases');
             
             filteredEvents = allEvents;
             renderTimeline(filteredEvents);
@@ -452,11 +500,13 @@
                 for (const [marker, className] of Object.entries(markerTypes)) {
                     if (markers.includes(marker)) {
                         eventClass = className;
-                        if (marker === '🔴') {
-                            isPrivate = true;
-                        }
                         break;
                     }
+                }
+                
+                // Always check for 🔴 to set isPrivate, regardless of other markers
+                if (markers.includes('🔴')) {
+                    isPrivate = true;
                 }
                 
                 // If no primary marker found, skip this event
@@ -464,17 +514,26 @@
                     continue;
                 }
                 
-                // Extract key procedural text (remove quotes and clean up)
-                let detail = procedural.replace(/^["*]+|["*]+$/g, '').trim();
-                if (detail.length > 100) {
-                    detail = detail.substring(0, 97) + '...';
+                // Extract key procedural text (preserve bold markers for parsing)
+                let detail = procedural.trim();
+                
+                // Debug raw procedural value
+                if (caseNumber && (procedural.includes('filed') || procedural.includes('issued') || procedural.includes('denied'))) {
+                    console.log(`Raw procedural for ${caseNumber}:`, procedural);
+                }
+                
+                // Create display version without asterisks for tooltip
+                let displayDetail = detail.replace(/\*\*/g, '').replace(/^["]+|["]+$/g, '').trim();
+                if (displayDetail.length > 100) {
+                    displayDetail = displayDetail.substring(0, 97) + '...';
                 }
                 
                 events.push({
                     date: date,
                     dateStr: dateStr,
                     title: title,
-                    detail: detail,
+                    detail: detail,  // Raw detail with bold markers
+                    displayDetail: displayDetail,  // Clean version for display
                     eventClass: eventClass,
                     isPrivate: isPrivate,
                     markers: markers,
@@ -540,39 +599,6 @@
             
             // Add missing document indicator to legend
             legendEl.appendChild(missingLegend);
-            
-            // Add case number legend if there are procedural events
-            const caseLegendItems = [
-                { caseNum: '338-0303', class: 'case-0303' },
-                { caseNum: '338-0594', class: 'case-0594' },
-                { caseNum: '338-0706', class: 'case-0706' },
-                { caseNum: '338-0756', class: 'case-0756' }
-            ];
-            
-            // Add separator
-            const separator = document.createElement('div');
-            separator.style.width = '1px';
-            separator.style.height = '20px';
-            separator.style.background = '#34495e';
-            separator.style.margin = '0 20px';
-            legendEl.appendChild(separator);
-            
-            // Add case legends
-            caseLegendItems.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'nav-legend-item';
-                div.innerHTML = `
-                    <div class="case-procedural ${item.class}" style="
-                        position: relative;
-                        width: 8px;
-                        height: 8px;
-                        border-radius: 50%;
-                        margin: 0;
-                    "></div>
-                    <span>DEP #${item.caseNum}</span>
-                `;
-                legendEl.appendChild(div);
-            });
             
             // Create timeline container content
             const container = document.getElementById('timeline-container');
@@ -683,43 +709,56 @@
                 const daysFromStart = (event.date - startDate) / (1000 * 60 * 60 * 24);
                 const x = 50 + (daysFromStart * pixelsPerDay);
                 
-                // Check if this is a procedural event
-                // Match both **text** and text** patterns
-                let proceduralMatch = null;
+                // Check if this is a procedural event - SUPER SIMPLE!
+                // If it has a case number and the procedural column is not "—", it's procedural
+                const isProcedural = event.caseNumber && event.detail !== '—';
                 
-                if (event.detail) {
-                    // Try standard format: **text** (WPA Form X)
-                    proceduralMatch = event.detail.match(/\*\*([^*]+)\*\*\s*\(WPA Form/);
+                // For title extraction, just remove any asterisks and formatting
+                let proceduralTitle = null;
+                let proceduralStatus = null;
+                if (isProcedural) {
+                    proceduralTitle = event.detail.replace(/\*\*/g, '').trim();
+                    // Remove any parenthetical info like (WPA Form X)
+                    proceduralTitle = proceduralTitle.replace(/\s*\(.*?\)\s*.*$/, '');
                     
-                    // If not found, try format without opening **: text** 
-                    if (!proceduralMatch) {
-                        proceduralMatch = event.detail.match(/^([^*]+)\*\*\s*\(WPA Form/);
-                    }
-                    
-                    // If still not found, look for any bold procedural terms
-                    if (!proceduralMatch) {
-                        // Match **text** or text** for key procedural terms
-                        proceduralMatch = event.detail.match(/(?:\*\*)?([^*]+(?:filed|issued|denied|appealed|withdrawn|signed|FORAD|ORAD|SOC|OOC|NOI|ANRAD|RDA|Settlement))\*\*/);
+                    // Determine status based on emoji first, then keywords
+                    if (event.detail.includes('⭐')) {
+                        proceduralStatus = 'pending';
+                    } else if (event.detail.includes('🛑')) {
+                        proceduralStatus = 'denied';
+                    } else if (event.detail.includes('✅')) {
+                        proceduralStatus = 'approved';
+                    } else if (proceduralTitle.includes('filed') || proceduralTitle.includes('submitted')) {
+                        proceduralStatus = 'pending';
+                    } else if (proceduralTitle.includes('denied')) {
+                        proceduralStatus = 'denied';
+                    } else if (proceduralTitle.includes('issued') || proceduralTitle.includes('approved')) {
+                        proceduralStatus = 'approved';
                     }
                 }
                 
-                const isProcedural = proceduralMatch !== null;
-                
-                // Debug: Log events with case numbers to see what we're getting
+                // Debug: Log ALL events with case numbers to see what we're getting
                 if (event.caseNumber && (event.detail.includes('filed') || event.detail.includes('issued') || event.detail.includes('denied'))) {
-                    console.log('Potential procedural event:', {
-                        date: event.dateStr,
-                        case: event.caseNumber,
+                    console.log('Full event object:', event);
+                    console.log('Procedural check:', {
+                        hasCase: !!event.caseNumber,
                         detail: event.detail,
-                        isProcedural: isProcedural,
-                        match: proceduralMatch
+                        detailNotDash: event.detail.trim() !== '—',
+                        detailNotEmpty: event.detail.trim() !== '',
+                        isProcedural: isProcedural
                     });
                 }
                 
                 // If procedural event and has case number, track it
                 if (isProcedural && event.caseNumber && caseProceduralEvents[event.caseNumber]) {
-                    // Extract the procedural action (e.g., "ANRAD filed", "NOI filed", etc.)
-                    const title = proceduralMatch[1].trim().replace(/^\*\*/, '');
+                    // Use the procedural title we already extracted
+                    const title = proceduralTitle;
+                    
+                    console.log(`Adding procedural event for case ${event.caseNumber}:`, {
+                        title: title,
+                        date: event.dateStr,
+                        detail: event.detail
+                    });
                     
                     caseProceduralEvents[event.caseNumber].push({
                         x: x,
@@ -727,7 +766,15 @@
                         dateStr: event.dateStr,
                         title: title,
                         detail: event.detail,
+                        status: proceduralStatus,
                         isPrivate: event.isPrivate
+                    });
+                } else if (event.caseNumber && event.detail.includes('**')) {
+                    console.log(`Event has case number but was not recognized as procedural:`, {
+                        case: event.caseNumber,
+                        detail: event.detail,
+                        isProcedural: isProcedural,
+                        title: proceduralTitle
                     });
                 }
                 
@@ -764,7 +811,7 @@
                 tooltip.innerHTML = `
                     <div class="event-date">${event.dateStr}</div>
                     <div class="event-title">${event.title}</div>
-                    ${event.detail ? `<div class="event-detail">${event.detail}</div>` : ''}
+                    ${event.displayDetail ? `<div class="event-detail">${event.displayDetail}</div>` : ''}
                 `;
                 
                 eventEl.appendChild(tooltip);
@@ -929,6 +976,17 @@
                     procEl.className = `event case-procedural case-${caseNum.slice(-4)} ${procEvent.isPrivate ? 'case-procedural-below' : 'case-procedural-above'}`;
                     procEl.style.left = procEvent.x + 'px';
                     
+                    // Set border color based on status (background color comes from case class)
+                    if (procEvent.status === 'pending') {
+                        procEl.style.borderColor = '#ffd700'; // Yellow border
+                    } else if (procEvent.status === 'denied') {
+                        procEl.style.borderColor = '#f44336'; // Red border
+                    } else if (procEvent.status === 'approved') {
+                        procEl.style.borderColor = '#4caf50'; // Green border
+                    } else if (procEvent.isPrivate) {
+                        procEl.style.borderColor = '#f44336'; // Red border for private nodes without status
+                    }
+                    
                     // Create tooltip
                     const tooltip = document.createElement('div');
                     tooltip.className = 'event-tooltip';
@@ -939,18 +997,11 @@
                     `;
                     procEl.appendChild(tooltip);
                     
-                    // Add procedural action label (below the node)
+                    // Add procedural action label (above for public, below for private)
                     const procLabel = document.createElement('div');
                     procLabel.className = `procedural-label ${procEvent.isPrivate ? 'procedural-label-below' : 'procedural-label-above'}`;
                     procLabel.textContent = procEvent.title;
                     procEl.appendChild(procLabel);
-                    
-                    // Add date label (above the node)
-                    const dateLabel = document.createElement('div');
-                    dateLabel.className = `procedural-date ${procEvent.isPrivate ? 'procedural-date-below' : 'procedural-date-above'}`;
-                    const eventDate = new Date(procEvent.date);
-                    dateLabel.textContent = `${eventDate.getMonth() + 1}/${eventDate.getDate()}`;
-                    procEl.appendChild(dateLabel);
                     
                     container.appendChild(procEl);
                     
@@ -958,8 +1009,9 @@
                     if (idx > 0) {
                         const prevEvent = caseEvents[idx - 1];
                         
-                        // Only connect if both events are on same level (both public or both private)
-                        if (prevEvent.isPrivate === procEvent.isPrivate) {
+                        // Connect all procedural events in the case timeline
+                        // Remove the same-level check to allow diagonal connections
+                        if (true) {  // Always connect
                             // Create SVG line from center to center
                             const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                             svg.style.position = 'absolute';
@@ -978,20 +1030,37 @@
                             const x2 = prevEvent.x < procEvent.x ? Math.abs(procEvent.x - prevEvent.x) + 5 : 5;
                             
                             let y1, y2;
-                            if (procEvent.isPrivate) {
-                                // Nodes at top: 185px, center at 185 + 5 = 190px
-                                y1 = y2 = 190;
+                            // Set Y coordinates based on whether each event is private
+                            if (prevEvent.isPrivate) {
+                                // Previous private node: 200 - 174 = 26px from top, center at 26 - 5 = 21px
+                                y1 = 21;
                             } else {
-                                // Nodes at bottom: 185px from 200px container = 15px from top
-                                // Center at 15 - 5 = 10px
-                                y1 = y2 = 10;
+                                // Previous public node: 200 - 185 = 15px from top, center at 15 - 5 = 10px
+                                y1 = 10;
+                            }
+                            
+                            if (procEvent.isPrivate) {
+                                // Current private node: 200 - 174 = 26px from top, center at 26 - 5 = 21px
+                                y2 = 21;
+                            } else {
+                                // Current public node: 200 - 185 = 15px from top, center at 15 - 5 = 10px
+                                y2 = 10;
                             }
                             
                             line.setAttribute('x1', x1);
                             line.setAttribute('y1', y1);
                             line.setAttribute('x2', x2);
                             line.setAttribute('y2', y2);
-                            line.setAttribute('stroke', getComputedStyle(procEl).borderColor);
+                            // Line color follows the previous (starting) node's status
+                            let strokeColor = '#999'; // Default gray
+                            if (prevEvent.status === 'pending') {
+                                strokeColor = '#ffd700'; // Yellow
+                            } else if (prevEvent.status === 'denied') {
+                                strokeColor = '#f44336'; // Red
+                            } else if (prevEvent.status === 'approved') {
+                                strokeColor = '#4caf50'; // Green
+                            }
+                            line.setAttribute('stroke', strokeColor);
                             line.setAttribute('stroke-width', '4');
                             line.setAttribute('stroke-opacity', '0.7');
                             
@@ -1001,9 +1070,16 @@
                             // Add case number label on the middle of the line (only on first connection)
                             if (idx === 1) {
                                 const caseLabel = document.createElement('div');
-                                caseLabel.className = `case-label ${procEvent.isPrivate ? 'case-label-below' : 'case-label-above'}`;
+                                caseLabel.className = 'case-label case-label-above';
                                 caseLabel.style.left = (prevEvent.x + procEvent.x) / 2 + 'px';
-                                caseLabel.style.color = getComputedStyle(procEl).borderColor;
+                                // Use the case's original color (not the line color)
+                                const caseColorClass = `case-${caseNum.slice(-4)}`;
+                                const tempEl = document.createElement('div');
+                                tempEl.className = caseColorClass;
+                                document.body.appendChild(tempEl);
+                                const caseColor = getComputedStyle(tempEl).backgroundColor;
+                                document.body.removeChild(tempEl);
+                                caseLabel.style.color = caseColor;
                                 caseLabel.textContent = `DEP #${caseNum}`;
                                 container.appendChild(caseLabel);
                             }

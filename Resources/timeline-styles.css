@@ -434,17 +434,17 @@ body {
 }
 
 .case-procedural-above {
-    bottom: 185px; /* Further above the public section */
+    bottom: 185px; /* Public nodes above the timeline */
 }
 
 .case-procedural-below {
-    top: 185px; /* Further below the private section */
+    bottom: 174px; /* Private nodes 11px lower than public nodes */
 }
 
 /* Case procedural labels */
 .case-label {
     position: absolute;
-    font-size: 13px;
+    font-size: 26px;
     font-weight: bold;
     text-align: center;
     white-space: nowrap;
@@ -453,7 +453,7 @@ body {
 }
 
 .case-label-above {
-    bottom: 195px;
+    bottom: 240px;
 }
 
 .case-label-below {
@@ -474,7 +474,7 @@ body {
 }
 
 .procedural-label-above {
-    top: calc(100% + 2px);  /* Below the node */
+    bottom: calc(100% + 2px);  /* Above the node */
 }
 
 .procedural-label-below {
