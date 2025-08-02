@@ -547,9 +547,8 @@
         function renderTimeline(events, customScale = null) {
             // Create legend
             const legendItems = [
-                { class: 'critical-moment', label: 'Critical Moment (🟡)' },
-                { class: 'privileged', label: 'Not Publicly Accessible (🔴)' },
-                { class: 'continuance', label: 'Hearing Continued (🐢)' }
+                { class: 'normal-public', label: 'Public Events' },
+                { class: 'privileged', label: 'Shadow Events' }
             ];
             
             // Add missing document indicator to legend
@@ -574,24 +573,12 @@
                 // Set CSS variables for legend colors
                 const box = div.querySelector('.legend-box');
                 const styles = getComputedStyle(document.createElement('div'));
-                if (item.class === 'critical-moment') {
-                    box.style.background = '#ffd700';
-                    box.style.borderColor = '#b8860b';
-                } else if (item.class === 'missing-file') {
-                    box.style.background = '#e91e63';
-                    box.style.borderColor = '#880e4f';
+                if (item.class === 'normal-public') {
+                    box.style.background = '#4caf50';
+                    box.style.borderColor = '#388e3c';
                 } else if (item.class === 'privileged') {
                     box.style.background = '#f44336';
-                    box.style.borderColor = '#c62828';
-                } else if (item.class === 'continuance') {
-                    box.style.background = '#8bc34a';
-                    box.style.borderColor = '#558b2f';
-                } else if (item.class === 'normal-public') {
-                    box.style.background = '#4caf50';
-                    box.style.borderColor = '#2e7d32';
-                } else if (item.class === 'normal-private') {
-                    box.style.background = '#ff9800';
-                    box.style.borderColor = '#e65100';
+                    box.style.borderColor = '#d32f2f';
                 }
                 
                 legendEl.appendChild(div);
@@ -705,81 +692,15 @@
                 }))
             );
             
+            // PASS 1: Regular timeline events
             events.forEach((event, index) => {
                 const daysFromStart = (event.date - startDate) / (1000 * 60 * 60 * 24);
                 const x = 50 + (daysFromStart * pixelsPerDay);
                 
-                // Check if this is a procedural event - SUPER SIMPLE!
-                // If it has a case number and the procedural column is not "—", it's procedural
-                const isProcedural = event.caseNumber && event.detail !== '—';
-                
-                // For title extraction, just remove any asterisks and formatting
-                let proceduralTitle = null;
-                let proceduralStatus = null;
-                if (isProcedural) {
-                    proceduralTitle = event.detail.replace(/\*\*/g, '').trim();
-                    // Remove any parenthetical info like (WPA Form X)
-                    proceduralTitle = proceduralTitle.replace(/\s*\(.*?\)\s*.*$/, '');
-                    
-                    // Determine status based on emoji first, then keywords
-                    if (event.detail.includes('⭐')) {
-                        proceduralStatus = 'pending';
-                    } else if (event.detail.includes('🛑')) {
-                        proceduralStatus = 'denied';
-                    } else if (event.detail.includes('✅')) {
-                        proceduralStatus = 'approved';
-                    } else if (proceduralTitle.includes('filed') || proceduralTitle.includes('submitted')) {
-                        proceduralStatus = 'pending';
-                    } else if (proceduralTitle.includes('denied')) {
-                        proceduralStatus = 'denied';
-                    } else if (proceduralTitle.includes('issued') || proceduralTitle.includes('approved')) {
-                        proceduralStatus = 'approved';
-                    }
-                }
-                
-                // Debug: Log ALL events with case numbers to see what we're getting
-                if (event.caseNumber && (event.detail.includes('filed') || event.detail.includes('issued') || event.detail.includes('denied'))) {
-                    console.log('Full event object:', event);
-                    console.log('Procedural check:', {
-                        hasCase: !!event.caseNumber,
-                        detail: event.detail,
-                        detailNotDash: event.detail.trim() !== '—',
-                        detailNotEmpty: event.detail.trim() !== '',
-                        isProcedural: isProcedural
-                    });
-                }
-                
-                // If procedural event and has case number, track it
-                if (isProcedural && event.caseNumber && caseProceduralEvents[event.caseNumber]) {
-                    // Use the procedural title we already extracted
-                    const title = proceduralTitle;
-                    
-                    console.log(`Adding procedural event for case ${event.caseNumber}:`, {
-                        title: title,
-                        date: event.dateStr,
-                        detail: event.detail
-                    });
-                    
-                    caseProceduralEvents[event.caseNumber].push({
-                        x: x,
-                        date: event.date,
-                        dateStr: event.dateStr,
-                        title: title,
-                        detail: event.detail,
-                        status: proceduralStatus,
-                        isPrivate: event.isPrivate
-                    });
-                } else if (event.caseNumber && event.detail.includes('**')) {
-                    console.log(`Event has case number but was not recognized as procedural:`, {
-                        case: event.caseNumber,
-                        detail: event.detail,
-                        isProcedural: isProcedural,
-                        title: proceduralTitle
-                    });
-                }
-                
                 const eventEl = document.createElement('div');
-                eventEl.className = `event ${event.eventClass} ${event.isPrivate ? 'event-below' : 'event-above'}`;
+                // For private events, always use 'privileged' class for red color
+                const colorClass = event.isPrivate ? 'privileged' : event.eventClass;
+                eventEl.className = `event ${colorClass} ${event.isPrivate ? 'event-below' : 'event-above'}`;
                 eventEl.style.left = x + 'px';
                 
                 // Only create date label if we haven't already created one for this date/level
@@ -954,14 +875,51 @@
                         vertLine.style.top = '80.5px';
                         vertLine.style.width = '1px';
                         vertLine.style.height = '39px'; // Distance between centers (119.5 - 80.5)
-                        vertLine.style.background = '#9c27b0'; // Purple for same-day connections
+                        vertLine.style.background = '#f44336'; // Red for connections touching private events
                         vertLine.style.zIndex = '4';
                         container.appendChild(vertLine);
                     }
                 }
             });
             
-            // Add case procedural events and connections
+            // PASS 2: Collect procedural events for case timelines
+            events.forEach(event => {
+                const daysFromStart = (event.date - startDate) / (1000 * 60 * 60 * 24);
+                const x = 50 + (daysFromStart * pixelsPerDay);
+                
+                // Check if this is a procedural event
+                const isProcedural = event.caseNumber && event.detail !== '—';
+                
+                if (isProcedural && event.caseNumber && caseProceduralEvents[event.caseNumber]) {
+                    // Extract title and status
+                    let proceduralTitle = event.detail.replace(/\*\*/g, '').trim();
+                    proceduralTitle = proceduralTitle.replace(/\s*\(.*?\)\s*.*$/, '');
+                    
+                    // Simple emoji-based status
+                    let proceduralStatus = null;
+                    if (event.detail.includes('⭐')) {
+                        proceduralStatus = 'pending';
+                    } else if (event.detail.includes('🛑')) {
+                        proceduralStatus = 'denied';
+                    } else if (event.detail.includes('✅')) {
+                        proceduralStatus = 'approved';
+                    } else if (event.detail.includes('🔒')) {
+                        proceduralStatus = 'inherit'; // Special status for behind-closed-doors
+                    }
+                    
+                    caseProceduralEvents[event.caseNumber].push({
+                        x: x,
+                        date: event.date,
+                        dateStr: event.dateStr,
+                        title: proceduralTitle,
+                        detail: event.detail,
+                        status: proceduralStatus,
+                        isPrivate: event.isPrivate
+                    });
+                }
+            });
+            
+            // PASS 3: Render case procedural events and connections
             Object.entries(caseProceduralEvents).forEach(([caseNum, caseEvents]) => {
                 if (caseEvents.length === 0) return;
                 
@@ -976,15 +934,32 @@
                     procEl.className = `event case-procedural case-${caseNum.slice(-4)} ${procEvent.isPrivate ? 'case-procedural-below' : 'case-procedural-above'}`;
                     procEl.style.left = procEvent.x + 'px';
                     
-                    // Set border color based on status (background color comes from case class)
+                    // Set colors based on status
                     if (procEvent.status === 'pending') {
-                        procEl.style.borderColor = '#ffd700'; // Yellow border
+                        procEl.style.backgroundColor = '#ffd700'; // Yellow
+                        procEl.style.borderColor = '#ccac00'; // Darker yellow border
                     } else if (procEvent.status === 'denied') {
-                        procEl.style.borderColor = '#f44336'; // Red border
+                        procEl.style.backgroundColor = '#f44336'; // Red
+                        procEl.style.borderColor = '#d32f2f'; // Darker red border
                     } else if (procEvent.status === 'approved') {
-                        procEl.style.borderColor = '#4caf50'; // Green border
-                    } else if (procEvent.isPrivate) {
-                        procEl.style.borderColor = '#f44336'; // Red border for private nodes without status
+                        procEl.style.backgroundColor = '#4caf50'; // Green
+                        procEl.style.borderColor = '#388e3c'; // Darker green border
+                    } else if (procEvent.status === 'inherit' && idx > 0) {
+                        // Inherit color from previous node
+                        const prevEvent = caseEvents[idx - 1];
+                        if (prevEvent.status === 'pending' || (prevEvent.status === 'inherit' && prevEvent.inheritedColor === 'pending')) {
+                            procEl.style.backgroundColor = '#ffd700';
+                            procEl.style.borderColor = '#ccac00';
+                            procEvent.inheritedColor = 'pending';
+                        } else if (prevEvent.status === 'denied' || (prevEvent.status === 'inherit' && prevEvent.inheritedColor === 'denied')) {
+                            procEl.style.backgroundColor = '#f44336';
+                            procEl.style.borderColor = '#d32f2f';
+                            procEvent.inheritedColor = 'denied';
+                        } else if (prevEvent.status === 'approved' || (prevEvent.status === 'inherit' && prevEvent.inheritedColor === 'approved')) {
+                            procEl.style.backgroundColor = '#4caf50';
+                            procEl.style.borderColor = '#388e3c';
+                            procEvent.inheritedColor = 'approved';
+                        }
                     }
                     
                     // Create tooltip
@@ -1051,13 +1026,13 @@
                             line.setAttribute('y1', y1);
                             line.setAttribute('x2', x2);
                             line.setAttribute('y2', y2);
-                            // Line color follows the previous (starting) node's status
+                            // Line color follows the previous node's status (including inherited)
                             let strokeColor = '#999'; // Default gray
-                            if (prevEvent.status === 'pending') {
+                            if (prevEvent.status === 'pending' || prevEvent.inheritedColor === 'pending') {
                                 strokeColor = '#ffd700'; // Yellow
-                            } else if (prevEvent.status === 'denied') {
+                            } else if (prevEvent.status === 'denied' || prevEvent.inheritedColor === 'denied') {
                                 strokeColor = '#f44336'; // Red
-                            } else if (prevEvent.status === 'approved') {
+                            } else if (prevEvent.status === 'approved' || prevEvent.inheritedColor === 'approved') {
                                 strokeColor = '#4caf50'; // Green
                             }
                             line.setAttribute('stroke', strokeColor);

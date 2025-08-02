@@ -420,8 +420,8 @@ body {
 
 /* Event styles based on markers */
 .critical-moment {
-    background: #ffd700;
-    border-color: #ccac00;
+    background: #4caf50;
+    border-color: #388e3c;
 }
 
 /* Case procedural event styles */
@@ -524,21 +524,14 @@ body {
     border-color: #00796b;
 }
 
-/* Critical moments above timeline use green */
-.event-above.critical-moment {
-    background: #2e7d32;
-    border-color: #1b5e20;
-}
-
-
 .privileged {
     background: #f44336;
-    border-color: #b71c1c;
+    border-color: #d32f2f;
 }
 
 .continuance {
-    background: #8bc34a;
-    border-color: #689f38;
+    background: #4caf50;
+    border-color: #388e3c;
 }
 
 .normal-public {
@@ -547,8 +540,8 @@ body {
 }
 
 .normal-private {
-    background: #ff9800;
-    border-color: #ef6c00;
+    background: #f44336;
+    border-color: #d32f2f;
 }
 
 /* Connecting lines */
