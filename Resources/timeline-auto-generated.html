@@ -821,8 +821,8 @@
                     container.appendChild(line);
                 } else {
                     // Different levels - diagonal line
-                    const startY = current.isPrivate ? 119.5 : 80.5;
-                    const endY = next.isPrivate ? 119.5 : 80.5;
+                    const startY = current.isPrivate ? 322 : 288; // Center of events (317+5, 283+5)
+                    const endY = next.isPrivate ? 322 : 288;
                     const height = Math.abs(endY - startY);
                     const width = next.x - current.x;
                     
@@ -849,36 +849,29 @@
                 }
             }
             
-            // Add vertical connections for same-day events on different levels
+            // Draw vertical lines between same-day events
             const eventsByDate = {};
             eventPositions.forEach(pos => {
-                const dateKey = pos.event.dateStr;
-                if (!eventsByDate[dateKey]) {
-                    eventsByDate[dateKey] = [];
+                if (!eventsByDate[pos.event.dateStr]) {
+                    eventsByDate[pos.event.dateStr] = [];
                 }
-                eventsByDate[dateKey].push(pos);
+                eventsByDate[pos.event.dateStr].push(pos);
             });
             
-            // Create vertical lines for dates with events on both levels
-            Object.values(eventsByDate).forEach(sameDayEvents => {
-                if (sameDayEvents.length > 1) {
-                    const publicEvents = sameDayEvents.filter(e => !e.isPrivate);
-                    const privateEvents = sameDayEvents.filter(e => e.isPrivate);
-                    
-                    if (publicEvents.length > 0 && privateEvents.length > 0) {
-                        // Events on both levels for the same day - add vertical connection
-                        const x = sameDayEvents[0].x; // All same-day events have same x position
-                        
-                        const vertLine = document.createElement('div');
-                        vertLine.style.position = 'absolute';
-                        vertLine.style.left = x + 'px';
-                        vertLine.style.top = '80.5px';
-                        vertLine.style.width = '1px';
-                        vertLine.style.height = '39px'; // Distance between centers (119.5 - 80.5)
-                        vertLine.style.background = '#f44336'; // Red for connections touching private events
-                        vertLine.style.zIndex = '4';
-                        container.appendChild(vertLine);
-                    }
+            Object.values(eventsByDate).forEach(dayEvents => {
+                const publicEvents = dayEvents.filter(e => !e.isPrivate);
+                const privateEvents = dayEvents.filter(e => e.isPrivate);
+                
+                if (publicEvents.length > 0 && privateEvents.length > 0) {
+                    // The events are already centered on their x position due to transform: translateX(-50%)
+                    const line = document.createElement('div');
+                    line.style.position = 'absolute';
+                    line.style.left = publicEvents[0].x + 'px';
+                    line.style.top = '288px';
+                    line.style.width = '1px';
+                    line.style.height = '34px';
+                    line.style.background = '#f44336';
+                    container.appendChild(line);
                 }
             });
             
@@ -920,6 +913,8 @@
             });
             
             // PASS 3: Render case procedural events and connections
+            const caseLabelPositions = []; // Track case label positions for collision detection
+            
             Object.entries(caseProceduralEvents).forEach(([caseNum, caseEvents]) => {
                 if (caseEvents.length === 0) return;
                 
@@ -972,11 +967,136 @@
                     `;
                     procEl.appendChild(tooltip);
                     
-                    // Add procedural action label (above for public, below for private)
+                    // Add abbreviated label with leader line
                     const procLabel = document.createElement('div');
-                    procLabel.className = `procedural-label ${procEvent.isPrivate ? 'procedural-label-below' : 'procedural-label-above'}`;
-                    procLabel.textContent = procEvent.title;
-                    procEl.appendChild(procLabel);
+                    procLabel.style.position = 'absolute';
+                    procLabel.style.fontSize = '11px';
+                    procLabel.style.fontWeight = '500';
+                    procLabel.style.padding = '2px 6px';
+                    procLabel.style.background = 'rgba(255, 255, 255, 0.95)';
+                    procLabel.style.borderRadius = '3px';
+                    procLabel.style.whiteSpace = 'nowrap';
+                    procLabel.style.zIndex = '11';
+                    procLabel.style.cursor = 'pointer';
+                    
+                    // Create abbreviation from title
+                    let abbreviation = procEvent.title;
+                    if (procEvent.title.includes('ANRAD')) {
+                        abbreviation = 'ANRAD';
+                    } else if (procEvent.title.includes('ANR')) {
+                        abbreviation = 'ANR';
+                    } else if (procEvent.title.includes('SORAD')) {
+                        abbreviation = 'SORAD';
+                    } else if (procEvent.title.includes('ORAD')) {
+                        abbreviation = 'ORAD';
+                    } else if (procEvent.title.includes('FORAD')) {
+                        abbreviation = 'FORAD';
+                    } else if (procEvent.title.includes('NOI')) {
+                        abbreviation = 'NOI';
+                    } else if (procEvent.title.includes('OOC')) {
+                        abbreviation = 'OOC';
+                    } else if (procEvent.title.includes('SOC')) {
+                        abbreviation = 'SOC';
+                    } else if (procEvent.title.includes('RDA')) {
+                        abbreviation = 'RDA';
+                    } else if (procEvent.title.includes('Extension')) {
+                        abbreviation = 'EXT';
+                    } else if (procEvent.title.includes('expires')) {
+                        abbreviation = 'EXP';
+                    } else if (procEvent.title.includes('Privileged')) {
+                        abbreviation = 'PRIV';
+                    } else if (procEvent.title.includes('approves')) {
+                        abbreviation = 'APPV';
+                    }
+                    
+                    procLabel.textContent = abbreviation;
+                    
+                    // Add tooltip to label
+                    procLabel.title = procEvent.title + ' - ' + procEvent.dateStr;
+                    
+                    // Add hover effect for label
+                    procLabel.addEventListener('mouseenter', () => {
+                        procLabel.style.background = 'rgba(255, 255, 255, 1)';
+                        procLabel.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+                    });
+                    procLabel.addEventListener('mouseleave', () => {
+                        procLabel.style.background = 'rgba(255, 255, 255, 0.95)';
+                        procLabel.style.boxShadow = 'none';
+                    });
+                    
+                    // Calculate label position with collision detection
+                    const labelWidth = abbreviation.length * 7 + 12; // Approximate width
+                    const labelHeight = 20;
+                    const nodeY = procEvent.isPrivate ? 111 : 100;
+                    const labelY = procEvent.isPrivate ? nodeY + 20 : nodeY - 30;
+                    
+                    let labelX = procEvent.x - labelWidth / 2;
+                    
+                    // Check for collisions and adjust
+                    let hasCollision = true;
+                    let attempts = 0;
+                    while (hasCollision && attempts < 5) {
+                        hasCollision = false;
+                        for (const existing of caseLabelPositions) {
+                            if (Math.abs(labelY - existing.y) < labelHeight &&
+                                labelX < existing.x + existing.width &&
+                                labelX + labelWidth > existing.x) {
+                                hasCollision = true;
+                                // Shift right or left based on which side has more space
+                                if (labelX < existing.x) {
+                                    labelX = existing.x - labelWidth - 5;
+                                } else {
+                                    labelX = existing.x + existing.width + 5;
+                                }
+                                break;
+                            }
+                        }
+                        attempts++;
+                    }
+                    
+                    // Position the label
+                    procLabel.style.left = labelX + 'px';
+                    procLabel.style.top = labelY + 'px';
+                    
+                    // Calculate leader line endpoints
+                    const nodeCenter = procEvent.x;
+                    const labelCenter = labelX + labelWidth / 2;
+                    const nodeEdge = procEvent.isPrivate ? nodeY + 8 : nodeY;
+                    const labelEdge = procEvent.isPrivate ? labelY : labelY + labelHeight;
+                    
+                    if (Math.abs(nodeCenter - labelCenter) > 5) {
+                        // Draw diagonal leader line using SVG
+                        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                        svg.style.position = 'absolute';
+                        svg.style.left = Math.min(nodeCenter, labelCenter) + 'px';
+                        svg.style.top = Math.min(nodeEdge, labelEdge) + 'px';
+                        svg.style.width = Math.abs(nodeCenter - labelCenter) + 'px';
+                        svg.style.height = Math.abs(nodeEdge - labelEdge) + 'px';
+                        svg.style.pointerEvents = 'none';
+                        svg.style.zIndex = '9';
+                        
+                        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                        line.setAttribute('x1', nodeCenter < labelCenter ? '0' : Math.abs(nodeCenter - labelCenter));
+                        line.setAttribute('y1', nodeEdge < labelEdge ? '0' : Math.abs(nodeEdge - labelEdge));
+                        line.setAttribute('x2', nodeCenter > labelCenter ? '0' : Math.abs(nodeCenter - labelCenter));
+                        line.setAttribute('y2', nodeEdge > labelEdge ? '0' : Math.abs(nodeEdge - labelEdge));
+                        line.setAttribute('stroke', '#999');
+                        line.setAttribute('stroke-width', '2');
+                        line.setAttribute('stroke-opacity', '0.7');
+                        
+                        svg.appendChild(line);
+                        container.appendChild(svg);
+                    }
+                    
+                    // Store label position
+                    caseLabelPositions.push({
+                        x: labelX,
+                        y: labelY,
+                        width: labelWidth,
+                        height: labelHeight
+                    });
+                    
+                    container.appendChild(procLabel);
                     
                     container.appendChild(procEl);
                     
@@ -992,7 +1112,7 @@
                             svg.style.position = 'absolute';
                             svg.style.left = Math.min(prevEvent.x, procEvent.x) + 'px';
                             svg.style.width = Math.abs(procEvent.x - prevEvent.x) + 'px';
-                            svg.style.height = '200px'; // Full container height
+                            svg.style.height = '400px'; // Full container height
                             svg.style.top = '0';
                             svg.style.pointerEvents = 'none';
                             svg.style.overflow = 'visible';
@@ -1007,19 +1127,19 @@
                             let y1, y2;
                             // Set Y coordinates based on whether each event is private
                             if (prevEvent.isPrivate) {
-                                // Previous private node: 200 - 174 = 26px from top, center at 26 - 5 = 21px
-                                y1 = 21;
+                                // Previous private node at 111px, center at 111 + 5 = 116px
+                                y1 = 116;
                             } else {
-                                // Previous public node: 200 - 185 = 15px from top, center at 15 - 5 = 10px
-                                y1 = 10;
+                                // Previous public node at 100px, center at 100 + 5 = 105px
+                                y1 = 105;
                             }
                             
                             if (procEvent.isPrivate) {
-                                // Current private node: 200 - 174 = 26px from top, center at 26 - 5 = 21px
-                                y2 = 21;
+                                // Current private node at 111px, center at 111 + 5 = 116px
+                                y2 = 116;
                             } else {
-                                // Current public node: 200 - 185 = 15px from top, center at 15 - 5 = 10px
-                                y2 = 10;
+                                // Current public node at 100px, center at 100 + 5 = 105px
+                                y2 = 105;
                             }
                             
                             line.setAttribute('x1', x1);

@@ -2,7 +2,7 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: #f0f0f0;
+    background-color: white;
     margin: 0;
     padding: 0;
     overflow: auto;
@@ -224,17 +224,17 @@ body {
 
 .container {
     width: fit-content;
-    background: white;
-    padding: 15px 40px;
-    margin: 0 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    background: transparent;
+    padding: 40px 40px;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
 }
 
 .timeline-container {
     position: relative;
     margin: 10px 0;
-    height: 200px;
+    height: 400px;
     width: 100%;
     min-width: 1200px;
 }
@@ -242,7 +242,7 @@ body {
 /* The Line */
 .timeline-line {
     position: absolute;
-    top: 100px; /* Center in 200px container */
+    top: 300px; /* Lower in 400px container */
     left: 50px;
     right: 50px;
     height: 2px;
@@ -259,21 +259,21 @@ body {
 }
 
 .public-section {
-    top: 40px;  /* Start lower */
-    height: 60px;  /* 60% of original 100px */
+    top: 240px;  /* Around timeline at 300px */
+    height: 60px;
     background: rgba(46, 125, 50, 0.08); /* More pronounced green */
 }
 
 .private-section {
-    top: 100px;
-    height: 60px;  /* 60% of original ~100px */
+    top: 300px;
+    height: 60px;
     background: rgba(198, 40, 40, 0.08); /* More pronounced red */
 }
 
 /* Year Markers */
 .year-marker {
     position: absolute;
-    top: 95px;
+    top: 295px;
     width: 2px;
     height: 10px;
     background: #34495e;
@@ -282,7 +282,7 @@ body {
 
 .year-label {
     position: absolute;
-    top: 97px;
+    top: 297px;
     transform: translateX(-50%);
     font-weight: bold;
     color: #34495e;
@@ -340,11 +340,11 @@ body {
 
 /* Event positioning */
 .event-above {
-    bottom: 117px; /* Square positioned symmetrically above line */
+    top: 283px; /* Above timeline at 300px */
 }
 
 .event-below {
-    top: 117px; /* Square positioned symmetrically below line */
+    top: 317px; /* Below timeline at 300px */
 }
 
 /* Tooltip */
@@ -358,7 +358,7 @@ body {
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
-    z-index: 40;
+    z-index: 100;
     width: 250px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     left: 50%;
@@ -431,14 +431,15 @@ body {
     border-radius: 50%;
     border-width: 2px;
     opacity: 0.9;
+    z-index: 10;
 }
 
 .case-procedural-above {
-    bottom: 185px; /* Public nodes above the timeline */
+    top: 100px; /* Case timeline well above main timeline */
 }
 
 .case-procedural-below {
-    bottom: 174px; /* Private nodes 11px lower than public nodes */
+    top: 111px; /* Private nodes 11px lower than public nodes */
 }
 
 /* Case procedural labels */
@@ -453,7 +454,7 @@ body {
 }
 
 .case-label-above {
-    bottom: 240px;
+    top: 30px; /* Well above case nodes at 100px */
 }
 
 .case-label-below {
@@ -463,14 +464,16 @@ body {
 /* Procedural node labels */
 .procedural-label {
     position: absolute;
-    font-size: 8px;
+    font-size: 12px;
+    font-weight: 500;
     color: #333;
     white-space: nowrap;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 1px 3px;
-    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2px 6px;
+    border-radius: 3px;
     left: 50%;
     transform: translateX(-50%);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .procedural-label-above {
@@ -553,12 +556,12 @@ body {
 
 .connection-line.public {
     background: #4caf50;
-    top: 80.5px; /* Center of square above timeline */
+    top: 288px; /* Center of square above timeline (283 + 5) */
 }
 
 .connection-line.private {
     background: #f44336;
-    top: 119.5px; /* Center of square aligned with label */
+    top: 322px; /* Center of square below timeline (317 + 5) */
 }
 
 .connection-line.cross {
@@ -624,7 +627,7 @@ body {
 }
 
 .public-label {
-    top: 60px;
+    top: 260px;
     left: 10px;
     color: #2e7d32;
     font-size: 11px;
@@ -635,7 +638,7 @@ body {
 }
 
 .private-label {
-    top: 120px;
+    top: 320px;
     left: 10px;
     color: #c62828;
     font-size: 11px;
