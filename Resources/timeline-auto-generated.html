@@ -91,7 +91,9 @@
             '🔍': { label: 'REVIEW', color: '#ffd700', borderColor: '#ccac00' },
             '🐢': { label: '', color: '#ffd700', borderColor: '#ccac00' },
             '🏛️': { label: 'HEARING', color: '#ffd700', borderColor: '#ccac00' },
-            '🔒': { label: 'PRIVATE', color: '#f44336', borderColor: '#d32f2f' }
+            '🔒': { label: 'PRIVATE', color: '#f44336', borderColor: '#d32f2f' },
+            '⏰': { label: 'EXPIRED', color: '#f44336', borderColor: '#d32f2f' },
+            '♻️': { label: 'EXTENDED', color: '#4caf50', borderColor: '#388e3c' }
         };
         
         // Toggle continuance visibility
@@ -538,7 +540,7 @@
                 // ALSO check if this is a caseline event (has any other emoji)
                 if (markers) {
                     // Caseline event - find the main emoji (not 🔒, ❌, or 🟢)
-                    const emojiRegex = /([\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{2B00}-\u{2BFF}])[\u{FE0F}]?/gu;
+                    const emojiRegex = /([\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{2B00}-\u{2BFF}]|[\u{23F0}-\u{23FF}])[\u{FE0F}]?/gu;
                     const allEmojis = markers.match(emojiRegex);
                     // Find first emoji that's not a modifier
                     const mainEmoji = allEmojis ? allEmojis.find(e => e !== '🔒' && e !== '❌' && e !== '🟢') : null;
@@ -613,12 +615,12 @@
                 <td style="padding: 2px 12px;">✅ Approved</td>
                 <td style="padding: 2px 12px;">⛔ Denied</td>
                 <td style="padding: 2px 12px;">📐 Plan</td>
+                <td style="padding: 2px 12px;">🔍 Review</td>
             `;
             caselineTable.appendChild(caselineRow1);
             
             const caselineRow2 = document.createElement('tr');
             caselineRow2.innerHTML = `
-                <td style="padding: 2px 12px;">🔍 Review</td>
                 <td style="padding: 2px 12px;">
                     <label style="cursor: pointer;">
                         <input type="checkbox" id="hide-continuances" style="margin-right: 4px; cursor: pointer;" checked onchange="toggleContinuances()">
@@ -626,6 +628,8 @@
                     </label>
                 </td>
                 <td style="padding: 2px 12px;">🏛️ Hearing</td>
+                <td style="padding: 2px 12px;">⏰ Expired</td>
+                <td style="padding: 2px 12px;">♻️ Extended</td>
                 <td style="padding: 2px 12px;">🔒 Private</td>
             `;
             caselineTable.appendChild(caselineRow2);
@@ -1431,9 +1435,10 @@
                         container.appendChild(infoLabel);
                     }
                     
-                    // For single-event cases, draw a line extending to the right
-                    if (caseEvents.length === 1) {
-                        const singleEvent = caseEvents[0];
+                    // For single-event cases OR cases ending with EXPIRED, draw a line extending to the right
+                    const lastEvent = caseEvents[caseEvents.length - 1];
+                    if (caseEvents.length === 1 || lastEvent.originalEmoji === '⏰') {
+                        const eventToExtend = lastEvent.originalEmoji === '⏰' ? lastEvent : caseEvents[0];
                         // Extend line to either current date or end of timeline, whichever is earlier
                         const currentDate = new Date();
                         const lineEndDate = currentDate > endDate ? endDate : currentDate;
@@ -1443,8 +1448,8 @@
                         // Create SVG line from center of node extending right
                         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                         svg.style.position = 'absolute';
-                        svg.style.left = singleEvent.x + 'px';
-                        svg.style.width = (currentX - singleEvent.x) + 'px';
+                        svg.style.left = eventToExtend.x + 'px';
+                        svg.style.width = (currentX - eventToExtend.x) + 'px';
                         svg.style.height = '400px'; // Full container height
                         svg.style.top = '0';
                         svg.style.pointerEvents = 'none';
@@ -1454,20 +1459,27 @@
                         
                         // Start from center of node (0px since x position is already centered)
                         line.setAttribute('x1', '0');
-                        line.setAttribute('x2', (currentX - singleEvent.x) + 'px');
+                        line.setAttribute('x2', (currentX - eventToExtend.x) + 'px');
                         
                         // Y position based on whether event is private
-                        const y = getNodeCenterY(singleEvent.isPrivate);
+                        const y = getNodeCenterY(eventToExtend.isPrivate);
                         line.setAttribute('y1', y);
                         line.setAttribute('y2', y);
                         
                         // Line color follows the node's color
-                        const strokeColor = singleEvent.nodeColor;
+                        const strokeColor = eventToExtend.nodeColor;
                         
                         line.setAttribute('stroke', strokeColor);
                         line.setAttribute('stroke-width', '4');
                         line.setAttribute('stroke-opacity', '0.7');
-                        line.setAttribute('stroke-dasharray', '8 4'); // Dashed to show ongoing
+                        // Solid line for EXPIRED, dashed for ongoing cases
+                        if (eventToExtend.originalEmoji === '⏰') {
+                            // Solid red line for expired cases
+                            line.setAttribute('stroke-dasharray', 'none');
+                        } else {
+                            // Dashed line for ongoing cases
+                            line.setAttribute('stroke-dasharray', '8 4');
+                        }
                         
                         svg.appendChild(line);
                         container.appendChild(svg);
