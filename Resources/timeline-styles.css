@@ -489,6 +489,42 @@ body {
     transition: all 0.2s ease;
 }
 
+/* Status-based label colors */
+.node-label.status-pending {
+    color: #ffd700; /* Yellow for submissions */
+    font-weight: 600;
+}
+
+.node-label.status-peer-review {
+    color: #ffd700; /* Yellow for peer review */
+    font-weight: 600;
+}
+
+.node-label.status-wcc-hearing {
+    color: #ffd700; /* Yellow for WCC hearings */
+    font-weight: 600;
+}
+
+.node-label.status-privileged {
+    color: #ffd700; /* Yellow for privileged dealings */
+    font-weight: 600;
+}
+
+.node-label.status-plan {
+    color: #ffd700; /* Yellow for plan submissions */
+    font-weight: 600;
+}
+
+.node-label.status-denied {
+    color: #d32f2f; /* Red for denials */
+    font-weight: 600;
+}
+
+.node-label.status-approved {
+    color: #388e3c; /* Green for approvals */
+    font-weight: 600;
+}
+
 .node-label:hover {
     background: rgba(255, 255, 255, 1);
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);

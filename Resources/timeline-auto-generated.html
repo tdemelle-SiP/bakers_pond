@@ -476,16 +476,24 @@
                 const date = new Date(dateParts[0], parseInt(dateParts[1]) - 1, dateParts[2]);
                 if (isNaN(date.getTime())) continue;
                 
-                // Extract title from document link or text
+                // Extract title and URL from document link or text
                 let title = document;
-                const linkMatch = document.match(/\[([^\]]+)\]/);
+                let documentUrl = null;
+                const linkMatch = document.match(/\[([^\]]+)\]\(([^)]+)\)/);
                 if (linkMatch) {
                     title = linkMatch[1];
+                    documentUrl = linkMatch[2];
+                } else {
+                    // Try simpler format without URL
+                    const simpleLinkMatch = document.match(/\[([^\]]+)\]/);
+                    if (simpleLinkMatch) {
+                        title = simpleLinkMatch[1];
+                    }
                 }
                 
                 // Clean up title
                 title = title.replace(/_/g, ' ')
-                           .replace(/MISSING:/g, '❌')
+                           .replace(/MISSING:/g, '⚠️ ')
                            .replace(/\.txt$/g, '')
                            .replace(/\.pdf$/g, '');
                 
@@ -499,7 +507,7 @@
                 let eventClass = '';
                 let isPrivate = false;
                 
-                // Check markers (❌ is now only a secondary indicator)
+                // Check markers (⚠️  is now only a secondary indicator)
                 for (const [marker, className] of Object.entries(markerTypes)) {
                     if (markers.includes(marker)) {
                         eventClass = className;
@@ -540,7 +548,8 @@
                     eventClass: eventClass,
                     isPrivate: isPrivate,
                     markers: markers,
-                    caseNumber: caseNumber
+                    caseNumber: caseNumber,
+                    documentUrl: documentUrl
                 });
             }
             
@@ -557,7 +566,7 @@
             // Add missing document indicator to legend
             const missingLegend = document.createElement('div');
             missingLegend.className = 'nav-legend-item';
-            missingLegend.innerHTML = '<span style="color: #d32f2f; font-weight: bold; font-size: 12px;">✕</span><span style="margin-left: 8px;">Missing Document (❌)</span>';
+            missingLegend.innerHTML = '<span style="color: #d32f2f; font-weight: bold; font-size: 12px;">⚠️</span><span style="margin-left: 8px;">Missing Document</span>';
             
             const legendEl = document.getElementById('nav-legend');
             legendEl.innerHTML = ''; // Clear existing legend items
@@ -756,10 +765,10 @@
                 eventEl.appendChild(tooltip);
                 
                 // Check if this event also has missing document marker
-                if (event.markers.includes('❌')) {
+                if (event.markers.includes('⚠️ ')) {
                     const missingX = document.createElement('div');
                     missingX.className = 'missing-indicator';
-                    missingX.textContent = '✕';
+                    missingX.textContent = '⚠️';
                     eventEl.appendChild(missingX);
                 }
                 
@@ -906,16 +915,83 @@
                     let proceduralTitle = event.detail.replace(/\*\*/g, '').trim();
                     proceduralTitle = proceduralTitle.replace(/\s*\(.*?\)\s*.*$/, '');
                     
-                    // Simple emoji-based status
+                    // Centralized status configuration
+                    const statusConfig = {
+                        // Yellow statuses (procedural/in-progress)
+                        'pending': { 
+                            emoji: '⭐',
+                            text: 'PENDING',
+                            color: '#ffd700',
+                            borderColor: '#ccac00'
+                        },
+                        'peer-review': {
+                            text: 'PEER REVIEW',
+                            color: '#ffd700',
+                            borderColor: '#ccac00'
+                        },
+                        'wcc-hearing': {
+                            text: 'WCC HEARING',
+                            color: '#ffd700',
+                            borderColor: '#ccac00',
+                            emoji: '🏛️',
+                            useEmojiAsNode: true
+                        },
+                        'privileged': {
+                            text: 'PRIV',
+                            color: '#ffd700',
+                            borderColor: '#ccac00',
+                            emoji: '⚖️',
+                            useEmojiAsNode: true
+                        },
+                        'plan': {
+                            text: 'PLAN',
+                            color: '#ffd700',
+                            borderColor: '#ccac00',
+                            emoji: '📐',
+                            useEmojiAsNode: true
+                        },
+                        
+                        // Red statuses (negative outcomes)
+                        'denied': {
+                            emoji: '⛔',
+                            text: 'DENIED',
+                            color: '#f44336',
+                            borderColor: '#d32f2f',
+                            useEmojiAsNode: true
+                        },
+                        
+                        // Green statuses (positive outcomes)
+                        'approved': {
+                            emoji: '✅',
+                            text: 'APPROVED',
+                            color: '#4caf50',
+                            borderColor: '#388e3c'
+                        }
+                    };
+                    
+                    // Store globally for reuse
+                    window.statusConfig = statusConfig;
+                    
+                    // Status detection - check emojis first, then text patterns
                     let proceduralStatus = null;
-                    if (event.detail.includes('⭐')) {
-                        proceduralStatus = 'pending';
-                    } else if (event.detail.includes('🛑')) {
-                        proceduralStatus = 'denied';
-                    } else if (event.detail.includes('✅')) {
-                        proceduralStatus = 'approved';
-                    } else if (event.detail.includes('🔒')) {
-                        proceduralStatus = 'inherit'; // Special status for behind-closed-doors
+                    
+                    // Check emoji matches first
+                    for (const [status, config] of Object.entries(statusConfig)) {
+                        if (config.emoji && event.detail.includes(config.emoji)) {
+                            proceduralStatus = status;
+                            break;
+                        }
+                    }
+                    
+                    // If no emoji match, check text patterns
+                    if (!proceduralStatus) {
+                        const titleUpper = proceduralTitle.toUpperCase();
+                        for (const [status, config] of Object.entries(statusConfig)) {
+                            if (config.text && titleUpper.includes(config.text)) {
+                                proceduralStatus = status;
+                                break;
+                            }
+                        }
                     }
                     
                     caseProceduralEvents[event.caseNumber].push({
@@ -925,7 +1001,9 @@
                         title: proceduralTitle,
                         detail: event.detail,
                         status: proceduralStatus,
-                        isPrivate: event.isPrivate
+                        isPrivate: event.isPrivate,
+                        documentUrl: event.documentUrl,
+                        markers: event.markers
                     });
                 }
             });
@@ -976,10 +1054,10 @@
                         abbreviation = 'ANR';
                     } else if (procEvent.title.includes('SORAD')) {
                         abbreviation = 'SORAD';
-                    } else if (procEvent.title.includes('ORAD')) {
-                        abbreviation = 'ORAD';
                     } else if (procEvent.title.includes('FORAD')) {
                         abbreviation = 'FORAD';
+                    } else if (procEvent.title.includes('ORAD')) {
+                        abbreviation = 'ORAD';
                     } else if (procEvent.title.includes('NOI')) {
                         abbreviation = 'NOI';
                     } else if (procEvent.title.includes('OOC')) {
@@ -998,6 +1076,8 @@
                         abbreviation = 'PRIV';
                     } else if (procEvent.title.includes('approves')) {
                         abbreviation = 'APPV';
+                    } else if (procEvent.title.includes('Plan') || procEvent.title.includes('PLAN')) {
+                        abbreviation = 'PLAN';
                     }
                     
                     // Measure actual rendered dimensions
@@ -1143,32 +1223,27 @@
                     procEl.className = `event case-procedural case-${caseNum.slice(-4)} ${procEvent.isPrivate ? 'case-procedural-below' : 'case-procedural-above'}`;
                     procEl.style.left = procEvent.x + 'px';
                     
-                    // Set colors based on status
-                    if (procEvent.status === 'pending') {
-                        procEl.style.backgroundColor = '#ffd700'; // Yellow
-                        procEl.style.borderColor = '#ccac00'; // Darker yellow border
-                    } else if (procEvent.status === 'denied') {
-                        procEl.style.backgroundColor = '#f44336'; // Red
-                        procEl.style.borderColor = '#d32f2f'; // Darker red border
-                    } else if (procEvent.status === 'approved') {
-                        procEl.style.backgroundColor = '#4caf50'; // Green
-                        procEl.style.borderColor = '#388e3c'; // Darker green border
-                    } else if (procEvent.status === 'inherit' && idx > 0) {
-                        // Inherit color from previous node
-                        const prevEvent = caseEvents[idx - 1];
-                        if (prevEvent.status === 'pending' || (prevEvent.status === 'inherit' && prevEvent.inheritedColor === 'pending')) {
-                            procEl.style.backgroundColor = '#ffd700';
-                            procEl.style.borderColor = '#ccac00';
-                            procEvent.inheritedColor = 'pending';
-                        } else if (prevEvent.status === 'denied' || (prevEvent.status === 'inherit' && prevEvent.inheritedColor === 'denied')) {
-                            procEl.style.backgroundColor = '#f44336';
-                            procEl.style.borderColor = '#d32f2f';
-                            procEvent.inheritedColor = 'denied';
-                        } else if (prevEvent.status === 'approved' || (prevEvent.status === 'inherit' && prevEvent.inheritedColor === 'approved')) {
-                            procEl.style.backgroundColor = '#4caf50';
-                            procEl.style.borderColor = '#388e3c';
-                            procEvent.inheritedColor = 'approved';
-                        }
+                    // Apply colors based on status using centralized config
+                    const statusInfo = window.statusConfig[procEvent.status];
+                    if (statusInfo) {
+                        procEl.style.backgroundColor = statusInfo.color;
+                        procEl.style.borderColor = statusInfo.borderColor;
+                    } else {
+                        // Default gray for unknown status
+                        procEl.style.backgroundColor = '#999999';
+                        procEl.style.borderColor = '#666666';
+                    }
+                    
+                    // Apply emoji as node if configured
+                    if (statusInfo && statusInfo.useEmojiAsNode) {
+                        procEl.style.backgroundColor = 'transparent';
+                        procEl.style.border = 'none';
+                        procEl.style.fontSize = '16px';
+                        procEl.style.lineHeight = '1';
+                        procEl.style.width = 'auto';
+                        procEl.style.height = 'auto';
+                        procEl.style.transform = 'translateX(-50%)';
+                        procEl.textContent = statusInfo.emoji;
                     }
                     
                     // Create tooltip
@@ -1180,6 +1255,39 @@
                         <div class="event-detail">${procEvent.dateStr}</div>
                     `;
                     procEl.appendChild(tooltip);
+                    
+                    // Check if this event has a scales or lock emoji marker
+                    if (procEvent.markers && procEvent.markers.includes('⚖️')) {
+                        // Replace the colored dot with a scales emoji
+                        procEl.style.backgroundColor = 'transparent';
+                        procEl.style.border = 'none';
+                        procEl.style.fontSize = '16px';
+                        procEl.style.lineHeight = '1';
+                        procEl.style.width = 'auto';
+                        procEl.style.height = 'auto';
+                        procEl.style.transform = 'translateX(-50%)';
+                        procEl.textContent = '⚖️';
+                    } else if (procEvent.markers && procEvent.markers.includes('🔒')) {
+                        // Replace the colored dot with a lock emoji
+                        procEl.style.backgroundColor = 'transparent';
+                        procEl.style.border = 'none';
+                        procEl.style.fontSize = '16px';
+                        procEl.style.lineHeight = '1';
+                        procEl.style.width = 'auto';
+                        procEl.style.height = 'auto';
+                        procEl.style.transform = 'translateX(-50%)';
+                        procEl.textContent = '🔒';
+                    } else if (procEvent.markers && procEvent.markers.includes('🔍')) {
+                        // Replace the colored dot with a magnifying glass emoji
+                        procEl.style.backgroundColor = 'transparent';
+                        procEl.style.border = 'none';
+                        procEl.style.fontSize = '16px';
+                        procEl.style.lineHeight = '1';
+                        procEl.style.width = 'auto';
+                        procEl.style.height = 'auto';
+                        procEl.style.transform = 'translateX(-50%)';
+                        procEl.textContent = '🔍';
+                    }
                     
                     // Find the resolved label position from allLabelData
                     const labelData = allLabelData.find(ld => 
@@ -1194,9 +1302,33 @@
                     
                     // Create label using stored data
                     const procLabel = document.createElement('div');
-                    procLabel.className = `node-label ${procEvent.isPrivate ? 'node-label-below' : 'node-label-above'}`;
+                    let statusClass = '';
+                    if (procEvent.status === 'pending') {
+                        statusClass = 'status-pending';
+                    } else if (procEvent.status === 'peer-review') {
+                        statusClass = 'status-peer-review';
+                    } else if (procEvent.status === 'wcc-hearing') {
+                        statusClass = 'status-wcc-hearing';
+                    } else if (procEvent.status === 'privileged') {
+                        statusClass = 'status-privileged';
+                    } else if (procEvent.status === 'plan') {
+                        statusClass = 'status-plan';
+                    } else if (procEvent.status === 'denied') {
+                        statusClass = 'status-denied';
+                    } else if (procEvent.status === 'approved') {
+                        statusClass = 'status-approved';
+                    }
+                    procLabel.className = `node-label ${procEvent.isPrivate ? 'node-label-below' : 'node-label-above'} ${statusClass}`;
                     procLabel.textContent = labelData.abbreviation;
                     procLabel.title = `${procEvent.title} - ${procEvent.dateStr}`;
+                    
+                    // Make label clickable if it has a document URL
+                    if (procEvent.documentUrl) {
+                        procLabel.style.cursor = 'pointer';
+                        procLabel.onclick = () => {
+                            window.open(procEvent.documentUrl, '_blank');
+                        };
+                    }
                     
                     // Use the pre-resolved positions
                     const labelX = labelData.x;
@@ -1290,15 +1422,9 @@
                             line.setAttribute('y1', y1);
                             line.setAttribute('x2', x2);
                             line.setAttribute('y2', y2);
-                            // Line color follows the previous node's status (including inherited)
-                            let strokeColor = '#999'; // Default gray
-                            if (prevEvent.status === 'pending' || prevEvent.inheritedColor === 'pending') {
-                                strokeColor = '#ffd700'; // Yellow
-                            } else if (prevEvent.status === 'denied' || prevEvent.inheritedColor === 'denied') {
-                                strokeColor = '#f44336'; // Red
-                            } else if (prevEvent.status === 'approved' || prevEvent.inheritedColor === 'approved') {
-                                strokeColor = '#4caf50'; // Green
-                            }
+                            // Line color follows the previous node's status
+                            const prevStatusInfo = window.statusConfig[prevEvent.status];
+                            const strokeColor = prevStatusInfo ? prevStatusInfo.color : '#999'; // Default gray
                             line.setAttribute('stroke', strokeColor);
                             line.setAttribute('stroke-width', '4');
                             line.setAttribute('stroke-opacity', '0.7');
@@ -1371,14 +1497,8 @@
                         line.setAttribute('y2', y);
                         
                         // Line color follows the node's status
-                        let strokeColor = '#999'; // Default gray
-                        if (singleEvent.status === 'pending') {
-                            strokeColor = '#ffd700'; // Yellow
-                        } else if (singleEvent.status === 'denied') {
-                            strokeColor = '#f44336'; // Red
-                        } else if (singleEvent.status === 'approved') {
-                            strokeColor = '#4caf50'; // Green
-                        }
+                        const statusInfo = window.statusConfig[singleEvent.status];
+                        const strokeColor = statusInfo ? statusInfo.color : '#999'; // Default gray
                         
                         line.setAttribute('stroke', strokeColor);
                         line.setAttribute('stroke-width', '4');
@@ -1394,7 +1514,7 @@
             // Calculate statistics
             const stats = {
                 criticalMoments: events.filter(e => e.markers.includes('🟡')).length,
-                missingDocs: events.filter(e => e.markers.includes('❌')).length,
+                missingDocs: events.filter(e => e.markers.includes('⚠️ ')).length,
                 privileged: events.filter(e => e.markers.includes('🔴')).length,
                 continuances: events.filter(e => e.markers.includes('🐢')).length,
                 totalEvents: events.length
