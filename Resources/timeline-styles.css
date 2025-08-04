@@ -436,11 +436,11 @@ body {
 }
 
 .case-procedural-above {
-    top: 120px; /* Case timeline well above main timeline */
+    top: 115px; /* Public nodes - moved up from 120px */
 }
 
 .case-procedural-below {
-    top: 131px; /* Private nodes 11px lower than public nodes */
+    top: 140px; /* Private nodes - increased separation to 25px */
 }
 
 /* Case procedural labels */
