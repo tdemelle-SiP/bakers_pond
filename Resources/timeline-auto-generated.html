@@ -70,7 +70,6 @@
     <div class="main-content">
         <div class="container">
         <div id="loading" class="loading">Loading timeline data...</div>
-        <div id="error" class="error" style="display: none;"></div>
         
         <div id="timeline-content" style="display: none;">
             <div class="timeline-container" id="timeline-container"></div>
@@ -82,6 +81,35 @@
         let allEvents = [];
         let filteredEvents = [];
         let currentDateRange = null;
+        
+        // Emoji configuration for caseline
+        const emojiConfig = {
+            '⭐': { label: 'NOI', color: '#ffd700', borderColor: '#ccac00' },
+            '✅': { label: 'APPROVED', color: '#4caf50', borderColor: '#388e3c' },
+            '⛔': { label: 'DENIED', color: '#f44336', borderColor: '#d32f2f' },
+            '📐': { label: 'PLAN', color: '#ffd700', borderColor: '#ccac00' },
+            '🔍': { label: 'REVIEW', color: '#ffd700', borderColor: '#ccac00' },
+            '🐢': { label: '', color: '#ffd700', borderColor: '#ccac00' },
+            '🏛️': { label: 'HEARING', color: '#ffd700', borderColor: '#ccac00' },
+            '🔒': { label: 'PRIVATE', color: '#f44336', borderColor: '#d32f2f' }
+        };
+        
+        // Toggle continuance visibility
+        function toggleContinuances() {
+            const checkbox = document.getElementById('hide-continuances');
+            const continuanceNodes = document.querySelectorAll('.event.case-procedural');
+            
+            // Save state to localStorage
+            localStorage.setItem('timeline-show-continuances', checkbox.checked);
+            
+            continuanceNodes.forEach(node => {
+                // Check if this node's first text is the turtle emoji
+                const firstText = node.childNodes[0];
+                if (firstText && firstText.nodeType === Node.TEXT_NODE && firstText.textContent.trim() === '🐢') {
+                    node.style.display = checkbox.checked ? 'block' : 'none';
+                }
+            });
+        }
         
         // Case filter dropdown functions
         function toggleCaseDropdown() {
@@ -129,56 +157,45 @@
         
         // Timeline data parser and renderer
         async function loadTimeline() {
-            try {
-                // Fetch the timeline overview markdown file with cache busting
-                const response = await fetch('../!42_Mill_St_Timeline_Overview.md?v=' + Date.now());
-                if (!response.ok) throw new Error('Failed to load timeline data');
+            // Fetch the timeline overview markdown file with cache busting
+            const response = await fetch('../!42_Mill_St_Timeline_Overview.md?v=' + Date.now());
+            
+            const text = await response.text();
+            allEvents = parseTimelineData(text);
+            
+            // Populate case number filter
+            populateCaseFilter(allEvents);
+            
+            // Set up filter handlers first to load saved preferences
+            setupFilterHandlers();
+            
+            // Apply saved filters if they exist
+            const savedStartDate = localStorage.getItem('timeline-start-date');
+            const savedEndDate = localStorage.getItem('timeline-end-date');
+            const savedCases = localStorage.getItem('timeline-selected-cases');
+            
+            if (savedStartDate || savedEndDate || savedCases) {
+                // Apply saved filters
+                applyFilters();
+            } else {
+                // Initial render with all events and saved scale
+                filteredEvents = allEvents;
                 
-                const text = await response.text();
-                allEvents = parseTimelineData(text);
-                
-                if (allEvents.length === 0) {
-                    throw new Error('No events found in timeline data');
-                }
-                
-                // Populate case number filter
-                populateCaseFilter(allEvents);
-                
-                // Set up filter handlers first to load saved preferences
-                setupFilterHandlers();
-                
-                // Apply saved filters if they exist
-                const savedStartDate = localStorage.getItem('timeline-start-date');
-                const savedEndDate = localStorage.getItem('timeline-end-date');
-                const savedCases = localStorage.getItem('timeline-selected-cases');
-                
-                if (savedStartDate || savedEndDate || savedCases) {
-                    // Apply saved filters
-                    applyFilters();
+                // Check if fit-to-window is enabled
+                const fitToWindowEnabled = localStorage.getItem('timeline-fit-to-window') === 'true';
+                if (fitToWindowEnabled) {
+                    // First render to establish date range
+                    renderTimeline(filteredEvents);
+                    // Then calculate and apply fit scale
+                    setTimeout(calculateAndApplyFitScale, 0);
                 } else {
-                    // Initial render with all events and saved scale
-                    filteredEvents = allEvents;
-                    
-                    // Check if fit-to-window is enabled
-                    const fitToWindowEnabled = localStorage.getItem('timeline-fit-to-window') === 'true';
-                    if (fitToWindowEnabled) {
-                        // First render to establish date range
-                        renderTimeline(filteredEvents);
-                        // Then calculate and apply fit scale
-                        setTimeout(calculateAndApplyFitScale, 0);
-                    } else {
-                        const savedScale = localStorage.getItem('timeline-scale');
-                        renderTimeline(filteredEvents, savedScale ? parseFloat(savedScale) : null);
-                    }
+                    const savedScale = localStorage.getItem('timeline-scale');
+                    renderTimeline(filteredEvents, savedScale ? parseFloat(savedScale) : null);
                 }
-                
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('timeline-content').style.display = 'block';
-            } catch (error) {
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('error').style.display = 'block';
-                document.getElementById('error').textContent = 'Error: ' + error.message;
             }
+            
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('timeline-content').style.display = 'block';
         }
         
         function populateCaseFilter(events) {
@@ -493,111 +510,140 @@
                 
                 // Clean up title
                 title = title.replace(/_/g, ' ')
-                           .replace(/MISSING:/g, '⚠️ ')
+                           .replace(/MISSING:/g, '❌ ')
                            .replace(/\.txt$/g, '')
                            .replace(/\.pdf$/g, '');
                 
-                // Determine event type based on markers and content
-                const markerTypes = {
-                    '🟡': 'critical-moment',
-                    '🔒': 'privileged',
-                    '🐢': 'continuance'
-                };
+                // EMOJI-BASED EVENT SYSTEM - mrkr column is single source of truth
+                const isPrivate = markers.includes('🔒');
+                const hasMissingDoc = markers.includes('❌');
                 
-                let eventClass = '';
-                let isPrivate = false;
+                // Check if this is a timeline event (has 🟢)
+                if (markers.includes('🟢')) {
+                    // Timeline event
+                    events.push({
+                        date: date,
+                        dateStr: dateStr,
+                        title: title,
+                        detail: procedural.trim(),
+                        displayDetail: procedural.replace(/\*\*/g, '').trim().substring(0, 100),
+                        eventClass: isPrivate ? 'tracked-event-priv' : 'tracked-event',
+                        isPrivate: isPrivate,
+                        markers: markers,
+                        caseNumber: caseNumber,
+                        documentUrl: documentUrl
+                    });
+                }
                 
-                // Check markers (⚠️  is now only a secondary indicator)
-                for (const [marker, className] of Object.entries(markerTypes)) {
-                    if (markers.includes(marker)) {
-                        eventClass = className;
-                        break;
+                // ALSO check if this is a caseline event (has any other emoji)
+                if (markers) {
+                    // Caseline event - find the main emoji (not 🔒, ❌, or 🟢)
+                    const emojiRegex = /([\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{2B00}-\u{2BFF}])[\u{FE0F}]?/gu;
+                    const allEmojis = markers.match(emojiRegex);
+                    // Find first emoji that's not a modifier
+                    const mainEmoji = allEmojis ? allEmojis.find(e => e !== '🔒' && e !== '❌' && e !== '🟢') : null;
+                    
+                    if (mainEmoji) {
+                        // Check if emoji is recognized
+                        let proceduralLabel = null;
+                        if (!emojiConfig[mainEmoji]) {
+                            // Not recognized, look for **LABEL**
+                            const labelMatch = procedural.match(/\*\*([^*]+)\*\*/);
+                            if (labelMatch) {
+                                proceduralLabel = labelMatch[1];
+                            }
+                        }
+                        
+                        events.push({
+                            date: date,
+                            dateStr: dateStr,
+                            title: title,
+                            detail: procedural.trim(),
+                            displayDetail: procedural.replace(/\*\*/g, '').trim().substring(0, 100),
+                            eventClass: 'case-procedural',
+                            isPrivate: isPrivate,
+                            markers: markers,
+                            caseNumber: caseNumber,
+                            documentUrl: documentUrl,
+                            caselineEmoji: mainEmoji,
+                            proceduralLabel: proceduralLabel
+                        });
                     }
                 }
-                
-                // Always check for 🔒 to set isPrivate, regardless of other markers
-                if (markers.includes('🔒')) {
-                    isPrivate = true;
-                }
-                
-                // If no primary marker found, skip this event
-                if (!eventClass) {
-                    continue;
-                }
-                
-                // Extract key procedural text (preserve bold markers for parsing)
-                let detail = procedural.trim();
-                
-                // Debug raw procedural value
-                if (caseNumber && (procedural.includes('filed') || procedural.includes('issued') || procedural.includes('denied'))) {
-                    console.log(`Raw procedural for ${caseNumber}:`, procedural);
-                }
-                
-                // Create display version without asterisks for tooltip
-                let displayDetail = detail.replace(/\*\*/g, '').replace(/^["]+|["]+$/g, '').trim();
-                if (displayDetail.length > 100) {
-                    displayDetail = displayDetail.substring(0, 97) + '...';
-                }
-                
-                events.push({
-                    date: date,
-                    dateStr: dateStr,
-                    title: title,
-                    detail: detail,  // Raw detail with bold markers
-                    displayDetail: displayDetail,  // Clean version for display
-                    eventClass: eventClass,
-                    isPrivate: isPrivate,
-                    markers: markers,
-                    caseNumber: caseNumber,
-                    documentUrl: documentUrl
-                });
             }
             
             return events.sort((a, b) => a.date - b.date);
         }
         
         function renderTimeline(events, customScale = null) {
-            // Create legend
-            const legendItems = [
-                { class: 'normal-public', label: 'Public Events' },
-                { class: 'privileged', label: 'Shadow Events' }
-            ];
-            
-            // Add missing document indicator to legend
-            const missingLegend = document.createElement('div');
-            missingLegend.className = 'nav-legend-item';
-            missingLegend.innerHTML = '<span style="color: #d32f2f; font-weight: bold; font-size: 12px;">⚠️</span><span style="margin-left: 8px;">Missing Document</span>';
-            
+            // Create legend with emoji explanations - Caseline and Timeline side by side
             const legendEl = document.getElementById('nav-legend');
             legendEl.innerHTML = ''; // Clear existing legend items
-            legendItems.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'nav-legend-item';
-                div.innerHTML = `
-                    <div class="legend-box ${item.class}" style="
-                        background: var(--bg);
-                        border-color: var(--border);
-                        ${item.class === 'missing-file' ? 'border-style: dashed;' : ''}
-                    "></div>
-                    <span>${item.label}</span>
-                `;
-                
-                // Set CSS variables for legend colors
-                const box = div.querySelector('.legend-box');
-                const styles = getComputedStyle(document.createElement('div'));
-                if (item.class === 'normal-public') {
-                    box.style.background = '#4caf50';
-                    box.style.borderColor = '#388e3c';
-                } else if (item.class === 'privileged') {
-                    box.style.background = '#f44336';
-                    box.style.borderColor = '#d32f2f';
-                }
-                
-                legendEl.appendChild(div);
-            });
+            legendEl.style.display = 'flex';
+            legendEl.style.gap = '20px';
+            legendEl.style.alignItems = 'center';
             
-            // Add missing document indicator to legend
-            legendEl.appendChild(missingLegend);
+            // Caseline legend (left side)
+            const caselineDiv = document.createElement('div');
+            caselineDiv.style.paddingRight = '20px';
+            caselineDiv.style.borderRight = '2px solid #546e7a';
+            const caselineTable = document.createElement('table');
+            caselineTable.style.borderCollapse = 'collapse';
+            caselineTable.style.color = 'white';
+            caselineTable.style.fontSize = '12px';
+            
+            const caselineRow1 = document.createElement('tr');
+            caselineRow1.innerHTML = `
+                <td style="padding: 2px 10px 2px 0; font-weight: bold; white-space: nowrap; vertical-align: top;" rowspan="2">Caseline:</td>
+                <td style="padding: 2px 12px;">⭐ NOI</td>
+                <td style="padding: 2px 12px;">✅ Approved</td>
+                <td style="padding: 2px 12px;">⛔ Denied</td>
+                <td style="padding: 2px 12px;">📐 Plan</td>
+            `;
+            caselineTable.appendChild(caselineRow1);
+            
+            const caselineRow2 = document.createElement('tr');
+            caselineRow2.innerHTML = `
+                <td style="padding: 2px 12px;">🔍 Review</td>
+                <td style="padding: 2px 12px;">
+                    <label style="cursor: pointer;">
+                        <input type="checkbox" id="hide-continuances" style="margin-right: 4px; cursor: pointer;" checked onchange="toggleContinuances()">
+                        🐢 Continued
+                    </label>
+                </td>
+                <td style="padding: 2px 12px;">🏛️ Hearing</td>
+                <td style="padding: 2px 12px;">🔒 Private</td>
+            `;
+            caselineTable.appendChild(caselineRow2);
+            caselineDiv.appendChild(caselineTable);
+            
+            // Timeline legend (right side)
+            const timelineDiv = document.createElement('div');
+            const timelineTable = document.createElement('table');
+            timelineTable.style.borderCollapse = 'collapse';
+            timelineTable.style.color = 'white';
+            timelineTable.style.fontSize = '12px';
+            
+            const timelineRow = document.createElement('tr');
+            timelineRow.innerHTML = `
+                <td style="padding: 2px 10px 2px 0; font-weight: bold; white-space: nowrap;">Timeline:</td>
+                <td style="padding: 2px 12px;"><span style="display: inline-block; width: 10px; height: 10px; background: #4caf50; border: 1px solid #388e3c; margin-right: 5px;"></span>Public Event</td>
+                <td style="padding: 2px 12px;"><span style="display: inline-block; width: 10px; height: 10px; background: #f44336; border: 1px solid #d32f2f; margin-right: 5px;"></span>Private Event</td>
+                <td style="padding: 2px 12px;">❌ Missing Document</td>
+            `;
+            timelineTable.appendChild(timelineRow);
+            timelineDiv.appendChild(timelineTable);
+            
+            legendEl.appendChild(caselineDiv);
+            legendEl.appendChild(timelineDiv);
+            
+            // Apply saved continuance visibility state
+            const savedShowContinuances = localStorage.getItem('timeline-show-continuances');
+            if (savedShowContinuances !== null) {
+                const checkbox = document.getElementById('hide-continuances');
+                checkbox.checked = savedShowContinuances === 'true';
+                // Don't call toggleContinuances() here as nodes aren't rendered yet
+            }
             
             // Create timeline container content
             const container = document.getElementById('timeline-container');
@@ -606,9 +652,9 @@
             container.innerHTML = `
                 <div class="timeline-section-background public-section"></div>
                 <div class="timeline-section-background private-section"></div>
-                <div class="section-label public-label">PUBLIC PROCEEDINGS</div>
-                <div class="section-label private-label">SHADOW PROCEEDINGS</div>
-                <div class="section-label timeline-title">PROCEDURAL TIMELINE</div>
+                <div class="section-label public-label">TIMELINE: PUBLIC</div>
+                <div class="section-label private-label">TIMELINE: PRIVATE</div>
+                <div class="section-label timeline-title">CASELINE</div>
                 <div class="timeline-line"></div>
             `;
             
@@ -628,7 +674,7 @@
             // Store date range globally for fit-to-window calculations
             currentDateRange = { startDate, endDate, totalDays };
             
-            const pixelsPerDay = customScale || parseFloat(document.getElementById('scale-slider')?.value) || 0.8;
+            const pixelsPerDay = customScale || parseFloat(document.getElementById('scale-slider').value);
             const timelineWidth = Math.max(totalDays * pixelsPerDay + 300, 1200);
             
             // Set the container width dynamically
@@ -704,30 +750,19 @@
                 '338-0756': { year: '2023', name: 'Dam' }
             };
             
-            // Debug: log event count and breakdown
-            console.log(`Rendering ${events.length} events`);
-            const publicCount = events.filter(e => !e.isPrivate).length;
-            const privateCount = events.filter(e => e.isPrivate).length;
-            console.log(`Public: ${publicCount}, Private: ${privateCount}`);
             
-            // Debug: Check first few events to see data structure
-            console.log('First 3 events with case numbers:', 
-                events.filter(e => e.caseNumber).slice(0, 3).map(e => ({
-                    date: e.dateStr,
-                    case: e.caseNumber,
-                    detail: e.detail
-                }))
-            );
+            // Separate timeline events from caseline events
+            const timelineEvents = events.filter(e => e.eventClass !== 'case-procedural');
+            const caselineEvents = events.filter(e => e.eventClass === 'case-procedural');
             
             // PASS 1: Regular timeline events
-            events.forEach((event, index) => {
+            timelineEvents.forEach((event, index) => {
                 const daysFromStart = (event.date - startDate) / (1000 * 60 * 60 * 24);
                 const x = 250 + (daysFromStart * pixelsPerDay);
                 
                 const eventEl = document.createElement('div');
-                // For private events, always use 'privileged' class for red color
-                const colorClass = event.isPrivate ? 'privileged' : event.eventClass;
-                eventEl.className = `event ${colorClass} ${event.isPrivate ? 'event-below' : 'event-above'}`;
+                // Use the eventClass which already includes the private distinction
+                eventEl.className = `event ${event.eventClass} ${event.isPrivate ? 'event-below' : 'event-above'}`;
                 eventEl.style.left = x + 'px';
                 
                 // Only create date label if we haven't already created one for this date/level
@@ -765,10 +800,10 @@
                 eventEl.appendChild(tooltip);
                 
                 // Check if this event also has missing document marker
-                if (event.markers.includes('⚠️ ')) {
+                if (event.markers.includes('❌')) {
                     const missingX = document.createElement('div');
                     missingX.className = 'missing-indicator';
-                    missingX.textContent = '⚠️';
+                    missingX.textContent = '❌';
                     eventEl.appendChild(missingX);
                 }
                 
@@ -902,109 +937,65 @@
                 }
             });
             
-            // PASS 2: Collect procedural events for case timelines
-            events.forEach(event => {
+            
+            // PASS 2: Collect caseline events
+            caselineEvents.forEach(event => {
                 const daysFromStart = (event.date - startDate) / (1000 * 60 * 60 * 24);
                 const x = 250 + (daysFromStart * pixelsPerDay);
                 
-                // Check if this is a procedural event
-                const isProcedural = event.caseNumber && event.detail !== '—';
+                // Determine display emoji and get configuration
+                const displayEmoji = event.isPrivate ? '🔒' : event.caselineEmoji;
+                const config = emojiConfig[event.caselineEmoji];
                 
-                if (isProcedural && event.caseNumber && caseProceduralEvents[event.caseNumber]) {
-                    // Extract title and status
-                    let proceduralTitle = event.detail.replace(/\*\*/g, '').trim();
-                    proceduralTitle = proceduralTitle.replace(/\s*\(.*?\)\s*.*$/, '');
+                // Get label and colors - use config if recognized, otherwise use procedural label and defaults
+                const nodeLabel = config ? config.label : (event.proceduralLabel || '');
+                const nodeColor = config ? config.color : '#999999';
+                const borderColor = config ? config.borderColor : '#666666';
+                
+                const eventData = {
+                    x: x,
+                    date: event.date,
+                    dateStr: event.dateStr,
+                    title: event.detail.replace(/\*\*/g, '').trim(),
+                    detail: event.detail,
+                    nodeEmoji: displayEmoji,
+                    originalEmoji: event.caselineEmoji,
+                    nodeLabel: nodeLabel,
+                    nodeColor: nodeColor,
+                    borderColor: borderColor,
+                    isPrivate: event.isPrivate,
+                    documentUrl: event.documentUrl,
+                    markers: event.markers,
+                    caseNumber: event.caseNumber
+                };
+                
+                if (event.caseNumber && caseProceduralEvents[event.caseNumber]) {
+                    // Add to case group for connection lines
+                    caseProceduralEvents[event.caseNumber].push(eventData);
+                } else {
+                    // Standalone event - render immediately
+                    const procEl = document.createElement('div');
+                    procEl.className = `event case-procedural ${event.isPrivate ? 'case-procedural-below' : 'case-procedural-above'}`;
+                    procEl.style.left = x + 'px';
+                    procEl.style.backgroundColor = 'transparent';
+                    procEl.style.border = 'none';
+                    procEl.style.fontSize = '16px';
+                    procEl.style.lineHeight = '1';
+                    procEl.style.width = 'auto';
+                    procEl.style.height = 'auto';
+                    procEl.style.transform = 'translateX(-50%)';
+                    procEl.textContent = displayEmoji;
                     
-                    // Centralized status configuration
-                    const statusConfig = {
-                        // Yellow statuses (procedural/in-progress)
-                        'pending': { 
-                            emoji: '⭐',
-                            text: 'PENDING',
-                            color: '#ffd700',
-                            borderColor: '#ccac00'
-                        },
-                        'peer-review': {
-                            text: 'PEER REVIEW',
-                            color: '#ffd700',
-                            borderColor: '#ccac00'
-                        },
-                        'wcc-hearing': {
-                            text: 'WCC HEARING',
-                            color: '#ffd700',
-                            borderColor: '#ccac00',
-                            emoji: '🏛️',
-                            useEmojiAsNode: true
-                        },
-                        'privileged': {
-                            text: 'PRIV',
-                            color: '#ffd700',
-                            borderColor: '#ccac00',
-                            emoji: '⚖️',
-                            useEmojiAsNode: true
-                        },
-                        'plan': {
-                            text: 'PLAN',
-                            color: '#ffd700',
-                            borderColor: '#ccac00',
-                            emoji: '📐',
-                            useEmojiAsNode: true
-                        },
-                        
-                        // Red statuses (negative outcomes)
-                        'denied': {
-                            emoji: '⛔',
-                            text: 'DENIED',
-                            color: '#f44336',
-                            borderColor: '#d32f2f',
-                            useEmojiAsNode: true
-                        },
-                        
-                        // Green statuses (positive outcomes)
-                        'approved': {
-                            emoji: '✅',
-                            text: 'APPROVED',
-                            color: '#4caf50',
-                            borderColor: '#388e3c'
-                        }
-                    };
+                    // Create tooltip
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'event-tooltip';
+                    tooltip.innerHTML = `
+                        <div class="event-title">${eventData.title}</div>
+                        <div class="event-detail">${eventData.dateStr}</div>
+                    `;
+                    procEl.appendChild(tooltip);
                     
-                    // Store globally for reuse
-                    window.statusConfig = statusConfig;
-                    
-                    // Status detection - check emojis first, then text patterns
-                    let proceduralStatus = null;
-                    
-                    // Check emoji matches first
-                    for (const [status, config] of Object.entries(statusConfig)) {
-                        if (config.emoji && event.detail.includes(config.emoji)) {
-                            proceduralStatus = status;
-                            break;
-                        }
-                    }
-                    
-                    // If no emoji match, check text patterns
-                    if (!proceduralStatus) {
-                        const titleUpper = proceduralTitle.toUpperCase();
-                        for (const [status, config] of Object.entries(statusConfig)) {
-                            if (config.text && titleUpper.includes(config.text)) {
-                                proceduralStatus = status;
-                                break;
-                            }
-                        }
-                    }
-                    
-                    caseProceduralEvents[event.caseNumber].push({
-                        x: x,
-                        date: event.date,
-                        dateStr: event.dateStr,
-                        title: proceduralTitle,
-                        detail: event.detail,
-                        status: proceduralStatus,
-                        isPrivate: event.isPrivate,
-                        documentUrl: event.documentUrl,
-                        markers: event.markers
-                    });
+                    container.appendChild(procEl);
                 }
             });
             
@@ -1031,7 +1022,6 @@
             Object.entries(caseProceduralEvents).forEach(([caseNum, caseEvents]) => {
                 if (caseEvents.length === 0) return;
                 
-                console.log(`Case ${caseNum} has ${caseEvents.length} procedural events:`, caseEvents);
                 
                 // Sort events by date
                 caseEvents.sort((a, b) => a.date - b.date);
@@ -1046,39 +1036,15 @@
                         caseEvents
                     });
                     
-                    // Calculate label data
-                    let abbreviation = procEvent.title;
-                    if (procEvent.title.includes('ANRAD')) {
-                        abbreviation = 'ANRAD';
-                    } else if (procEvent.title.includes('ANR')) {
-                        abbreviation = 'ANR';
-                    } else if (procEvent.title.includes('SORAD')) {
-                        abbreviation = 'SORAD';
-                    } else if (procEvent.title.includes('FORAD')) {
-                        abbreviation = 'FORAD';
-                    } else if (procEvent.title.includes('ORAD')) {
-                        abbreviation = 'ORAD';
-                    } else if (procEvent.title.includes('NOI')) {
-                        abbreviation = 'NOI';
-                    } else if (procEvent.title.includes('OOC')) {
-                        abbreviation = 'OOC';
-                    } else if (procEvent.title.includes('SOC')) {
-                        abbreviation = 'SOC';
-                    } else if (procEvent.title.includes('RDA')) {
-                        abbreviation = 'RDA';
-                    } else if (procEvent.title.includes('Extension')) {
-                        abbreviation = 'EXT';
-                    } else if (procEvent.title.includes('denied')) {
-                        abbreviation = 'DENY';
-                    } else if (procEvent.title.includes('Settlement')) {
-                        abbreviation = 'SETTL';
-                    } else if (procEvent.title.includes('Privileged')) {
-                        abbreviation = 'PRIV';
-                    } else if (procEvent.title.includes('approves')) {
-                        abbreviation = 'APPV';
-                    } else if (procEvent.title.includes('Plan') || procEvent.title.includes('PLAN')) {
-                        abbreviation = 'PLAN';
+                    // Skip labels for continuance events (🐢)
+                    if (procEvent.originalEmoji === '🐢') {
+                        // Don't add label data for continuance events
+                        return;
                     }
+                    
+                    // Use the nodeLabel from the event
+                    let abbreviation = procEvent.nodeLabel;
+                    
                     
                     // Measure actual rendered dimensions
                     const { width: labelWidth, height: labelHeight } = measureAbbrev(abbreviation, procEvent.isPrivate);
@@ -1223,28 +1189,15 @@
                     procEl.className = `event case-procedural case-${caseNum.slice(-4)} ${procEvent.isPrivate ? 'case-procedural-below' : 'case-procedural-above'}`;
                     procEl.style.left = procEvent.x + 'px';
                     
-                    // Apply colors based on status using centralized config
-                    const statusInfo = window.statusConfig[procEvent.status];
-                    if (statusInfo) {
-                        procEl.style.backgroundColor = statusInfo.color;
-                        procEl.style.borderColor = statusInfo.borderColor;
-                    } else {
-                        // Default gray for unknown status
-                        procEl.style.backgroundColor = '#999999';
-                        procEl.style.borderColor = '#666666';
-                    }
-                    
-                    // Apply emoji as node if configured
-                    if (statusInfo && statusInfo.useEmojiAsNode) {
-                        procEl.style.backgroundColor = 'transparent';
-                        procEl.style.border = 'none';
-                        procEl.style.fontSize = '16px';
-                        procEl.style.lineHeight = '1';
-                        procEl.style.width = 'auto';
-                        procEl.style.height = 'auto';
-                        procEl.style.transform = 'translateX(-50%)';
-                        procEl.textContent = statusInfo.emoji;
-                    }
+                    // Display emoji as node
+                    procEl.style.backgroundColor = 'transparent';
+                    procEl.style.border = 'none';
+                    procEl.style.fontSize = '16px';
+                    procEl.style.lineHeight = '1';
+                    procEl.style.width = 'auto';
+                    procEl.style.height = 'auto';
+                    procEl.style.transform = 'translateX(-50%)';
+                    procEl.textContent = procEvent.nodeEmoji;
                     
                     // Create tooltip
                     const tooltip = document.createElement('div');
@@ -1256,123 +1209,83 @@
                     `;
                     procEl.appendChild(tooltip);
                     
-                    // Check if this event has a scales or lock emoji marker
-                    if (procEvent.markers && procEvent.markers.includes('⚖️')) {
-                        // Replace the colored dot with a scales emoji
-                        procEl.style.backgroundColor = 'transparent';
-                        procEl.style.border = 'none';
-                        procEl.style.fontSize = '16px';
-                        procEl.style.lineHeight = '1';
-                        procEl.style.width = 'auto';
-                        procEl.style.height = 'auto';
-                        procEl.style.transform = 'translateX(-50%)';
-                        procEl.textContent = '⚖️';
-                    } else if (procEvent.markers && procEvent.markers.includes('🔒')) {
-                        // Replace the colored dot with a lock emoji
-                        procEl.style.backgroundColor = 'transparent';
-                        procEl.style.border = 'none';
-                        procEl.style.fontSize = '16px';
-                        procEl.style.lineHeight = '1';
-                        procEl.style.width = 'auto';
-                        procEl.style.height = 'auto';
-                        procEl.style.transform = 'translateX(-50%)';
-                        procEl.textContent = '🔒';
-                    } else if (procEvent.markers && procEvent.markers.includes('🔍')) {
-                        // Replace the colored dot with a magnifying glass emoji
-                        procEl.style.backgroundColor = 'transparent';
-                        procEl.style.border = 'none';
-                        procEl.style.fontSize = '16px';
-                        procEl.style.lineHeight = '1';
-                        procEl.style.width = 'auto';
-                        procEl.style.height = 'auto';
-                        procEl.style.transform = 'translateX(-50%)';
-                        procEl.textContent = '🔍';
-                    }
-                    
                     // Find the resolved label position from allLabelData
                     const labelData = allLabelData.find(ld => 
                         ld.procEvent === procEvent && 
                         ld.caseNum === caseNum
                     );
                     
-                    if (!labelData) {
-                        console.error('Could not find label data for event', procEvent);
-                        return; // Skip this event
-                    }
-                    
-                    // Create label using stored data
-                    const procLabel = document.createElement('div');
-                    let statusClass = '';
-                    if (procEvent.status === 'pending') {
-                        statusClass = 'status-pending';
-                    } else if (procEvent.status === 'peer-review') {
-                        statusClass = 'status-peer-review';
-                    } else if (procEvent.status === 'wcc-hearing') {
-                        statusClass = 'status-wcc-hearing';
-                    } else if (procEvent.status === 'privileged') {
-                        statusClass = 'status-privileged';
-                    } else if (procEvent.status === 'plan') {
-                        statusClass = 'status-plan';
-                    } else if (procEvent.status === 'denied') {
-                        statusClass = 'status-denied';
-                    } else if (procEvent.status === 'approved') {
-                        statusClass = 'status-approved';
-                    }
-                    procLabel.className = `node-label ${procEvent.isPrivate ? 'node-label-below' : 'node-label-above'} ${statusClass}`;
-                    procLabel.textContent = labelData.abbreviation;
-                    procLabel.title = `${procEvent.title} - ${procEvent.dateStr}`;
-                    
-                    // Make label clickable if it has a document URL
-                    if (procEvent.documentUrl) {
-                        procLabel.style.cursor = 'pointer';
-                        procLabel.onclick = () => {
-                            window.open(procEvent.documentUrl, '_blank');
-                        };
-                    }
-                    
-                    // Use the pre-resolved positions
-                    const labelX = labelData.x;
-                    const labelY = labelData.y;
-                    const labelWidth = labelData.width;
-                    const labelHeight = labelData.height;
-                    const nodeY = procEvent.isPrivate ? 131 : 120;
-                    
-                    // Position the label (dynamic positioning requires inline styles)
-                    procLabel.style.left = labelX + 'px';
-                    procLabel.style.top = labelY + 'px';
-                    procLabel.style.transform = 'none'; // Override the CSS transform since we're positioning absolutely
-                    
-                    // Calculate leader line endpoints
-                    const nodeCenter = procEvent.x;
-                    const labelCenter = labelX + labelWidth / 2;
-                    const nodeEdge = procEvent.isPrivate ? nodeY + 8 : nodeY;
-                    const labelEdge = procEvent.isPrivate ? labelY : labelY + labelHeight;
-                    
-                    if (Math.abs(nodeCenter - labelCenter) > 5) {
-                        // Draw diagonal leader line using SVG
-                        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-                        svg.style.position = 'absolute';
-                        svg.style.left = Math.min(nodeCenter, labelCenter) + 'px';
-                        svg.style.top = Math.min(nodeEdge, labelEdge) + 'px';
-                        svg.style.width = Math.abs(nodeCenter - labelCenter) + 'px';
-                        svg.style.height = Math.abs(nodeEdge - labelEdge) + 'px';
-                        svg.style.pointerEvents = 'none';
-                        svg.style.zIndex = '9';
+                    // Render label only if labelData exists (skip for continuance events)
+                    if (labelData) {
+                        // Create label using stored data
+                        const procLabel = document.createElement('div');
                         
-                        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                        line.setAttribute('x1', nodeCenter < labelCenter ? '0' : Math.abs(nodeCenter - labelCenter));
-                        line.setAttribute('y1', nodeEdge < labelEdge ? '0' : Math.abs(nodeEdge - labelEdge));
-                        line.setAttribute('x2', nodeCenter > labelCenter ? '0' : Math.abs(nodeCenter - labelCenter));
-                        line.setAttribute('y2', nodeEdge > labelEdge ? '0' : Math.abs(nodeEdge - labelEdge));
-                        line.setAttribute('stroke', '#999');
-                        line.setAttribute('stroke-width', '2');
-                        line.setAttribute('stroke-opacity', '0.7');
+                        // Determine status class based on node color
+                        let statusClass = '';
+                        if (procEvent.nodeColor === '#f44336') {
+                            statusClass = 'status-denied';
+                        } else if (procEvent.nodeColor === '#4caf50') {
+                            statusClass = 'status-approved';
+                        } else if (procEvent.nodeColor === '#ffd700') {
+                            statusClass = 'status-pending';
+                        }
                         
-                        svg.appendChild(line);
-                        container.appendChild(svg);
+                        procLabel.className = `node-label ${procEvent.isPrivate ? 'node-label-below' : 'node-label-above'} ${statusClass}`;
+                        procLabel.textContent = labelData.abbreviation;
+                        procLabel.title = `${procEvent.title} - ${procEvent.dateStr}`;
+                        
+                        // Make label clickable if it has a document URL
+                        if (procEvent.documentUrl) {
+                            procLabel.style.cursor = 'pointer';
+                            procLabel.onclick = () => {
+                                window.open(procEvent.documentUrl, '_blank');
+                            };
+                        }
+                        
+                        // Use the pre-resolved positions
+                        const labelX = labelData.x;
+                        const labelY = labelData.y;
+                        const labelWidth = labelData.width;
+                        const labelHeight = labelData.height;
+                        const nodeY = procEvent.isPrivate ? 131 : 120;
+                        
+                        // Position the label (dynamic positioning requires inline styles)
+                        procLabel.style.left = labelX + 'px';
+                        procLabel.style.top = labelY + 'px';
+                        procLabel.style.transform = 'none'; // Override the CSS transform since we're positioning absolutely
+                        
+                        // Calculate leader line endpoints
+                        const nodeCenter = procEvent.x;
+                        const labelCenter = labelX + labelWidth / 2;
+                        const nodeEdge = procEvent.isPrivate ? nodeY + 8 : nodeY;
+                        const labelEdge = procEvent.isPrivate ? labelY : labelY + labelHeight;
+                        
+                        if (Math.abs(nodeCenter - labelCenter) > 5) {
+                            // Draw diagonal leader line using SVG
+                            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                            svg.style.position = 'absolute';
+                            svg.style.left = Math.min(nodeCenter, labelCenter) + 'px';
+                            svg.style.top = Math.min(nodeEdge, labelEdge) + 'px';
+                            svg.style.width = Math.abs(nodeCenter - labelCenter) + 'px';
+                            svg.style.height = Math.abs(nodeEdge - labelEdge) + 'px';
+                            svg.style.pointerEvents = 'none';
+                            svg.style.zIndex = '9';
+                            
+                            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                            line.setAttribute('x1', nodeCenter < labelCenter ? '0' : Math.abs(nodeCenter - labelCenter));
+                            line.setAttribute('y1', nodeEdge < labelEdge ? '0' : Math.abs(nodeEdge - labelEdge));
+                            line.setAttribute('x2', nodeCenter > labelCenter ? '0' : Math.abs(nodeCenter - labelCenter));
+                            line.setAttribute('y2', nodeEdge > labelEdge ? '0' : Math.abs(nodeEdge - labelEdge));
+                            line.setAttribute('stroke', '#999');
+                            line.setAttribute('stroke-width', '1');
+                            line.setAttribute('stroke-opacity', '0.7');
+                            
+                            svg.appendChild(line);
+                            container.appendChild(svg);
+                        }
+                        
+                        container.appendChild(procLabel);
                     }
-                    
-                    container.appendChild(procLabel);
                     
                     container.appendChild(procEl);
                     
@@ -1422,9 +1335,8 @@
                             line.setAttribute('y1', y1);
                             line.setAttribute('x2', x2);
                             line.setAttribute('y2', y2);
-                            // Line color follows the previous node's status
-                            const prevStatusInfo = window.statusConfig[prevEvent.status];
-                            const strokeColor = prevStatusInfo ? prevStatusInfo.color : '#999'; // Default gray
+                            // Line color follows the previous node's color
+                            const strokeColor = prevEvent.nodeColor;
                             line.setAttribute('stroke', strokeColor);
                             line.setAttribute('stroke-width', '4');
                             line.setAttribute('stroke-opacity', '0.7');
@@ -1496,9 +1408,8 @@
                         line.setAttribute('y1', y);
                         line.setAttribute('y2', y);
                         
-                        // Line color follows the node's status
-                        const statusInfo = window.statusConfig[singleEvent.status];
-                        const strokeColor = statusInfo ? statusInfo.color : '#999'; // Default gray
+                        // Line color follows the node's color
+                        const strokeColor = singleEvent.nodeColor;
                         
                         line.setAttribute('stroke', strokeColor);
                         line.setAttribute('stroke-width', '4');
@@ -1514,7 +1425,7 @@
             // Calculate statistics
             const stats = {
                 criticalMoments: events.filter(e => e.markers.includes('🟡')).length,
-                missingDocs: events.filter(e => e.markers.includes('⚠️ ')).length,
+                missingDocs: events.filter(e => e.markers.includes('❌ ')).length,
                 privileged: events.filter(e => e.markers.includes('🔒')).length,
                 continuances: events.filter(e => e.markers.includes('🐢')).length,
                 totalEvents: events.length
@@ -1544,6 +1455,13 @@
                     <span class="stat-label">Total</span>
                 </div>
             `;
+            
+            // Apply saved continuance visibility after all nodes are rendered
+            const continuanceVisibility = localStorage.getItem('timeline-show-continuances');
+            if (continuanceVisibility === 'false') {
+                // Only apply if saved as hidden (default is shown)
+                toggleContinuances();
+            }
         }
         
         // Load timeline when page loads
