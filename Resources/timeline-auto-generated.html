@@ -500,7 +500,7 @@
                 // Determine event type based on markers and content
                 const markerTypes = {
                     '🟡': 'critical-moment',
-                    '🔴': 'privileged',
+                    '🔒': 'privileged',
                     '🐢': 'continuance'
                 };
                 
@@ -515,8 +515,8 @@
                     }
                 }
                 
-                // Always check for 🔴 to set isPrivate, regardless of other markers
-                if (markers.includes('🔴')) {
+                // Always check for 🔒 to set isPrivate, regardless of other markers
+                if (markers.includes('🔒')) {
                     isPrivate = true;
                 }
                 
@@ -1515,7 +1515,7 @@
             const stats = {
                 criticalMoments: events.filter(e => e.markers.includes('🟡')).length,
                 missingDocs: events.filter(e => e.markers.includes('⚠️ ')).length,
-                privileged: events.filter(e => e.markers.includes('🔴')).length,
+                privileged: events.filter(e => e.markers.includes('🔒')).length,
                 continuances: events.filter(e => e.markers.includes('🐢')).length,
                 totalEvents: events.length
             };
