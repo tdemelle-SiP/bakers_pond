@@ -576,6 +576,20 @@
         }
         
         function renderTimeline(events, customScale = null) {
+            // Centralized position constants
+            const NODE_POSITIONS = {
+                public: 115,      // Y position for public nodes
+                private: 140,     // Y position for private nodes
+                emojiSize: 16,    // Font size of emoji
+                emojiCenter: 8,   // Offset to center of emoji
+                labelGapAbove: 35,// Gap between node and label above (increased from 30)
+                labelGapBelow: 20 // Gap between node and label below
+            };
+            
+            // Helper functions for node positions
+            const getNodeY = (isPrivate) => isPrivate ? NODE_POSITIONS.private : NODE_POSITIONS.public;
+            const getNodeCenterY = (isPrivate) => getNodeY(isPrivate) + NODE_POSITIONS.emojiCenter;
+            
             // Create legend with emoji explanations - Caseline and Timeline side by side
             const legendEl = document.getElementById('nav-legend');
             legendEl.innerHTML = ''; // Clear existing legend items
@@ -1048,8 +1062,8 @@
                     
                     // Measure actual rendered dimensions
                     const { width: labelWidth, height: labelHeight } = measureAbbrev(abbreviation, procEvent.isPrivate);
-                    const nodeY = procEvent.isPrivate ? 140 : 115;
-                    const baseY = procEvent.isPrivate ? nodeY + 20 : nodeY - 30;
+                    const nodeY = getNodeY(procEvent.isPrivate);
+                    const baseY = procEvent.isPrivate ? nodeY + NODE_POSITIONS.labelGapBelow : nodeY - NODE_POSITIONS.labelGapAbove;
                     const baseX = procEvent.x - labelWidth / 2;
                     
                     allLabelData.push({
@@ -1298,7 +1312,7 @@
                         const labelY = labelData.y;
                         const labelWidth = labelData.width;
                         const labelHeight = labelData.height;
-                        const nodeY = procEvent.isPrivate ? 140 : 115;
+                        const nodeY = getNodeY(procEvent.isPrivate);
                         
                         // Position the label (dynamic positioning requires inline styles)
                         procLabel.style.left = labelX + 'px';
@@ -1308,27 +1322,27 @@
                         // Calculate leader line endpoints
                         const nodeCenter = procEvent.x;
                         const labelCenter = labelX + labelWidth / 2;
-                        // Calculate emoji center (16px font, estimated 8px to center)
-                        const nodeCenterY = procEvent.isPrivate ? 140 + 8 : 115 + 8;
-                        // Label center Y
-                        const labelCenterY = procEvent.isPrivate ? labelY + labelHeight / 2 : labelY + labelHeight / 2;
+                        // Calculate emoji center
+                        const nodeCenterY = getNodeCenterY(procEvent.isPrivate);
+                        // Label edge Y - connect to bottom edge for labels above, top edge for labels below
+                        const labelEdgeY = procEvent.isPrivate ? labelY : labelY + labelHeight;
                         
                         if (Math.abs(nodeCenter - labelCenter) > 5) {
                             // Draw diagonal leader line using SVG
                             const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                             svg.style.position = 'absolute';
                             svg.style.left = Math.min(nodeCenter, labelCenter) + 'px';
-                            svg.style.top = Math.min(nodeCenterY, labelCenterY) + 'px';
+                            svg.style.top = Math.min(nodeCenterY, labelEdgeY) + 'px';
                             svg.style.width = Math.abs(nodeCenter - labelCenter) + 'px';
-                            svg.style.height = Math.abs(nodeCenterY - labelCenterY) + 'px';
+                            svg.style.height = Math.abs(nodeCenterY - labelEdgeY) + 'px';
                             svg.style.pointerEvents = 'none';
                             svg.style.zIndex = '9';
                             
                             const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
                             line.setAttribute('x1', nodeCenter < labelCenter ? '0' : Math.abs(nodeCenter - labelCenter));
-                            line.setAttribute('y1', nodeCenterY < labelCenterY ? '0' : Math.abs(nodeCenterY - labelCenterY));
+                            line.setAttribute('y1', nodeCenterY < labelEdgeY ? '0' : Math.abs(nodeCenterY - labelEdgeY));
                             line.setAttribute('x2', nodeCenter > labelCenter ? '0' : Math.abs(nodeCenter - labelCenter));
-                            line.setAttribute('y2', nodeCenterY > labelCenterY ? '0' : Math.abs(nodeCenterY - labelCenterY));
+                            line.setAttribute('y2', nodeCenterY > labelEdgeY ? '0' : Math.abs(nodeCenterY - labelEdgeY));
                             line.setAttribute('stroke', '#999');
                             line.setAttribute('stroke-width', '1');
                             line.setAttribute('stroke-opacity', '0.7');
@@ -1366,23 +1380,9 @@
                             const x1 = prevEvent.x < procEvent.x ? 0 : Math.abs(procEvent.x - prevEvent.x);
                             const x2 = prevEvent.x < procEvent.x ? Math.abs(procEvent.x - prevEvent.x) : 0;
                             
-                            let y1, y2;
                             // Set Y coordinates based on whether each event is private
-                            if (prevEvent.isPrivate) {
-                                // Previous private node at 140px, center at 140 + 8 = 148px
-                                y1 = 148;
-                            } else {
-                                // Previous public node at 115px, center at 115 + 8 = 123px
-                                y1 = 123;
-                            }
-                            
-                            if (procEvent.isPrivate) {
-                                // Current private node at 140px, center at 140 + 8 = 148px
-                                y2 = 148;
-                            } else {
-                                // Current public node at 115px, center at 115 + 8 = 123px
-                                y2 = 123;
-                            }
+                            const y1 = getNodeCenterY(prevEvent.isPrivate);
+                            const y2 = getNodeCenterY(procEvent.isPrivate);
                             
                             line.setAttribute('x1', x1);
                             line.setAttribute('y1', y1);
@@ -1457,7 +1457,7 @@
                         line.setAttribute('x2', (currentX - singleEvent.x) + 'px');
                         
                         // Y position based on whether event is private
-                        const y = singleEvent.isPrivate ? '148' : '123'; // Center of emoji (position + 8)
+                        const y = getNodeCenterY(singleEvent.isPrivate);
                         line.setAttribute('y1', y);
                         line.setAttribute('y2', y);
                         
