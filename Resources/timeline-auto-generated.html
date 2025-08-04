@@ -1098,89 +1098,65 @@
                                 a.y += (a.procEvent.isPrivate ? dy : -dy);
                                 b.y += (b.procEvent.isPrivate ? dy : -dy);
                             }
-                            
-                            // clamp to container bounds
-                            const minX = 250;
-                            const maxX = 250 + timelineWidth - 1;
-                            a.x = Math.max(minX, Math.min(a.x, maxX - a.width));
-                            b.x = Math.max(minX, Math.min(b.x, maxX - b.width));
                         }
                     }
                 }
                 iteration++;
             }
             
-            // Phase 2.5 — Order-preserving packing (no crossing + no overlap)
-            (function packLabelsOrderPreserving(){
-                const GAP = 6;
-                const MIN_X = 250;
-                const MAX_X = 250 + timelineWidth - 1;
+            // Phase 2.5: Order-preserving packing
+            // After collision resolution, pack labels to minimize total distance while preserving order
+            const MIN_X = 250; // timeline start
+            const MAX_X = 250 + totalDays * pixelsPerDay; // timeline end
+            const GAP = minGap;
+            
+            // Process each band (public/private) separately
+            [false, true].forEach(bandIsBelow => {
+                const items = allLabelData
+                    .filter(ld => ld.procEvent.isPrivate === bandIsBelow)
+                    .sort((a,b) => a.procEvent.x - b.procEvent.x) // node order
+                    .map(ld => {
+                        const w = ld.width;
+                        const desiredC = ld.x + w / 2; // from collision solver
+                        return {
+                            ld,
+                            w,
+                            minC: MIN_X + w / 2,
+                            maxC: MAX_X - w / 2,
+                            c: desiredC,          // working center
+                            desiredC
+                        };
+                    });
                 
-                function pack(bandIsBelow){
-                    // Build items with desired centers from Phase-2 output
-                    const items = allLabelData
-                        .filter(ld => ld.procEvent.isPrivate === bandIsBelow)
-                        .sort((a,b) => a.procEvent.x - b.procEvent.x) // node order
-                        .map(ld => {
-                            const w = ld.width;
-                            const desiredC = ld.x + w / 2; // from collision solver
-                            return {
-                                ld,
-                                w,
-                                minC: MIN_X + w / 2,
-                                maxC: MAX_X - w / 2,
-                                c: desiredC,          // working center
-                                desiredC
-                            };
-                        });
-                    
-                    if (items.length === 0) return;
-                    
-                    // Forward pass: enforce increasing centers + gap
-                    for (let i = 0; i < items.length; i++) {
-                        if (i > 0) {
-                            const prev = items[i - 1], cur = items[i];
-                            const need = prev.c + (prev.w + cur.w) / 2 + GAP;
-                            cur.c = Math.max(cur.c, need);
-                        }
-                        items[i].c = Math.max(items[i].c, items[i].minC);
+                if (items.length === 0) return;
+                
+                // Forward pass: enforce increasing centers + gap
+                for (let i = 0; i < items.length; i++) {
+                    if (i > 0) {
+                        const prev = items[i - 1], cur = items[i];
+                        const need = prev.c + (prev.w + cur.w) / 2 + GAP;
+                        cur.c = Math.max(cur.c, need);
                     }
-                    
-                    // Backward pass: clamp to right bound and propagate left
-                    for (let i = items.length - 1; i >= 0; i--) {
-                        const cur = items[i];
-                        cur.c = Math.min(cur.c, cur.maxC);
-                        if (i < items.length - 1) {
-                            const next = items[i + 1];
-                            const allow = next.c - (cur.w + next.w) / 2 - GAP;
-                            cur.c = Math.min(cur.c, allow);
-                        }
-                        cur.c = Math.max(cur.c, cur.minC);
-                    }
-                    
-                    // Optional settle loop: nudge toward desired centers without breaking constraints
-                    for (let iter = 0; iter < 2; iter++) {
-                        // pull right
-                        for (let i = 1; i < items.length; i++) {
-                            const prev = items[i - 1], cur = items[i];
-                            const target = Math.max(cur.desiredC, prev.c + (prev.w + cur.w) / 2 + GAP, cur.minC);
-                            cur.c = Math.min(cur.c + Math.max(0, target - cur.c), cur.maxC);
-                        }
-                        // pull left
-                        for (let i = items.length - 2; i >= 0; i--) {
-                            const cur = items[i], next = items[i + 1];
-                            const target = Math.min(cur.desiredC, next.c - (cur.w + next.w) / 2 - GAP, cur.maxC);
-                            cur.c = Math.max(cur.c - Math.max(0, cur.c - target), cur.minC);
-                        }
-                    }
-                    
-                    // Write back x from centers
-                    for (const it of items) it.ld.x = Math.round(it.c - it.w / 2);
+                    items[i].c = Math.max(items[i].c, items[i].minC);
                 }
                 
-                pack(false); // above band
-                pack(true);  // below band
-            })();
+                // Backward pass: clamp to right bound and propagate left
+                for (let i = items.length - 1; i >= 0; i--) {
+                    const cur = items[i];
+                    cur.c = Math.min(cur.c, cur.maxC);
+                    if (i < items.length - 1) {
+                        const next = items[i + 1];
+                        const allow = next.c - (cur.w + next.w) / 2 - GAP;
+                        cur.c = Math.min(cur.c, allow);
+                    }
+                }
+                
+                // Write back the packed positions
+                items.forEach(({ ld, c, w }) => {
+                    ld.x = c - w / 2;
+                });
+            });
+            
             
             // Phase 3: Render all elements with resolved positions
             // First render nodes
