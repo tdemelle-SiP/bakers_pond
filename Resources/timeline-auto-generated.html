@@ -1067,43 +1067,117 @@
                 });
             });
             
-            // Phase 2: Resolve label collisions globally
-            const maxIterations = 25;
-            const minGap = 6; // horizontal breathing room
-            let iteration = 0;
-            let hadCollision = true;
+            // Phase 2: Bidirectional order-preserving label placement
+            const minGap = 3; // horizontal breathing room
             
-            while (hadCollision && iteration < maxIterations) {
-                hadCollision = false;
+            // Process each band (public/private) separately
+            [false, true].forEach(isPrivate => {
+                // Get labels for this band, sorted by node position
+                const bandLabels = allLabelData
+                    .filter(ld => ld.procEvent.isPrivate === isPrivate)
+                    .sort((a, b) => a.procEvent.x - b.procEvent.x);
                 
-                for (let i = 0; i < allLabelData.length; i++) {
-                    for (let j = i + 1; j < allLabelData.length; j++) {
-                        const a = allLabelData[i], b = allLabelData[j];
+                if (bandLabels.length === 0) return;
+                
+                // Start all labels at their ideal positions
+                bandLabels.forEach(label => {
+                    label.x = label.baseX;
+                });
+                
+                // Find and resolve overlaps
+                let hasOverlap = true;
+                let iterations = 0;
+                
+                while (hasOverlap && iterations < 20) {
+                    hasOverlap = false;
+                    
+                    for (let i = 1; i < bandLabels.length; i++) {
+                        const prev = bandLabels[i - 1];
+                        const curr = bandLabels[i];
                         
-                        // AABB overlap with horizontal gap
-                        const hOverlap = Math.min(a.x + a.width, b.x + b.width) - Math.max(a.x, b.x);
-                        const vOverlap = Math.min(a.y + a.height, b.y + b.height) - Math.max(a.y, b.y);
+                        const overlap = (prev.x + prev.width + minGap) - curr.x;
                         
-                        if (hOverlap > -minGap && vOverlap > 0) {
-                            hadCollision = true;
+                        if (overlap > 0) {
+                            hasOverlap = true;
                             
-                            // push apart horizontally
-                            const push = (Math.max(hOverlap, 0) + minGap) / 2 + 2;
-                            if (a.x <= b.x) { a.x -= push; b.x += push; }
-                            else            { a.x += push; b.x -= push; }
+                            // Calculate how much each label can move toward its ideal position
+                            const prevIdealDist = Math.abs(prev.x - prev.baseX);
+                            const currIdealDist = Math.abs(curr.x - curr.baseX);
                             
-                            // tiny vertical stagger to break repeated ties (keeps in each band)
-                            const dy = 1; // 1px nudge is visually invisible but breaks equality
-                            if (a.y === b.y) {
-                                a.y += (a.procEvent.isPrivate ? dy : -dy);
-                                b.y += (b.procEvent.isPrivate ? dy : -dy);
+                            // Distribute the overlap based on which label has more "give"
+                            // The label further from its ideal position moves less
+                            if (prevIdealDist < currIdealDist) {
+                                // Previous label can move more
+                                prev.x -= overlap * 0.7;
+                                curr.x += overlap * 0.3;
+                            } else if (currIdealDist < prevIdealDist) {
+                                // Current label can move more
+                                prev.x -= overlap * 0.3;
+                                curr.x += overlap * 0.7;
+                            } else {
+                                // Equal distribution
+                                prev.x -= overlap * 0.5;
+                                curr.x += overlap * 0.5;
                             }
                         }
                     }
+                    
+                    iterations++;
                 }
-                iteration++;
-            }
+            });
             
+            /* COMMENTED OUT FOR TESTING
+            // Phase 2.3: Pull labels back toward their nodes when possible
+            // After pushing apart, try to move labels closer to their ideal positions
+            for (let pullIter = 0; pullIter < 10; pullIter++) {
+                let anyMovement = false;
+                
+                for (let i = 0; i < allLabelData.length; i++) {
+                    const label = allLabelData[i];
+                    const idealX = label.baseX; // Original centered position
+                    const currentCenter = label.x + label.width / 2;
+                    const nodeX = label.procEvent.x;
+                    
+                    // Only try to move if we're not already at ideal position
+                    if (Math.abs(currentCenter - nodeX) > 2) {
+                        // Calculate desired movement toward node
+                        const moveDir = nodeX > currentCenter ? 1 : -1;
+                        const moveAmount = Math.min(5, Math.abs(currentCenter - nodeX) * 0.3); // Move up to 5px or 30% of distance
+                        
+                        // Check if moving would cause collision
+                        const testX = label.x + (moveDir * moveAmount);
+                        let canMove = true;
+                        
+                        for (let j = 0; j < allLabelData.length; j++) {
+                            if (i === j) continue;
+                            const other = allLabelData[j];
+                            
+                            // Only check labels on same level
+                            if (label.procEvent.isPrivate !== other.procEvent.isPrivate) continue;
+                            
+                            // Check if move would cause overlap
+                            const wouldOverlap = (testX < other.x + other.width + minGap) && 
+                                                (testX + label.width + minGap > other.x);
+                            
+                            if (wouldOverlap) {
+                                canMove = false;
+                                break;
+                            }
+                        }
+                        
+                        if (canMove) {
+                            label.x = testX;
+                            anyMovement = true;
+                        }
+                    }
+                }
+                
+                // Stop if no labels could move
+                if (!anyMovement) break;
+            }
+            */
+            
+            /* COMMENTED OUT FOR TESTING
             // Phase 2.5: Order-preserving packing
             // After collision resolution, pack labels to minimize total distance while preserving order
             const MIN_X = 250; // timeline start
@@ -1156,6 +1230,7 @@
                     ld.x = c - w / 2;
                 });
             });
+            */
             
             
             // Phase 3: Render all elements with resolved positions
