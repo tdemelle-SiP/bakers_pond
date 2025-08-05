@@ -244,7 +244,7 @@ body {
 .timeline-line {
     position: absolute;
     top: 300px; /* Lower in 400px container */
-    left: 250px;
+    left: 200px;
     right: 0;
     height: 2px;
     background: #34495e;
@@ -254,7 +254,7 @@ body {
 /* Background sections for public/private proceedings */
 .timeline-section-background {
     position: absolute;
-    left: 250px;
+    left: 200px;
     right: 0;
     z-index: 0;
 }
@@ -685,7 +685,7 @@ body {
 .public-label {
     top: 270px;  /* Center of green section: 240px + 30px (half of 60px height) */
     right: auto;
-    left: 245px;  /* Right-aligned at timeline start */
+    left: 195px;  /* Right-aligned at timeline start */
     transform: translateX(-100%) translateY(-50%);  /* Align right edge to timeline start */
     color: #2e7d32;
     font-size: 22px;
@@ -699,7 +699,7 @@ body {
 .private-label {
     top: 330px;  /* Center of red section: 300px + 30px (half of 60px height) */
     right: auto;
-    left: 245px;  /* Right-aligned at timeline start */
+    left: 195px;  /* Right-aligned at timeline start */
     transform: translateX(-100%) translateY(-50%);  /* Align right edge to timeline start */
     color: #c62828;
     font-size: 22px;
@@ -713,7 +713,7 @@ body {
 .timeline-title {
     top: 125px;  /* Aligned with case timeline area */
     right: auto;
-    left: 245px;  /* Right-aligned at timeline start */
+    left: 195px;  /* Right-aligned at timeline start */
     transform: translateX(-100%) translateY(-50%);  /* Align right edge to timeline start */
     color: #1976d2;  /* Blue color to match case timeline colors */
     font-size: 22px;

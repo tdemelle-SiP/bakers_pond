@@ -81,6 +81,7 @@
         let allEvents = [];
         let filteredEvents = [];
         let currentDateRange = null;
+        const TIMELINE_LEFT_OFFSET = 200; // Left offset for timeline start
         
         // Emoji configuration for caseline
         const emojiConfig = {
@@ -452,8 +453,10 @@
         function calculateAndApplyFitScale() {
             if (filteredEvents.length === 0) return;
             
-            // Timeline starts at 250px offset, need some buffer
-            const availableWidth = window.innerWidth - 350;
+            // Calculate available width accounting for container padding and timeline offset
+            const containerPadding = 80; // 40px padding on each side from .container
+            const rightMargin = 40; // Additional right margin
+            const availableWidth = window.innerWidth - TIMELINE_LEFT_OFFSET - containerPadding - rightMargin;
             
             // Calculate required scale to fit timeline
             if (currentDateRange) {
@@ -724,24 +727,35 @@
                 const yearStartDays = Math.max(0, (yearStart - startDate) / (1000 * 60 * 60 * 24));
                 const yearEndDays = Math.min(totalDays, (yearEnd - startDate) / (1000 * 60 * 60 * 24));
                 
-                const yearStartX = 250 + (yearStartDays * pixelsPerDay);
-                const yearEndX = 250 + (yearEndDays * pixelsPerDay);
+                const yearStartX = TIMELINE_LEFT_OFFSET + (yearStartDays * pixelsPerDay);
+                const yearEndX = TIMELINE_LEFT_OFFSET + (yearEndDays * pixelsPerDay);
                 
                 // Only process years that are at least partially visible
-                if (yearEndX > 250 && yearStartX < timelineWidth + 250) {
+                if (yearEndX > TIMELINE_LEFT_OFFSET && yearStartX < timelineWidth + TIMELINE_LEFT_OFFSET) {
                     // Add marker at year boundary if it's within the timeline
-                    if (yearStartX >= 250 && yearStartX <= timelineWidth + 250) {
+                    if (yearStartX >= TIMELINE_LEFT_OFFSET && yearStartX <= timelineWidth + TIMELINE_LEFT_OFFSET) {
                         const marker = document.createElement('div');
                         marker.className = 'year-marker';
                         marker.style.left = yearStartX + 'px';
                         container.appendChild(marker);
+                        
+                        // Add vertical line extending from timeline up through caseline
+                        const vertLine = document.createElement('div');
+                        vertLine.style.position = 'absolute';
+                        vertLine.style.left = yearStartX + 'px';
+                        vertLine.style.top = '0px'; // Start from top of container
+                        vertLine.style.width = '1px';
+                        vertLine.style.height = '305px'; // Extend to just above timeline (timeline is at 300px)
+                        vertLine.style.backgroundColor = 'rgba(0, 0, 0, 0.1)'; // Very subtle black
+                        vertLine.style.zIndex = '0'; // Behind everything else
+                        container.appendChild(vertLine);
                     }
                     
                     // Only add year label if this year is within the event range
                     if (year >= firstEventYear && year <= lastEventYear) {
                         // Add year label centered in the visible portion of the year
-                        const visibleStartX = Math.max(250, yearStartX);
-                        const visibleEndX = Math.min(timelineWidth + 250, yearEndX);
+                        const visibleStartX = Math.max(TIMELINE_LEFT_OFFSET, yearStartX);
+                        const visibleEndX = Math.min(timelineWidth + TIMELINE_LEFT_OFFSET, yearEndX);
                         const labelX = (visibleStartX + visibleEndX) / 2;
                         
                         const label = document.createElement('div');
@@ -784,7 +798,7 @@
             // PASS 1: Regular timeline events
             timelineEvents.forEach((event, index) => {
                 const daysFromStart = (event.date - startDate) / (1000 * 60 * 60 * 24);
-                const x = 250 + (daysFromStart * pixelsPerDay);
+                const x = TIMELINE_LEFT_OFFSET + (daysFromStart * pixelsPerDay);
                 
                 const eventEl = document.createElement('div');
                 // Use the eventClass which already includes the private distinction
@@ -967,7 +981,7 @@
             // PASS 2: Collect caseline events
             caselineEvents.forEach(event => {
                 const daysFromStart = (event.date - startDate) / (1000 * 60 * 60 * 24);
-                const x = 250 + (daysFromStart * pixelsPerDay);
+                const x = TIMELINE_LEFT_OFFSET + (daysFromStart * pixelsPerDay);
                 
                 // Determine display emoji and get configuration
                 const displayEmoji = event.isPrivate ? '🔒' : event.caselineEmoji;
