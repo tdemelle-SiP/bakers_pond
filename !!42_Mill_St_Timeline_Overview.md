@@ -27,6 +27,9 @@ These emojis create nodes on the case-specific procedural timeline:
 - ⭐ with **ANRAD** → shows "ANRAD" as label
 - ⭐ with **SORAD** → shows "SORAD" as label
 
+**Template:**
+| YYYY-MM-DD | [Doc Title](https://github.com/tdemelle-SiP/bakers_pond/blob/master/Dated%20Documents/Doc%20Link.pdf) | #(DEP case number) | 🟢 | (** Caseline Node Label **) | (Analysis) | (Notes) |
+
 **Note:** For unrecognized emojis, the emoji becomes the node icon and the label is extracted from **LABEL** in the Procedural Step column.
 
 | Date | Document | Case # | Mrkr | Procedural Step | Environmental/Strategic Analysis | Notes |
@@ -36,6 +39,8 @@ These emojis create nodes on the case-specific procedural timeline:
 | 2000-07-27 | [Quitclaim Deed Lot 2B](https://github.com/tdemelle-SiP/bakers_pond/blob/master/Dated%20Documents/2000_07_27%20Quitclaim%20Deed%20Lot%202B.pdf) | | | | Delapa Transfers property to Vinci who pays $10k | Property transfer via quitclaim deed for Lot 2B; ? |
 | 2001-04-23 | [338-0303 Review Lot 2B Mill St](https://github.com/tdemelle-SiP/bakers_pond/blob/master/Dated%20Documents/2001_04_23%20338-0303%20Review%20Lot%202B%20Mill%20St.pdf) | 338-0303 | | | Substantive, regulation savvy review. This level of scrutiny should be referenced and applied today. | DEP Review under file #338-0303 |
 | 2014-10-01 | [GLM Boundary Delineation](https://github.com/tdemelle-SiP/bakers_pond/blob/master/Dated%20Documents/2014_10%20GLM%20Boundary%20Delineation.png) | 338-0594 | | | Professional delineation documentation showing open water - this changes to BVW in later plans | GLM wetland boundary delineation image; this image from GEC report; does it reflect GLM's initial image? |
+| 2014-08_07 | [BVW Delineation Field Data Form](https://github.com/tdemelle-SiP/bakers_pond/blob/master/Dated%20Documents/2014_08_07%20BVW%20Delineation%20Field%20Data%20Form) | 338-0594 | 🟢 |  |  | |
+| 2014-08_26 | [Wetland Border Report](https://github.com/tdemelle-SiP/bakers_pond/blob/master/Dated%20Documents/2014_08_26%20Wetland%20Border%20Report.pdf) | 338-0594 | 🟢 |  |  |  |
 | 2014-10-27 | [MISSING: Wetland Delineation Plan RDA](https://github.com/tdemelle-SiP/bakers_pond/blob/master/Dated%20Documents/2014_10_27_MISSING_Wetland_Delineation_Plan_RDA.txt) | 338-0594 | ❌⭐ | **RDA** | Initial delineation for development; Critical baseline documentation missing | Filed by GLM Engineering of Hopkinton |
 | 2014-11-14 | [MISSING: Anrad Application Dep 338-0594](https://github.com/tdemelle-SiP/bakers_pond/blob/master/Dated%20Documents/2014_11_14_MISSING_ANRAD_Application_DEP_338-0594.txt) | 338-0594 | ❌🟢⭐ | **ANRAD** | Formal request for wetland boundary confirmation; Attempt to lock in favorable delineation before development | |
 | 2015-09-04 | [MISSING: First Gec Site Visit](https://github.com/tdemelle-SiP/bakers_pond/blob/master/Dated%20Documents/2015_09_04_MISSING_First_GEC_Site_Visit.txt) | 338-0594 | ❌ | | Town hires consultant to verify delineation; WCC not trusting developer's submission | First GEC site visit for peer review |
