@@ -16,7 +16,7 @@
 <body>
     <nav class="sticky-nav">
         <div class="nav-top-row">
-            <a href="https://github.com/tdemelle-SiP/bakers_pond/blob/master/!README.md" class="nav-link">← Back to README</a>
+            <a href="https://github.com/tdemelle-SiP/bakers_pond/blob/master/README.md" class="nav-link">← Back to README</a>
             <div class="nav-title">42 Mill Street Timeline (Auto-Generated)</div>
             <div id="nav-stats" class="stats-container"></div>
         </div>
@@ -161,7 +161,7 @@
         // Timeline data parser and renderer
         async function loadTimeline() {
             // Fetch the timeline overview markdown file with cache busting
-            const response = await fetch('../!42_Mill_St_Timeline_Overview.md?v=' + Date.now());
+            const response = await fetch('../!!42_Mill_St_Timeline_Overview.md?v=' + Date.now());
             
             const text = await response.text();
             allEvents = parseTimelineData(text);
