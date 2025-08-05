@@ -595,8 +595,8 @@
                 private: 140,     // Y position for private nodes
                 emojiSize: 16,    // Font size of emoji
                 emojiCenter: 8,   // Offset to center of emoji
-                labelGapAbove: 35,// Gap between node and label above (increased from 30)
-                labelGapBelow: 20 // Gap between node and label below
+                labelGapAbove: 25,// Gap between node and label above (reduced to center better)
+                labelGapBelow: 30 // Gap between node and label below (increased to center better)
             };
             
             // Helper functions for node positions
@@ -1112,7 +1112,7 @@
                     } else {
                         // Labels above: center the label vertically around a fixed point
                         const singleLineHeight = 20; // Approximate height of single line label
-                        const centerPoint = nodeY - NODE_POSITIONS.labelGapAbove - (singleLineHeight / 2) + 8; // Moved down 8px
+                        const centerPoint = nodeY - NODE_POSITIONS.labelGapAbove - (singleLineHeight / 2);
                         baseY = centerPoint - (labelHeight / 2);
                     }
                     const baseX = procEvent.x - labelWidth / 2;
