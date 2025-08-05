@@ -84,7 +84,7 @@
         
         // Emoji configuration for caseline
         const emojiConfig = {
-            '⭐': { label: 'NOI', color: '#ffd700', borderColor: '#ccac00' },
+            '⭐': { label: '', color: '#ffd700', borderColor: '#ccac00' },
             '✅': { label: 'APPROVED', color: '#4caf50', borderColor: '#388e3c' },
             '⛔': { label: 'DENIED', color: '#f44336', borderColor: '#d32f2f' },
             '📐': { label: 'PLAN', color: '#ffd700', borderColor: '#ccac00' },
@@ -405,16 +405,26 @@
                 return checkedCases.includes(eventCase);
             });
             
-            // Preserve current scale and scroll position when filtering
-            const currentScale = parseFloat(document.getElementById('scale-slider').value);
-            const mainContent = document.querySelector('.main-content');
-            const currentScroll = mainContent ? mainContent.scrollLeft : 0;
+            // Check if fit-to-window is enabled
+            const fitToWindowEnabled = document.getElementById('fit-to-window').checked;
             
-            renderTimeline(filteredEvents, currentScale);
-            
-            // Restore scroll position after render
-            if (mainContent) {
-                mainContent.scrollLeft = currentScroll;
+            if (fitToWindowEnabled) {
+                // First render to establish date range for filtered events
+                renderTimeline(filteredEvents);
+                // Then calculate and apply fit scale
+                setTimeout(calculateAndApplyFitScale, 0);
+            } else {
+                // Preserve current scale and scroll position when filtering
+                const currentScale = parseFloat(document.getElementById('scale-slider').value);
+                const mainContent = document.querySelector('.main-content');
+                const currentScroll = mainContent ? mainContent.scrollLeft : 0;
+                
+                renderTimeline(filteredEvents, currentScale);
+                
+                // Restore scroll position after render
+                if (mainContent) {
+                    mainContent.scrollLeft = currentScroll;
+                }
             }
         }
         
@@ -546,14 +556,12 @@
                     const mainEmoji = allEmojis ? allEmojis.find(e => e !== '🔒' && e !== '❌' && e !== '🟢') : null;
                     
                     if (mainEmoji) {
-                        // Check if emoji is recognized
+                        // Always check for **LABEL** override
                         let proceduralLabel = null;
-                        if (!emojiConfig[mainEmoji]) {
-                            // Not recognized, look for **LABEL**
-                            const labelMatch = procedural.match(/\*\*([^*]+)\*\*/);
-                            if (labelMatch) {
-                                proceduralLabel = labelMatch[1];
-                            }
+                        const labelMatch = procedural.match(/\*\*([^*]+)\*\*/);
+                        if (labelMatch) {
+                            proceduralLabel = labelMatch[1];
+                            console.log(`Found label override: "${proceduralLabel}" for emoji ${mainEmoji} on ${dateStr}`);
                         }
                         
                         events.push({
@@ -611,7 +619,7 @@
             const caselineRow1 = document.createElement('tr');
             caselineRow1.innerHTML = `
                 <td style="padding: 2px 10px 2px 0; font-weight: bold; white-space: nowrap; vertical-align: top;" rowspan="2">Caseline:</td>
-                <td style="padding: 2px 12px;">⭐ NOI</td>
+                <td style="padding: 2px 12px;">⭐ Filing</td>
                 <td style="padding: 2px 12px;">✅ Approved</td>
                 <td style="padding: 2px 12px;">⛔ Denied</td>
                 <td style="padding: 2px 12px;">📐 Plan</td>
@@ -965,8 +973,8 @@
                 const displayEmoji = event.isPrivate ? '🔒' : event.caselineEmoji;
                 const config = emojiConfig[event.caselineEmoji];
                 
-                // Get label and colors - use config if recognized, otherwise use procedural label and defaults
-                const nodeLabel = config ? config.label : (event.proceduralLabel || '');
+                // Get label and colors - prefer procedural label override, then config label
+                const nodeLabel = event.proceduralLabel || (config ? config.label : '');
                 const nodeColor = config ? config.color : '#999999';
                 const borderColor = config ? config.borderColor : '#666666';
                 
@@ -1019,6 +1027,18 @@
             
             // PASS 3: Render case procedural events and connections
             
+            // Helper function to split labels with multiple words
+            function splitLabel(text) {
+                const words = text.split(' ');
+                if (words.length <= 1) return text;
+                
+                // Split into two lines as evenly as possible
+                const midpoint = Math.floor(words.length / 2);
+                const line1 = words.slice(0, midpoint).join(' ');
+                const line2 = words.slice(midpoint).join(' ');
+                return line1 + '\n' + line2;
+            }
+            
             // Helper function to measure actual rendered dimensions
             function measureAbbrev(abbrev, isPrivate) {
                 const el = document.createElement('div');
@@ -1026,6 +1046,8 @@
                 el.style.position = 'absolute';
                 el.style.visibility = 'hidden';
                 el.style.transform = 'none';
+                el.style.whiteSpace = 'pre-line';
+                el.style.textAlign = 'center';
                 el.textContent = abbrev;
                 document.body.appendChild(el);
                 const { width, height } = el.getBoundingClientRect();
@@ -1060,14 +1082,25 @@
                         return;
                     }
                     
-                    // Use the nodeLabel from the event
-                    let abbreviation = procEvent.nodeLabel;
+                    // Use the nodeLabel from the event and split if multiple words
+                    let abbreviation = splitLabel(procEvent.nodeLabel);
                     
                     
                     // Measure actual rendered dimensions
                     const { width: labelWidth, height: labelHeight } = measureAbbrev(abbreviation, procEvent.isPrivate);
                     const nodeY = getNodeY(procEvent.isPrivate);
-                    const baseY = procEvent.isPrivate ? nodeY + NODE_POSITIONS.labelGapBelow : nodeY - NODE_POSITIONS.labelGapAbove;
+                    // For labels above: adjust Y position so multiline labels are centered around the same point as single line
+                    // For labels below: keep the same top-aligned behavior
+                    let baseY;
+                    if (procEvent.isPrivate) {
+                        // Labels below: top edge stays at fixed distance from node
+                        baseY = nodeY + NODE_POSITIONS.labelGapBelow;
+                    } else {
+                        // Labels above: center the label vertically around a fixed point
+                        const singleLineHeight = 20; // Approximate height of single line label
+                        const centerPoint = nodeY - NODE_POSITIONS.labelGapAbove - (singleLineHeight / 2) + 8; // Moved down 8px
+                        baseY = centerPoint - (labelHeight / 2);
+                    }
                     const baseX = procEvent.x - labelWidth / 2;
                     
                     allLabelData.push({
@@ -1106,7 +1139,7 @@
                 let hasOverlap = true;
                 let iterations = 0;
                 
-                while (hasOverlap && iterations < 20) {
+                while (hasOverlap && iterations < 30) {
                     hasOverlap = false;
                     
                     for (let i = 1; i < bandLabels.length; i++) {
@@ -1118,137 +1151,15 @@
                         if (overlap > 0) {
                             hasOverlap = true;
                             
-                            // Calculate how much each label can move toward its ideal position
-                            const prevIdealDist = Math.abs(prev.x - prev.baseX);
-                            const currIdealDist = Math.abs(curr.x - curr.baseX);
-                            
-                            // Distribute the overlap based on which label has more "give"
-                            // The label further from its ideal position moves less
-                            if (prevIdealDist < currIdealDist) {
-                                // Previous label can move more
-                                prev.x -= overlap * 0.7;
-                                curr.x += overlap * 0.3;
-                            } else if (currIdealDist < prevIdealDist) {
-                                // Current label can move more
-                                prev.x -= overlap * 0.3;
-                                curr.x += overlap * 0.7;
-                            } else {
-                                // Equal distribution
-                                prev.x -= overlap * 0.5;
-                                curr.x += overlap * 0.5;
-                            }
+                            // Split the overlap - move both labels
+                            prev.x -= overlap * 0.5;
+                            curr.x += overlap * 0.5;
                         }
                     }
                     
                     iterations++;
                 }
             });
-            
-            /* COMMENTED OUT FOR TESTING
-            // Phase 2.3: Pull labels back toward their nodes when possible
-            // After pushing apart, try to move labels closer to their ideal positions
-            for (let pullIter = 0; pullIter < 10; pullIter++) {
-                let anyMovement = false;
-                
-                for (let i = 0; i < allLabelData.length; i++) {
-                    const label = allLabelData[i];
-                    const idealX = label.baseX; // Original centered position
-                    const currentCenter = label.x + label.width / 2;
-                    const nodeX = label.procEvent.x;
-                    
-                    // Only try to move if we're not already at ideal position
-                    if (Math.abs(currentCenter - nodeX) > 2) {
-                        // Calculate desired movement toward node
-                        const moveDir = nodeX > currentCenter ? 1 : -1;
-                        const moveAmount = Math.min(5, Math.abs(currentCenter - nodeX) * 0.3); // Move up to 5px or 30% of distance
-                        
-                        // Check if moving would cause collision
-                        const testX = label.x + (moveDir * moveAmount);
-                        let canMove = true;
-                        
-                        for (let j = 0; j < allLabelData.length; j++) {
-                            if (i === j) continue;
-                            const other = allLabelData[j];
-                            
-                            // Only check labels on same level
-                            if (label.procEvent.isPrivate !== other.procEvent.isPrivate) continue;
-                            
-                            // Check if move would cause overlap
-                            const wouldOverlap = (testX < other.x + other.width + minGap) && 
-                                                (testX + label.width + minGap > other.x);
-                            
-                            if (wouldOverlap) {
-                                canMove = false;
-                                break;
-                            }
-                        }
-                        
-                        if (canMove) {
-                            label.x = testX;
-                            anyMovement = true;
-                        }
-                    }
-                }
-                
-                // Stop if no labels could move
-                if (!anyMovement) break;
-            }
-            */
-            
-            /* COMMENTED OUT FOR TESTING
-            // Phase 2.5: Order-preserving packing
-            // After collision resolution, pack labels to minimize total distance while preserving order
-            const MIN_X = 250; // timeline start
-            const MAX_X = 250 + totalDays * pixelsPerDay; // timeline end
-            const GAP = minGap;
-            
-            // Process each band (public/private) separately
-            [false, true].forEach(bandIsBelow => {
-                const items = allLabelData
-                    .filter(ld => ld.procEvent.isPrivate === bandIsBelow)
-                    .sort((a,b) => a.procEvent.x - b.procEvent.x) // node order
-                    .map(ld => {
-                        const w = ld.width;
-                        const desiredC = ld.x + w / 2; // from collision solver
-                        return {
-                            ld,
-                            w,
-                            minC: MIN_X + w / 2,
-                            maxC: MAX_X - w / 2,
-                            c: desiredC,          // working center
-                            desiredC
-                        };
-                    });
-                
-                if (items.length === 0) return;
-                
-                // Forward pass: enforce increasing centers + gap
-                for (let i = 0; i < items.length; i++) {
-                    if (i > 0) {
-                        const prev = items[i - 1], cur = items[i];
-                        const need = prev.c + (prev.w + cur.w) / 2 + GAP;
-                        cur.c = Math.max(cur.c, need);
-                    }
-                    items[i].c = Math.max(items[i].c, items[i].minC);
-                }
-                
-                // Backward pass: clamp to right bound and propagate left
-                for (let i = items.length - 1; i >= 0; i--) {
-                    const cur = items[i];
-                    cur.c = Math.min(cur.c, cur.maxC);
-                    if (i < items.length - 1) {
-                        const next = items[i + 1];
-                        const allow = next.c - (cur.w + next.w) / 2 - GAP;
-                        cur.c = Math.min(cur.c, allow);
-                    }
-                }
-                
-                // Write back the packed positions
-                items.forEach(({ ld, c, w }) => {
-                    ld.x = c - w / 2;
-                });
-            });
-            */
             
             
             // Phase 3: Render all elements with resolved positions
@@ -1300,6 +1211,8 @@
                         }
                         
                         procLabel.className = `node-label ${procEvent.isPrivate ? 'node-label-below' : 'node-label-above'} ${statusClass}`;
+                        procLabel.style.whiteSpace = 'pre-line';
+                        procLabel.style.textAlign = 'center';
                         procLabel.textContent = labelData.abbreviation;
                         procLabel.title = `${procEvent.title} - ${procEvent.dateStr}`;
                         
@@ -1435,10 +1348,10 @@
                         container.appendChild(infoLabel);
                     }
                     
-                    // For single-event cases OR cases ending with EXPIRED, draw a line extending to the right
+                    // For single-event cases (but NOT EXPIRED), draw a line extending to the right
                     const lastEvent = caseEvents[caseEvents.length - 1];
-                    if (caseEvents.length === 1 || lastEvent.originalEmoji === '⏰') {
-                        const eventToExtend = lastEvent.originalEmoji === '⏰' ? lastEvent : caseEvents[0];
+                    if (caseEvents.length === 1 && caseEvents[0].originalEmoji !== '⏰') {
+                        const eventToExtend = caseEvents[0];
                         // Extend line to either current date or end of timeline, whichever is earlier
                         const currentDate = new Date();
                         const lineEndDate = currentDate > endDate ? endDate : currentDate;
@@ -1472,14 +1385,8 @@
                         line.setAttribute('stroke', strokeColor);
                         line.setAttribute('stroke-width', '4');
                         line.setAttribute('stroke-opacity', '0.7');
-                        // Solid line for EXPIRED, dashed for ongoing cases
-                        if (eventToExtend.originalEmoji === '⏰') {
-                            // Solid red line for expired cases
-                            line.setAttribute('stroke-dasharray', 'none');
-                        } else {
-                            // Dashed line for ongoing cases
-                            line.setAttribute('stroke-dasharray', '8 4');
-                        }
+                        // Dashed line for ongoing cases
+                        line.setAttribute('stroke-dasharray', '8 4');
                         
                         svg.appendChild(line);
                         container.appendChild(svg);

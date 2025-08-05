@@ -487,6 +487,7 @@ body {
     z-index: 11;
     cursor: pointer;
     transition: all 0.2s ease;
+    line-height: 1.2; /* Tighter line spacing for multiline labels */
 }
 
 /* Status-based label colors */

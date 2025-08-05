@@ -57,6 +57,8 @@ Efforts are underway to accurately assess the intent and consequences of the pro
 
 [Re: NOI for Lot 2B Mill Street (DEP File #338-0706) — Expired SOC](https://docs.google.com/document/d/1rFPh2nAFR3PbEKMZM0cLZzL174oV-v5gESPvF3wq0Yc/edit?usp=sharing)
 
+[RE: 42 Mill StreetUnbuildable Lot Status Due to Unresolved Subdivision Issues](https://docs.google.com/document/d/1VBTaT9irJAqS0Zx9Q_fWZE51eqEElwP7lZ3O_z1xWcg/edit?usp=sharing)
+
 [2025_07_29 WCC Documents Request](https://docs.google.com/document/d/1aTuwKN8ClZdpTS8MXKj5Fsh2QCiWgmMlIX4puK6gw2g/edit?usp=sharing)
 
 ---
