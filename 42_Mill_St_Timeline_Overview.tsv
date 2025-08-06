@@ -1,27 +1,27 @@
-#DOC	# 42 Mill Street Timeline Overview
-#DOC	## Timeline Emoji System
-#DOC	The timeline visualization uses emojis in the **Mrkr** column to determine event types and appearance:
-#DOC	### Timeline Events (Regular Timeline)
-#DOC	- 🟢 = Green public event on timeline
-#DOC	- 🔒🟢 = Red private event on timeline  
-#DOC	- ❌ = Missing document indicator (appears with other markers)
-#DOC	### Caseline Events (Procedural Timeline)
-#DOC	These emojis create nodes on the case-specific procedural timeline:
-#DOC	- ⭐ = Filing/Application (no default label - use **LABEL** in Procedural Step)
-#DOC	- ✅ = Approved (label: "APPROVED")
-#DOC	- ⛔ = Denied (label: "DENIED")
-#DOC	- 📐 = Plan Submitted (label: "PLAN")
-#DOC	- 🔍 = Peer Review (label: "REVIEW")
-#DOC	- 🐢 = Continued Hearing (no label)
-#DOC	- 🏛️ = Public Hearing (label: "HEARING")
-#DOC	- ⏰ = Expired (label: "EXPIRED")
-#DOC	- ♻️ = Extended (label: "EXTENDED")
-#DOC	- 🔒 + any above = Private version (shows 🔒 as node)
-#DOC	**Label Override:** Any recognized emoji can have its label overridden by including **LABEL** in the Procedural Step column. For example:
-#DOC	- ⭐ with **RDA** → shows "RDA" as label
-#DOC	- ⭐ with **ANRAD** → shows "ANRAD" as label
-#DOC	- ⭐ with **SORAD** → shows "SORAD" as label
-#DOC	**Template:**
+#DOC # 42 Mill Street Timeline Overview
+#DOC ## Timeline Emoji System
+#DOC The timeline visualization uses emojis in the **Mrkr** column to determine event types and appearance:
+#DOC ### Timeline Events (Regular Timeline)
+#DOC - 🟢 = Green public event on timeline
+#DOC - 🔒🟢 = Red private event on timeline  
+#DOC - ❌ = Missing document indicator (appears with other markers)
+#DOC ### Caseline Events (Procedural Timeline)
+#DOC These emojis create nodes on the case-specific procedural timeline:
+#DOC - ⭐ = Filing/Application (no default label - use **LABEL** in Procedural Step)
+#DOC - ✅ = Approved (label: "APPROVED")
+#DOC - ⛔ = Denied (label: "DENIED")
+#DOC - 📐 = Plan Submitted (label: "PLAN")
+#DOC - 🔍 = Peer Review (label: "REVIEW")
+#DOC - 🐢 = Continued Hearing (no label)
+#DOC - 🏛️ = Public Hearing (label: "HEARING")
+#DOC - ⏰ = Expired (label: "EXPIRED")
+#DOC - ♻️ = Extended (label: "EXTENDED")
+#DOC - 🔒 + any above = Private version (shows 🔒 as node)
+#DOC **Label Override:** Any recognized emoji can have its label overridden by including **LABEL** in the Procedural Step column. For example:
+#DOC - ⭐ with **RDA** → shows "RDA" as label
+#DOC - ⭐ with **ANRAD** → shows "ANRAD" as label
+#DOC - ⭐ with **SORAD** → shows "SORAD" as label
+#DOC **Template:**
 
 Date	Document	Case #	Mrkr	Procedural Step	Environmental/Strategic Analysis	Notes
 1966-06-28	[1355 mill st plan](https://github.com/tdemelle-SiP/bakers_pond/blob/master/Dated%20Documents/1966_06_28_1355%20mill%20st%20plan.PDF)	Historical			Establishes plotlines	Historical property plan from 1966
