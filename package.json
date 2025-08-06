@@ -1,0 +1,12 @@
+{
+  "name": "bakers_pond",
+  "version": "1.0.0",
+  "description": "42 Mill Street Timeline Management",
+  "scripts": {
+    "watch": "chokidar timeline-data.csv -c \"python tsv2md.py\"",
+    "convert": "python tsv2md.py"
+  },
+  "devDependencies": {
+    "chokidar-cli": "^3.0.0"
+  }
+}

@@ -57,3 +57,7 @@ Resources/Working_Files/
 
 # Claude AI workspace configuration
 .claude/
+
+# Node dependencies
+node_modules/
+package-lock.json

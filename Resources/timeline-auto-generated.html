@@ -208,6 +208,7 @@
                     caseNumbers.add(event.caseNumber);
                 }
             });
+            console.log('Found case numbers:', Array.from(caseNumbers));
             
             const container = document.getElementById('filter-case');
             container.innerHTML = ''; // Clear existing content
@@ -239,8 +240,9 @@
                 container.appendChild(label);
             }
             
-            // Add the known DEP case numbers in chronological order
+            // Add the known DEP case numbers and categories in chronological order
             const knownCases = [
+                { value: 'Historical', text: 'Historical Records' },
                 { value: '338-0303', text: 'DEP #338-0303 | 2001 Initial' },
                 { value: '338-0594', text: 'DEP #338-0594 | 2014 House' },
                 { value: '338-0706', text: 'DEP #338-0706 | 2020 House' },
@@ -286,7 +288,8 @@
                     });
                     
                     label.appendChild(checkbox);
-                    label.appendChild(document.createTextNode(' DEP #' + caseNum));
+                    const displayText = caseNum === 'Historical' ? 'Historical Records' : ' DEP #' + caseNum;
+                    label.appendChild(document.createTextNode(displayText));
                     container.appendChild(label);
                 }
             });
@@ -776,6 +779,7 @@
             
             // Track case procedural events for timeline bars
             const caseProceduralEvents = {
+                'Historical': [],
                 '338-0303': [],
                 '338-0594': [],
                 '338-0706': [],
@@ -784,6 +788,7 @@
             
             // Case info for labels
             const caseInfo = {
+                'Historical': { year: '', name: 'Historical' },
                 '338-0303': { year: '2001', name: 'Initial' },
                 '338-0594': { year: '2014', name: 'House' },
                 '338-0706': { year: '2020', name: 'House' },
@@ -1196,8 +1201,9 @@
                     // Create tooltip
                     const tooltip = document.createElement('div');
                     tooltip.className = 'event-tooltip';
+                    const caseLabel = caseNum === 'Historical' ? 'Historical Records' : `DEP #${caseNum}`;
                     tooltip.innerHTML = `
-                        <div class="event-date">DEP #${caseNum}</div>
+                        <div class="event-date">${caseLabel}</div>
                         <div class="event-title">${procEvent.title}</div>
                         <div class="event-detail">${procEvent.dateStr}</div>
                     `;
@@ -1349,7 +1355,8 @@
                     const caseColor = getComputedStyle(tempEl).backgroundColor;
                     document.body.removeChild(tempEl);
                     caseLabel.style.color = caseColor;
-                    caseLabel.textContent = `DEP #${caseNum}`;
+                    const labelText = caseNum === 'Historical' ? 'Historical Records' : `DEP #${caseNum}`;
+                    caseLabel.textContent = labelText;
                     container.appendChild(caseLabel);
                     
                     // Add year and name label above the case number
