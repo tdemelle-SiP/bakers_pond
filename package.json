@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "42 Mill Street Timeline Management",
   "scripts": {
-    "watch": "chokidar timeline-data.csv -c \"python tsv2md.py\"",
-    "convert": "python tsv2md.py"
+    "watch": "chokidar Resources/tsv-converter/timeline-data.tsv -c \"python Resources/tsv-converter/tsv2md.py\"",
+    "convert": "python Resources/tsv-converter/tsv2md.py"
   },
   "devDependencies": {
     "chokidar-cli": "^3.0.0"

@@ -20,7 +20,6 @@ desktop.ini
 *.backup
 
 # IDE and Editor Files
-.vscode/
 .idea/
 *.sublime-project
 *.sublime-workspace
@@ -53,7 +52,7 @@ confidential/
 trash/
 
 # Working directory
-Resources/Working_Files/
+Resources/work/
 
 # Claude AI workspace configuration
 .claude/
