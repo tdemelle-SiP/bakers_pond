@@ -1,5 +1,42 @@
 /* Timeline Auto-Generated Styles */
 
+/* Legend and caseline styles */
+.legend-table {
+	border-collapse: collapse;
+}
+
+.timeline-icon {
+	width: 14px;
+	height: 14px;
+	display: inline-block;
+	border-radius: 50%;
+	margin-right: 4px;
+	border: 1px solid #000;
+}
+
+.caseline-line {
+	stroke: #0066cc;
+	stroke-width: 2;
+}
+
+.caseline-label {
+	fill: #0066cc;
+	font-weight: 600;
+	font-size: 12px;
+}
+
+/* Ensure nodes paint above baseline */
+.event {
+	position: absolute;
+	z-index: 2;
+}
+
+/* SVG Connector styles */
+.connectors line,
+.connector {
+	stroke-width: 1.5;
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background-color: white;
@@ -244,7 +281,7 @@ body {
 .timeline-line {
     position: absolute;
     top: 300px; /* Lower in 400px container */
-    left: 200px;
+    left: 250px;
     right: 0;
     height: 2px;
     background: #34495e;
@@ -254,7 +291,7 @@ body {
 /* Background sections for public/private proceedings */
 .timeline-section-background {
     position: absolute;
-    left: 200px;
+    left: 250px;
     right: 0;
     z-index: 0;
 }
