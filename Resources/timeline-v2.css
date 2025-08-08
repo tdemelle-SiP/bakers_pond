@@ -39,7 +39,7 @@ body {
 .container {
     width: fit-content;
     background: transparent;
-    padding: 40px 40px;
+    padding: 40px 20px;
     margin: 0;
     border-radius: 0;
     box-shadow: none;
@@ -144,7 +144,7 @@ body {
 .timeline-line {
     position: absolute;
     top: 50%; /* Center line divides public/private */
-    left: 200px;
+    left: 155px;
     right: 0;
     height: 1px; /* Thinner line per user request */
     background: #34495e;
@@ -156,7 +156,7 @@ body {
 .caseline-center-line {
     position: absolute;
     top: calc(50% + 45px); /* Adjusted center line position */
-    left: 200px;
+    left: 155px;
     right: 0;
     height: 1px;
     background: #34495e;
@@ -167,7 +167,7 @@ body {
 /* Background sections */
 .timeline-section-background {
     position: absolute;
-    left: 200px;
+    left: 155px;
     right: 0;
     top: 0;
     bottom: 0;
@@ -224,7 +224,7 @@ body {
 }
 
 .connections-overlay {
-    z-index: 20; /* Connections above case titles */
+    z-index: 5; /* Connections below sections but above backgrounds */
 }
 
 /* ========== 4. TIMELINE EVENTS (GREEN/RED DOTS) ========== */
@@ -280,30 +280,30 @@ body {
 }
 
 .event-above .event-date-label {
-    bottom: calc(100% + 16px);
+    bottom: calc(100% + 8px);
     margin-bottom: 2px;
 }
 
 .event-below .event-date-label {
-    top: calc(100% + 16px);
+    top: calc(100% + 8px);
     margin-top: 2px;
 }
 
 /* Missing indicator */
 .missing-indicator {
     position: absolute;
-    font-size: 14px;
+    font-size: 7px;
     z-index: 41; /* Missing indicators above date labels */
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .event-above .missing-indicator {
-    top: -20px;
-    left: 8px;
+    top: -10px;
 }
 
 .event-below .missing-indicator {
-    top: 12px;
-    left: 8px;
+    bottom: -10px;
 }
 
 /* ========== 5. CASELINE ELEMENTS ========== */
@@ -363,8 +363,8 @@ body {
     color: #ffd700;
 }
 
-/* Continuance hiding */
-.hide-continuances .continuance {
+/* Continuance hiding - only hide nodes, not connection lines */
+.hide-continuances .caseline-node.continuance {
     display: none !important;
 }
 

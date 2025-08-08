@@ -5,13 +5,13 @@
  * REFERENCES:
  * - Original: lines 693-771 for date range and positioning
  * - 60-day padding before/after events
- * - TIMELINE_LEFT_OFFSET = 200px
+ * - TIMELINE_LEFT_OFFSET = 155px
  * - Default pixelsPerDay = 0.8
  */
 
 // Constants from original
-export const TIMELINE_LEFT_OFFSET = 200;
-export const TIMELINE_RIGHT_PADDING = 300;
+export const TIMELINE_LEFT_OFFSET = 155;
+export const TIMELINE_RIGHT_PADDING = 50;
 export const DEFAULT_SCALE = 0.8;
 
 /**
@@ -52,7 +52,11 @@ export function getXPosition(date, startDate, pixelsPerDay) {
  * @returns {number} Timeline width in pixels
  */
 export function calculateTimelineWidth(totalDays, pixelsPerDay) {
-    return Math.max(totalDays * pixelsPerDay + TIMELINE_RIGHT_PADDING, 1200);
+    // Calculate content width
+    const contentWidth = totalDays * pixelsPerDay + TIMELINE_RIGHT_PADDING;
+    // Ensure it's at least as wide as the viewport
+    const viewportWidth = window.innerWidth - 40; // Account for container padding
+    return Math.max(contentWidth, viewportWidth, 1200);
 }
 
 /**

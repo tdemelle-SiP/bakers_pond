@@ -33,12 +33,12 @@ export function filterByDate(events, startDate, endDate) {
 /**
  * Filter events by case numbers
  * @param {Object[]} events - All events
- * @param {string[]} selectedCases - Array of selected case numbers (empty = show all)
+ * @param {string[]} selectedCases - Array of selected case numbers (empty = show none)
  * @returns {Object[]} Filtered events
  */
 export function filterByCase(events, selectedCases) {
     if (!selectedCases || selectedCases.length === 0) {
-        return events;
+        return [];  // When no cases selected, show nothing
     }
     
     return events.filter(event => {
@@ -66,8 +66,8 @@ export function applyFilters(events, filterState) {
         filtered = filterByDate(filtered, filterState.startDate, filterState.endDate);
     }
     
-    // Apply case filter
-    if (filterState.selectedCases && filterState.selectedCases.length > 0) {
+    // Apply case filter - always apply it (empty array means show nothing)
+    if (filterState.selectedCases !== undefined) {
         filtered = filterByCase(filtered, filterState.selectedCases);
     }
     

@@ -209,7 +209,8 @@ function handleScaleUpdate(scaleUpdate) {
 function calculateFitToWindowScale() {
     const container = document.getElementById('timeline-container');
     const dateRange = calculateDateRange(state.filteredEvents);
-    const availableWidth = window.innerWidth - 250; // Account for margins
+    // Account for: 155px left offset + 50px right padding + 40px container padding
+    const availableWidth = window.innerWidth - 245; 
     
     if (dateRange.totalDays > 0) {
         return Math.min(3.0, availableWidth / dateRange.totalDays);

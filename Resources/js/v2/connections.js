@@ -110,7 +110,7 @@ export function drawCaselineConnections(caseGroups, container) {
     svg.style.width = '100%';
     svg.style.height = sectionHeight + 'px';
     svg.style.pointerEvents = 'none';
-    svg.style.zIndex = '4';
+    svg.style.zIndex = '5';  // Connections below nodes
     
     // Draw connections for each case
     Object.entries(caseGroups).forEach(([caseNumber, nodes]) => {
@@ -126,23 +126,22 @@ export function drawCaselineConnections(caseGroups, container) {
             
             const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             line.setAttribute('x1', current.x);
-            // Convert Y to percentage within caseline section, matching node positions
-            // Center is at 50% + 35px offset, nodes are ±20px from center, emoji center is +8px
+            // Calculate Y positions for connection lines to pass through exact center
+            // Public nodes: TOP at 50% + 15px (50% - 20px + 35px)
+            // Private nodes: TOP at 50% + 55px (50% + 20px + 35px)
+            // Emoji visual center is further down due to line-height and glyph rendering
             const y1 = current.isPrivate ? 
-                (sectionHeight * 0.5 + 35 + 20 + 8) : // Private node center with title offset
-                (sectionHeight * 0.5 + 35 - 20 + 8);  // Public node center with title offset
+                (sectionHeight * 0.5 + 55 + 12) : // Private center: TOP + 12px to visual center
+                (sectionHeight * 0.5 + 15 + 12);  // Public center: TOP + 12px to visual center
             const y2 = next.isPrivate ? 
-                (sectionHeight * 0.5 + 35 + 20 + 8) : // Private node center with title offset
-                (sectionHeight * 0.5 + 35 - 20 + 8);  // Public node center with title offset
+                (sectionHeight * 0.5 + 55 + 12) : // Private center: TOP + 12px to visual center
+                (sectionHeight * 0.5 + 15 + 12);  // Public center: TOP + 12px to visual center
             line.setAttribute('y1', y1);
             line.setAttribute('x2', next.x);
             line.setAttribute('y2', y2);
             
-            // Add continuance class if either endpoint is a continuance
-            const isContinuance = (current.emoji === '🐢' || next.emoji === '🐢');
-            if (isContinuance) {
-                line.classList.add('continuance');
-            }
+            // Note: We don't add continuance class to lines anymore
+            // Lines should remain visible even when continuance nodes are hidden
             
             // Use the current node's color for the line (following original pattern)
             line.setAttribute('stroke', current.color);
@@ -169,7 +168,7 @@ export function drawLeaderLines(labels, container) {
     svg.style.width = '100%';
     svg.style.height = '400px';
     svg.style.pointerEvents = 'none';
-    svg.style.zIndex = '18';
+    svg.style.zIndex = '8';  // Leader lines below nodes but above connection lines
     
     labels.forEach(label => {
         // Only draw leader if label is offset from node

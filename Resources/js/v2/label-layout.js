@@ -70,6 +70,7 @@ export function resolveCollisions(labelData) {
         // Find and resolve overlaps
         let hasOverlap = true;
         let iterations = 0;
+        const minLeftBound = 20; // Minimum left position to keep labels on screen
         
         while (hasOverlap && iterations < 30) {
             hasOverlap = false;
@@ -86,6 +87,17 @@ export function resolveCollisions(labelData) {
                     // Split the overlap - move both labels
                     prev.x -= overlap * 0.5;
                     curr.x += overlap * 0.5;
+                }
+            }
+            
+            // Ensure no labels go off the left edge
+            for (let i = 0; i < bandLabels.length; i++) {
+                if (bandLabels[i].x < minLeftBound) {
+                    const shift = minLeftBound - bandLabels[i].x;
+                    // Push this label and all to its right
+                    for (let j = i; j < bandLabels.length; j++) {
+                        bandLabels[j].x += shift;
+                    }
                 }
             }
             
@@ -242,7 +254,7 @@ function drawLeaderLine(container, node, labelData) {
     svg.style.width = Math.abs(nodeCenter - labelCenter) + 'px';
     svg.style.height = Math.abs(nodeCenterY - labelEdgeY) + 'px';
     svg.style.pointerEvents = 'none';
-    svg.style.zIndex = '9';
+    svg.style.zIndex = '8';  // Leader lines below nodes but above connection lines
     
     const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
     line.setAttribute('x1', nodeCenter < labelCenter ? '0' : Math.abs(nodeCenter - labelCenter));

@@ -28,7 +28,6 @@ const NODE_Y = {
 export function renderTimelineNodes(events, dateRange, pixelsPerDay) {
     const positions = [];
     const dateLabels = { above: [], below: [] };
-    const datesWithLabels = { above: new Set(), below: new Set() };
     
     // Get the correct containers
     const publicContainer = document.getElementById('public-container');
@@ -48,29 +47,23 @@ export function renderTimelineNodes(events, dateRange, pixelsPerDay) {
         node.className = `event timeline-node ${event.eventClass} ${event.isPrivate ? 'event-below' : 'event-above'}`;
         node.style.left = x + 'px'; // Use absolute positioning
         
-        // Prepare date label if first event on this date/level
+        // Prepare date label for EVERY event (v1 approach)
         const labelGroup = event.isPrivate ? 'below' : 'above';
-        const dateKey = event.dateStr;
+        const monthDay = new Date(event.date).toLocaleDateString('en-US', { 
+            month: 'numeric', 
+            day: 'numeric' 
+        });
         
-        if (!datesWithLabels[labelGroup].has(dateKey)) {
-            const monthDay = new Date(event.date).toLocaleDateString('en-US', { 
-                month: 'numeric', 
-                day: 'numeric' 
-            });
-            
-            const dateLabel = document.createElement('div');
-            dateLabel.className = 'event-date-label';
-            dateLabel.textContent = monthDay;
-            
-            dateLabels[labelGroup].push({
-                element: dateLabel,
-                x: x,
-                date: event.date,
-                nodeEl: node
-            });
-            
-            datesWithLabels[labelGroup].add(dateKey);
-        }
+        const dateLabel = document.createElement('div');
+        dateLabel.className = 'event-date-label';
+        dateLabel.textContent = monthDay;
+        
+        dateLabels[labelGroup].push({
+            element: dateLabel,
+            x: x,
+            date: event.date,
+            eventEl: node  // Changed to match v1 naming
+        });
         
         // Create tooltip
         const tooltip = document.createElement('div');
@@ -114,7 +107,7 @@ export function renderTimelineNodes(events, dateRange, pixelsPerDay) {
 }
 
 /**
- * Apply date labels with clustering to avoid overlap
+ * Apply date labels with two-pass clustering algorithm from v1
  * @param {Object} dateLabels - {above: [], below: []} arrays of label data
  */
 function applyDateLabels(dateLabels) {
@@ -122,16 +115,50 @@ function applyDateLabels(dateLabels) {
         const labels = dateLabels[position];
         if (labels.length === 0) return;
         
-        // Sort by x position
+        // Sort labels by x position
         labels.sort((a, b) => a.x - b.x);
         
-        // Simple clustering: skip labels that are too close
+        // PASS 1: Identify clusters of overlapping NODES (5px squares)
+        const nodeClusterBoundaries = [];
+        let clusterStart = 0;
+        
+        for (let i = 1; i < labels.length; i++) {
+            // If nodes are more than 8px apart, end the current cluster
+            if (labels[i].x - labels[i-1].x > 8) {
+                nodeClusterBoundaries.push({ start: clusterStart, end: i - 1 });
+                clusterStart = i;
+            }
+        }
+        // Add the last cluster
+        nodeClusterBoundaries.push({ start: clusterStart, end: labels.length - 1 });
+        
+        // Mark which labels to keep from node clustering
+        const keepFromNodePass = new Set();
+        nodeClusterBoundaries.forEach(cluster => {
+            keepFromNodePass.add(cluster.start); // Always keep first
+            if (cluster.end > cluster.start) {
+                keepFromNodePass.add(cluster.end); // Keep last if different
+            }
+        });
+        
+        // PASS 2: Remove any date that is within 25 pixels of a previous date
+        const finalLabelsToShow = [];
         let lastShownX = -Infinity;
-        labels.forEach(label => {
-            if (label.x - lastShownX >= 25) {  // Minimum 25px spacing
-                label.nodeEl.appendChild(label.element);
+        
+        labels.forEach((label, index) => {
+            if (!keepFromNodePass.has(index)) return; // Skip if removed in pass 1
+            
+            if (label.x - lastShownX >= 25) {
+                // This label is far enough from the last shown one
+                finalLabelsToShow.push(label);
                 lastShownX = label.x;
             }
+            // Otherwise, skip this label (it's too close to the previous one)
+        });
+        
+        // Apply the final labels
+        finalLabelsToShow.forEach(label => {
+            label.eventEl.appendChild(label.element);
         });
     });
 }
