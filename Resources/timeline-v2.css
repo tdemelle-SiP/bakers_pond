@@ -1,0 +1,647 @@
+/**
+ * timeline-v2.css
+ * Organized styles matching original timeline appearance
+ * Structure:
+ * 1. Base & Body
+ * 2. Navigation Header
+ * 3. Timeline Container & Sections
+ * 4. Timeline Events (Green/Red Dots)
+ * 5. Caseline Elements
+ * 6. Year Markers
+ * 7. Controls & Filters
+ * 8. Tooltips & Interactions
+ * 9. Legend & Stats
+ */
+
+/* ========== 1. BASE & BODY ========== */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: white;
+    margin: 0;
+    padding: 0;
+    overflow: auto;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 190px; /* Space for header with border */
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 20px; /* Space for scrollbar */
+}
+
+.container {
+    width: fit-content;
+    background: transparent;
+    padding: 40px 40px;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* ========== 2. NAVIGATION HEADER ========== */
+.sticky-nav {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    right: 15px;
+    background: #2c3e50;
+    padding: 8px 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    z-index: 1000;
+    flex-shrink: 0;
+    border: 15px solid white;
+}
+
+.nav-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.nav-bottom-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+.nav-filter-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 6px 0;
+    border-top: 1px solid #34495e;
+}
+
+.nav-link {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    background: #3498db;
+    transition: background 0.3s ease;
+}
+
+.nav-link:hover {
+    background: #455a71;
+}
+
+.nav-title {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* ========== 3. TIMELINE CONTAINER & SECTIONS ========== */
+.timeline-container {
+    position: relative;
+    margin: 10px 0;
+    height: calc(100vh - 210px); /* Full height minus header */
+    width: 100%;
+    min-width: 1200px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Timeline sections */
+.timeline-section {
+    position: relative;
+    width: 100%;
+}
+
+/* Caseline takes 55% of vertical space */
+.caseline-section {
+    height: 55%;
+    position: relative;
+    z-index: 10;
+}
+
+/* Timeline takes 45% of vertical space */
+.timeline-events-section {
+    height: 45%;
+    position: relative;
+    z-index: 10;
+}
+
+.section-content {
+    position: absolute;
+    top: 0;
+    left: 0; /* Don't offset - nodes handle their own X positioning */
+    right: 0;
+    height: 100%;
+}
+
+/* The main timeline line (between public and private) */
+.timeline-line {
+    position: absolute;
+    top: 50%; /* Center line divides public/private */
+    left: 200px;
+    right: 0;
+    height: 2px;
+    background: #34495e;
+    z-index: 15;
+    transform: translateY(-50%);
+}
+
+/* Background sections */
+.timeline-section-background {
+    position: absolute;
+    left: 200px;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 0;
+}
+
+.public-section-bg {
+    background: rgba(46, 125, 50, 0.08);
+}
+
+.private-section-bg {
+    background: rgba(198, 40, 40, 0.08);
+}
+
+/* Section labels */
+.section-label {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    font-weight: bold;
+    z-index: 5;
+}
+
+.caseline-label {
+    color: #0066cc;
+    font-size: 16px;
+    top: 75px;
+}
+
+.public-label {
+    color: #2e7d32;
+}
+
+.private-label {
+    color: #c62828;
+}
+
+/* Overlays that span all sections */
+.year-markers-overlay,
+.connections-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+.year-markers-overlay {
+    z-index: 20;
+}
+
+.connections-overlay {
+    z-index: 5;
+}
+
+/* ========== 4. TIMELINE EVENTS (GREEN/RED DOTS) ========== */
+.event,
+.timeline-node {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 1px;
+    border: 1px solid;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+    transform: translateX(-50%);
+}
+
+/* Public events - green (absolute positioning) */
+.tracked-event,
+.event-above {
+    background: #4caf50;
+    border-color: #388e3c;
+    top: 35%; /* Well above center in timeline section */
+}
+
+/* Private events - red (absolute positioning) */
+.tracked-event-priv,
+.event-below {
+    background: #f44336;
+    border-color: #d32f2f;
+    top: 65%; /* Well below center in timeline section */
+}
+
+.event:hover,
+.timeline-node:hover {
+    transform: translateX(-50%) scale(1.2, 1.1);
+    z-index: 30;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+/* Date labels */
+.event-date-label {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 9px;
+    color: #666;
+    white-space: nowrap;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 1px 3px;
+    border-radius: 2px;
+    z-index: 8;
+}
+
+.event-above .event-date-label {
+    bottom: calc(100% + 16px);
+    margin-bottom: 2px;
+}
+
+.event-below .event-date-label {
+    top: calc(100% + 16px);
+    margin-top: 2px;
+}
+
+/* Missing indicator */
+.missing-indicator {
+    position: absolute;
+    font-size: 14px;
+    z-index: 11;
+}
+
+.event-above .missing-indicator {
+    top: -20px;
+    left: 8px;
+}
+
+.event-below .missing-indicator {
+    top: 12px;
+    left: 8px;
+}
+
+/* ========== 5. CASELINE ELEMENTS ========== */
+.case-procedural,
+.caseline-node {
+    position: absolute;
+    font-size: 16px;
+    transform: translateX(-50%);
+    cursor: pointer;
+    z-index: 15;
+}
+
+/* Caseline public events - above the dividing line */
+.caseline-node.public,
+.case-procedural-above {
+    top: 35%; /* Well above center in caseline section */
+}
+
+/* Caseline private events - below the dividing line */  
+.caseline-node.private,
+.case-procedural-below {
+    top: 65%; /* Well below center in caseline section */
+}
+
+/* Caseline labels */
+.node-label {
+    position: absolute;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 6px;
+    background: white;
+    border: 1px solid;
+    border-radius: 3px;
+    white-space: nowrap;
+    text-align: center;
+    z-index: 20;
+    cursor: pointer;
+}
+
+.node-label-above {
+    top: 70px; /* Above caseline nodes */
+}
+
+.node-label-below {
+    top: 120px; /* Below caseline nodes */
+}
+
+/* Status colors for labels */
+.status-approved {
+    background: #e8f5e9;
+    border-color: #4caf50;
+    color: #2e7d32;
+}
+
+.status-denied {
+    background: #ffebee;
+    border-color: #f44336;
+    color: #c62828;
+}
+
+.status-pending {
+    background: #fffde7;
+    border-color: #ffd700;
+    color: #f57f17;
+}
+
+/* Continuance hiding */
+.hide-continuances .continuance {
+    display: none !important;
+}
+
+/* ========== 6. YEAR MARKERS ========== */
+.year-marker {
+    position: absolute;
+    top: 295px;
+    width: 2px;
+    height: 10px;
+    background: #34495e;
+    z-index: 2;
+}
+
+.year-label {
+    position: absolute;
+    transform: translateX(-50%);
+    font-weight: bold;
+    color: #34495e;
+    background: rgba(255,255,255,0.9);
+    padding: 0 6px;
+    font-size: 12px;
+    z-index: 3;
+}
+
+/* ========== 7. CONTROLS & FILTERS ========== */
+.date-filter-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(52, 73, 94, 0.2);
+    padding: 8px 15px;
+    border-radius: 6px;
+    border: 1px solid rgba(52, 73, 94, 0.6);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-label {
+    color: #ccc;
+    font-size: 13px;
+}
+
+.filter-input {
+    padding: 4px 8px;
+    border: 1px solid #34495e;
+    border-radius: 4px;
+    background: #1a252f;
+    color: white;
+    font-size: 13px;
+}
+
+.filter-button {
+    padding: 4px 12px;
+    border: 1px solid #34495e;
+    border-radius: 4px;
+    background: #34495e;
+    color: white;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.filter-button:hover {
+    background: #455a71;
+}
+
+/* Case filter dropdown */
+.case-filter-container {
+    position: relative;
+    display: inline-block;
+}
+
+.case-filter-button {
+    padding: 4px 12px;
+    border: 1px solid #34495e;
+    border-radius: 4px;
+    background: #1a252f;
+    color: white;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 150px;
+    justify-content: space-between;
+}
+
+.case-filter-button:hover {
+    background: #2c3e50;
+}
+
+.dropdown-arrow {
+    font-size: 10px;
+}
+
+.case-filter-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 4px;
+    background: #1a252f;
+    border: 1px solid #34495e;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    min-width: 200px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.case-filter-controls {
+    display: flex;
+    gap: 8px;
+    padding: 8px;
+    border-bottom: 1px solid #34495e;
+}
+
+.select-all-btn,
+.clear-all-btn {
+    flex: 1;
+    padding: 4px 8px;
+    font-size: 11px;
+    border: 1px solid #34495e;
+    background: #2c3e50;
+    color: white;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.select-all-btn:hover,
+.clear-all-btn:hover {
+    background: #34495e;
+}
+
+.case-checkbox-list {
+    padding: 8px;
+}
+
+.case-checkbox-label {
+    display: flex;
+    align-items: center;
+    color: white;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 4px 0;
+    white-space: nowrap;
+}
+
+.case-checkbox {
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+.case-checkbox-label:hover {
+    color: #ffd700;
+}
+
+/* ========== 8. TOOLTIPS & INTERACTIONS ========== */
+.event-tooltip {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.95);
+    color: white;
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 100;
+    white-space: nowrap;
+    max-width: 400px;
+}
+
+/* Show tooltip on hover */
+.event:hover .event-tooltip,
+.timeline-node:hover .event-tooltip,
+.caseline-node:hover .event-tooltip {
+    opacity: 1;
+}
+
+/* Position tooltips above for top events, below for bottom events */
+.event-above .event-tooltip {
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.event-below .event-tooltip {
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.event-date {
+    font-weight: 600;
+    color: #4fc3f7;
+    margin-bottom: 4px;
+}
+
+.event-title {
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+
+.event-detail {
+    font-size: 12px;
+    color: #ccc;
+    white-space: normal;
+}
+
+/* ========== 9. LEGEND & STATS ========== */
+.legend {
+    display: flex;
+    gap: 40px;
+    color: white;
+    font-size: 12px;
+}
+
+.legend table {
+    border-collapse: collapse;
+}
+
+.legend td {
+    padding: 2px 8px;
+    white-space: nowrap;
+}
+
+.stats-container {
+    display: flex;
+    gap: 20px;
+    color: white;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-number {
+    font-size: 18px;
+    font-weight: bold;
+    color: #4fc3f7;
+}
+
+.stat-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+
+/* Loading state */
+.loading {
+    padding: 40px;
+    text-align: center;
+    color: #666;
+    font-size: 16px;
+}
+
+/* Hide content initially */
+#timeline-content {
+    display: none;
+}
+
+/* Scrollbar styling */
+.main-content::-webkit-scrollbar {
+    height: 12px;
+}
+
+.main-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.main-content::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 6px;
+}
+
+.main-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

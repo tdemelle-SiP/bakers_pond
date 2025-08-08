@@ -1,0 +1,226 @@
+/**
+ * main.js
+ * Orchestrates the timeline application
+ * 
+ * This is a minimal version for testing - will be expanded
+ */
+
+import { loadTableData, extractTableRows } from './data-loader.js';
+import { parseEvents, extractCaseNumbers, getEventDateRange } from './event-parser.js';
+import { calculateDateRange, drawYearMarkers, calculateTimelineWidth, setContainerWidth, DEFAULT_SCALE } from './date-scale.js';
+import { renderTimelineNodes } from './timeline-nodes.js';
+import { renderCaselineNodes, renderCaselineLabels } from './caseline-nodes.js';
+import { drawTimelineConnections, drawCaselineConnections } from './connections.js';
+import { initLegend } from './legend-v2.js';
+import { calculateStats, renderStats } from './stats.js';
+import { applyFilters, getDefaultFilterState } from './filters.js';
+import { initAllControls } from './controls-v2.js';
+import { createLabelsWithCollisionDetection } from './label-layout.js';
+
+// Application state
+const state = {
+    allEvents: [],
+    filteredEvents: [],
+    scale: DEFAULT_SCALE,
+    filters: getDefaultFilterState(),
+    caseNumbers: [],
+    fitToWindow: false
+};
+
+/**
+ * Initialize the timeline application
+ */
+async function init() {
+    console.log('Timeline v2 initializing...');
+    
+    // Load and parse data
+    const markdown = await loadTableData();
+    console.log('Loaded markdown:', markdown.length, 'characters');
+    
+    const tableRows = extractTableRows(markdown);
+    console.log('Extracted rows:', tableRows.length);
+    
+    const events = parseEvents(tableRows);
+    console.log('Parsed events:', events.length);
+    
+    // Store in state
+    state.allEvents = events;
+    state.filteredEvents = events;
+    
+    // Extract metadata
+    const caseNumbers = extractCaseNumbers(events);
+    console.log('Case numbers:', caseNumbers);
+    
+    const eventDateRange = getEventDateRange(events);
+    console.log('Date range:', eventDateRange);
+    
+    // Log sample events for debugging
+    const timelineEvent = events.find(e => e.eventType === 'timeline');
+    const caselineEvent = events.find(e => e.eventType === 'caseline');
+    console.log('Sample timeline event:', timelineEvent);
+    console.log('Sample caseline event:', caselineEvent);
+    
+    // Count event types
+    const timelineCount = events.filter(e => e.eventType === 'timeline').length;
+    const caselineCount = events.filter(e => e.eventType === 'caseline').length;
+    console.log(`Event counts: ${timelineCount} timeline, ${caselineCount} caseline`);
+    
+    // Hide loading, show content
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('timeline-content').style.display = 'block';
+    
+    // Initialize timeline rendering
+    const container = document.getElementById('timeline-container');
+    const yearMarkersContainer = document.getElementById('year-markers-container');
+    const connectionsContainer = document.getElementById('connections-container');
+    const dateRange = calculateDateRange(events);
+    const pixelsPerDay = DEFAULT_SCALE;
+    
+    // Set container dimensions
+    const timelineWidth = calculateTimelineWidth(dateRange.totalDays, pixelsPerDay);
+    setContainerWidth(container, timelineWidth);
+    
+    // Draw year markers
+    drawYearMarkers(yearMarkersContainer, dateRange, pixelsPerDay);
+    
+    // Render timeline nodes (they get their own containers internally)
+    const nodePositions = renderTimelineNodes(events, dateRange, pixelsPerDay);
+    console.log('Rendered timeline nodes:', nodePositions.length);
+    
+    // Render caseline nodes (gets its own container internally)
+    const caselineData = renderCaselineNodes(events, dateRange, pixelsPerDay);
+    console.log('Rendered caseline nodes:', caselineData.nodes.length);
+    
+    // Render caseline labels with collision detection
+    createLabelsWithCollisionDetection(caselineData.nodes, container);
+    
+    // Draw connection lines
+    drawTimelineConnections(nodePositions, connectionsContainer);
+    drawCaselineConnections(caselineData.caseGroups, connectionsContainer);
+    
+    // Initialize legend
+    initLegend();
+    
+    // Calculate and display stats
+    const stats = calculateStats(events);
+    renderStats(stats);
+    console.log('Stats:', stats);
+    
+    // Store case numbers in state
+    state.caseNumbers = caseNumbers;
+    
+    // Initialize controls
+    initAllControls({
+        caseNumbers: caseNumbers,
+        initialScale: state.scale,
+        onFilterUpdate: handleFilterUpdate,
+        onScaleUpdate: handleScaleUpdate,
+        calculateFitScale: calculateFitToWindowScale
+    });
+    
+    // All modules now initialized
+}
+
+/**
+ * Handle filter updates
+ */
+function handleFilterUpdate(filterUpdate) {
+    console.log('Filter update:', filterUpdate);
+    
+    // Update state
+    Object.assign(state.filters, filterUpdate);
+    
+    // Apply filters
+    state.filteredEvents = applyFilters(state.allEvents, state.filters);
+    
+    // Re-render
+    render();
+}
+
+/**
+ * Handle scale updates
+ */
+function handleScaleUpdate(scaleUpdate) {
+    console.log('Scale update:', scaleUpdate);
+    
+    if (scaleUpdate.scale !== undefined) {
+        state.scale = scaleUpdate.scale;
+    }
+    
+    if (scaleUpdate.fitToWindow !== undefined) {
+        state.fitToWindow = scaleUpdate.fitToWindow;
+    }
+    
+    // Re-render with new scale
+    render();
+}
+
+/**
+ * Calculate scale to fit visible events in window
+ */
+function calculateFitToWindowScale() {
+    const container = document.getElementById('timeline-container');
+    const dateRange = calculateDateRange(state.filteredEvents);
+    const availableWidth = window.innerWidth - 250; // Account for margins
+    
+    if (dateRange.totalDays > 0) {
+        return Math.min(3.0, availableWidth / dateRange.totalDays);
+    }
+    
+    return DEFAULT_SCALE;
+}
+
+/**
+ * Re-render the timeline with current state
+ */
+function render() {
+    console.log('Rendering with', state.filteredEvents.length, 'filtered events');
+    
+    // Clear existing content
+    const caselineContainer = document.getElementById('caseline-container');
+    const timelineContainer = document.getElementById('timeline-nodes-container');
+    const yearMarkersContainer = document.getElementById('year-markers-container');
+    const connectionsContainer = document.getElementById('connections-container');
+    
+    if (caselineContainer) caselineContainer.innerHTML = '';
+    if (timelineContainer) timelineContainer.innerHTML = '';
+    if (yearMarkersContainer) yearMarkersContainer.innerHTML = '';
+    if (connectionsContainer) connectionsContainer.innerHTML = '';
+    
+    // Recalculate date range and render
+    const dateRange = calculateDateRange(state.filteredEvents);
+    const pixelsPerDay = state.scale;
+    
+    // Update container width
+    const container = document.getElementById('timeline-container');
+    const timelineWidth = calculateTimelineWidth(dateRange.totalDays, pixelsPerDay);
+    setContainerWidth(container, timelineWidth);
+    
+    // Draw year markers
+    drawYearMarkers(yearMarkersContainer, dateRange, pixelsPerDay);
+    
+    // Render nodes
+    const nodePositions = renderTimelineNodes(state.filteredEvents, dateRange, pixelsPerDay);
+    const caselineData = renderCaselineNodes(state.filteredEvents, dateRange, pixelsPerDay);
+    
+    // Render labels with collision detection
+    createLabelsWithCollisionDetection(caselineData.nodes, container);
+    
+    // Draw connections
+    drawTimelineConnections(nodePositions, connectionsContainer);
+    drawCaselineConnections(caselineData.caseGroups, connectionsContainer);
+    
+    // Update stats
+    const stats = calculateStats(state.filteredEvents);
+    renderStats(stats);
+}
+
+// Start when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
+}
+
+// Export state for debugging
+window.timelineState = state;

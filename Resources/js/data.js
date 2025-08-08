@@ -6,8 +6,8 @@
 
 export async function loadEvents() {
 	// --- 1. fetch the markdown table ------------------------------------
-	// The table lives in the root directory as !!42_Mill_St_Timeline_Overview.md
-	const res = await fetch('/!!42_Mill_St_Timeline_Overview.md');
+	// The table lives in the parent directory as !!42_Mill_St_Timeline_Overview.md
+	const res = await fetch('../!!42_Mill_St_Timeline_Overview.md?v=' + Date.now());
 	if (!res.ok) throw new Error('Timeline markdown missing');
 	const md = await res.text();
 
@@ -37,31 +37,77 @@ export async function loadEvents() {
 		}
 
 		// Extract document URL if it's a markdown link
-		let documentUrl = '';
+		let documentUrl = null;
 		let documentTitle = document;
 		const linkMatch = document.match(/\[([^\]]+)\]\(([^)]+)\)/);
 		if (linkMatch) {
 			documentTitle = linkMatch[1];
 			documentUrl = linkMatch[2];
+		} else {
+			// Try simpler format without URL
+			const simpleLinkMatch = document.match(/\[([^\]]+)\]/);
+			if (simpleLinkMatch) {
+				documentTitle = simpleLinkMatch[1];
+			}
 		}
+		
+		// Clean up title
+		documentTitle = documentTitle.replace(/_/g, ' ')
+			.replace(/MISSING:/g, '❌ ')
+			.replace(/\.txt$/g, '')
+			.replace(/\.pdf$/g, '');
 
+		// Check for label override in procedural text
+		let proceduralLabel = null;
+		const labelMatch = procedural.match(/\*\*([^*]+)\*\*/);
+		if (labelMatch) {
+			proceduralLabel = labelMatch[1];
+		}
+		
+		// Extract display detail (remove bold markers, trim to 100 chars)
+		const displayDetail = procedural.replace(/\*\*/g, '').trim().substring(0, 100);
+		
+		// Determine if this is a timeline event (has 🟢)
+		const isTimelineEvent = markers.includes('🟢');
+		
+		// Find main emoji for caseline events (not 🔒, ❌, or 🟢)
+		const emojiRegex = /([\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{2B00}-\u{2BFF}]|[\u{23F0}-\u{23FF}])[\u{FE0F}]?/gu;
+		const allEmojis = markers.match(emojiRegex);
+		const caselineEmoji = allEmojis ? allEmojis.find(e => e !== '🔒' && e !== '❌' && e !== '🟢') : null;
+		
+		// Determine event class
+		let eventClass = '';
+		if (isTimelineEvent) {
+			eventClass = markers.includes('🔒') ? 'tracked-event-priv' : 'tracked-event';
+		} else if (caselineEmoji) {
+			eventClass = 'case-procedural';
+		}
+		
 		events.push({
 			date,					// Date object
 			dateStr,				// "2024-05-07"
+			title: documentTitle,	// Clean title for display
 			document,				// Full markdown link or plain text
 			documentTitle,			// Just the title
 			documentUrl,			// URL if exists
-			caseNumber,				// "#338-0706"
+			caseNumber: caseNumber.trim(),	// Clean case number
 			markers,				// "🟢🐢", etc.
 			procedural,				// Procedural step text
+			proceduralLabel,		// Override label from **text**
+			detail: procedural.trim(),	// Full detail text
+			displayDetail,			// Shortened display version
 			environmental,			// Environmental/Strategic analysis
 			notes,					// Notes column
+			eventClass,				// Event classification
+			caselineEmoji,			// Main emoji for caseline events
 			
 			// Computed flags for easy filtering
 			isContinuance: markers.includes('🐢'),
 			isPrivate: markers.includes('🔒'),
+			hasMissingDoc: markers.includes('❌'),
+			isTimelineEvent,
 			isApproved: markers.includes('✅') || markers.includes('🟢'),
-			isDenied: markers.includes('❌'),
+			isDenied: markers.includes('⛔'),
 			isPending: markers.includes('🟡') || markers.includes('⏰'),
 			isHearing: markers.includes('🏛️'),
 			isReview: markers.includes('🔍'),

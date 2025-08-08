@@ -24,9 +24,8 @@ export function initControls() {
 	document.getElementById('case-filter-button')?.addEventListener('click', toggleCaseDropdown);
 	document.querySelector('.select-all-btn')?.addEventListener('click', selectAllCases);
 	document.querySelector('.clear-all-btn')?.addEventListener('click', clearAllCases);
+	document.getElementById('apply-filters')?.addEventListener('click', applyFilters);
 	document.getElementById('reset-filters')?.addEventListener('click', resetFilters);
 	
-	// Date filter inputs
-	document.getElementById('filter-start-date')?.addEventListener('change', applyFilters);
-	document.getElementById('filter-end-date')?.addEventListener('change', applyFilters);
+	// Date filter inputs (removed the change handlers as apply-filters button handles it)
 }

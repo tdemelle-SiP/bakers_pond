@@ -1,0 +1,110 @@
+/**
+ * stats.js
+ * Calculates and displays event statistics in the header
+ */
+
+/**
+ * Calculate statistics from events
+ * @param {Object[]} events - All parsed events
+ * @returns {Object} Statistics object
+ */
+export function calculateStats(events) {
+    const stats = {
+        total: events.length,
+        critical: 0,
+        missing: 0,
+        private: 0,
+        continued: 0,
+        timeline: 0,
+        caseline: 0,
+        public: 0
+    };
+    
+    events.forEach(event => {
+        // Count by type
+        if (event.eventType === 'timeline') {
+            stats.timeline++;
+        } else if (event.eventType === 'caseline') {
+            stats.caseline++;
+        }
+        
+        // Count private
+        if (event.isPrivate) {
+            stats.private++;
+        } else {
+            stats.public++;
+        }
+        
+        // Count missing documents
+        if (event.hasMissingDoc) {
+            stats.missing++;
+        }
+        
+        // Count continuances
+        if (event.caselineEmoji === '🐢') {
+            stats.continued++;
+        }
+        
+        // Count critical (you may need to define what makes an event critical)
+        // For now, let's say denied events are critical
+        if (event.caselineEmoji === '⛔') {
+            stats.critical++;
+        }
+    });
+    
+    return stats;
+}
+
+/**
+ * Render statistics in the header
+ * @param {Object} stats - Statistics object from calculateStats
+ */
+export function renderStats(stats) {
+    // Find or create stats container
+    let statsContainer = document.getElementById('stats-container');
+    if (!statsContainer) {
+        const navTopRow = document.querySelector('.nav-top-row');
+        if (!navTopRow) return;
+        
+        // Look for existing stats or create new
+        const existingStats = navTopRow.querySelector('.stats-container');
+        if (existingStats) {
+            statsContainer = existingStats;
+        } else {
+            statsContainer = document.createElement('div');
+            statsContainer.id = 'stats-container';
+            statsContainer.className = 'stats-container';
+            
+            // Insert after title
+            const title = navTopRow.querySelector('.nav-title');
+            if (title && title.nextSibling) {
+                navTopRow.insertBefore(statsContainer, title.nextSibling);
+            } else {
+                navTopRow.appendChild(statsContainer);
+            }
+        }
+    }
+    
+    // Build stats HTML with colored badges
+    const statsHtml = `
+        <div style="display: flex; gap: 20px; align-items: center;">
+            <span style="background: #ffd700; color: #333; padding: 2px 8px; border-radius: 12px; font-size: 14px; font-weight: bold;">
+                ${stats.critical} Critical
+            </span>
+            <span style="background: #ff5252; color: white; padding: 2px 8px; border-radius: 12px; font-size: 14px; font-weight: bold;">
+                ${stats.missing} Missing
+            </span>
+            <span style="background: #f44336; color: white; padding: 2px 8px; border-radius: 12px; font-size: 14px; font-weight: bold;">
+                ${stats.private} Private
+            </span>
+            <span style="background: #ff9800; color: white; padding: 2px 8px; border-radius: 12px; font-size: 14px; font-weight: bold;">
+                ${stats.continued} Continued
+            </span>
+            <span style="background: #2196f3; color: white; padding: 2px 8px; border-radius: 12px; font-size: 14px; font-weight: bold;">
+                ${stats.total} Total
+            </span>
+        </div>
+    `;
+    
+    statsContainer.innerHTML = statsHtml;
+}

@@ -34,7 +34,7 @@ const markerStyles = {
 const emojiConfig = markerStyles;
 
 // Position constants
-const TIMELINE_LEFT_OFFSET = 250;          // original value
+const TIMELINE_LEFT_OFFSET = 200;          // original value
 const RIGHT_MARGIN         = 40;           // original value
 const NODE_POSITIONS = {
 	public: 120,      // original value
@@ -138,26 +138,13 @@ function initializeDateFilter() {
 	const startInput = document.getElementById('filter-start-date');
 	const endInput = document.getElementById('filter-end-date');
 	
-	// Set initial values
-	startInput.value = formatDateForInput(range.start);
-	endInput.value = formatDateForInput(range.end);
-	
-	// Add change handlers
-	startInput.addEventListener('change', () => {
-		applyFilters();
-		if (document.getElementById('fit-to-window')?.checked) {
-			calculateAndApplyFitScale();
-		}
-		saveFilterState();
-	});
-	
-	endInput.addEventListener('change', () => {
-		applyFilters();
-		if (document.getElementById('fit-to-window')?.checked) {
-			calculateAndApplyFitScale();
-		}
-		saveFilterState();
-	});
+	// Don't override if already has values (from HTML defaults)
+	if (!startInput.value) {
+		startInput.value = formatDateForInput(range.start);
+	}
+	if (!endInput.value) {
+		endInput.value = formatDateForInput(range.end);
+	}
 }
 
 
@@ -232,22 +219,21 @@ function buildTimelineData(events) {
 	const caselineEvents = [];
 	
 	events.forEach(event => {
-		// Determine if it's a caseline event (has procedural markers)
-		const isCaseline = event.markers && /[⭐⛔🔵✅❌🟢🟡📐📝🔍🐢🏛️⏰♻️]/.test(event.markers);
+		// Check if this is a timeline event (has 🟢)
+		if (event.isTimelineEvent) {
+			timelineEvents.push({
+				...event,
+				eventClass: event.eventClass || (event.isPrivate ? 'tracked-event-priv' : 'tracked-event')
+			});
+		}
 		
-		if (isCaseline) {
-			// Extract first emoji for display
-			const caselineEmoji = event.markers.match(/[⭐⛔🔵✅❌🟢🟡📐📝🔍🐢🏛️⏰♻️]/)?.[0] || '';
+		// ALSO check if this is a caseline event (has any emoji that's not just 🟢/🔒/❌)
+		if (event.caselineEmoji) {
 			caselineEvents.push({
 				...event,
 				eventClass: 'case-procedural',
-				caselineEmoji,
-				displayEmoji: event.isPrivate ? '🔒' : caselineEmoji
-			});
-		} else {
-			timelineEvents.push({
-				...event,
-				eventClass: event.isPrivate ? 'private' : 'public'
+				displayEmoji: event.isPrivate ? '🔒' : event.caselineEmoji,
+				originalEmoji: event.caselineEmoji
 			});
 		}
 	});
@@ -468,14 +454,14 @@ function drawSVG(params) {
 		tooltip.className = 'event-tooltip';
 		tooltip.innerHTML = `
 			<div class="event-date">${event.dateStr}</div>
-			<div class="event-title">${event.documentTitle || event.document}</div>
-			${event.procedural ? `<div class="event-detail">${event.procedural}</div>` : ''}
+			<div class="event-title">${event.title}</div>
+			${event.displayDetail ? `<div class="event-detail">${event.displayDetail}</div>` : ''}
 		`;
 		
 		eventEl.appendChild(tooltip);
 		
 		// Check for missing document marker
-		if (event.markers && event.markers.includes('❌')) {
+		if (event.hasMissingDoc) {
 			const missingX = document.createElement('div');
 			missingX.className = 'missing-indicator';
 			missingX.textContent = '❌';
@@ -503,8 +489,8 @@ function drawSVG(params) {
 		const daysFromStart = (event.date - startDate) / (1000 * 60 * 60 * 24);
 		const x = TIMELINE_LEFT_OFFSET + (daysFromStart * pixelsPerDay);
 		
-		const config = markerStyles[event.caselineEmoji];
-		const nodeLabel = event.procedural || (config ? config.label : '');
+		const config = markerStyles[event.caselineEmoji] || emojiConfig[event.caselineEmoji];
+		const nodeLabel = event.proceduralLabel || (config ? config.label : '');
 		const nodeColor = config ? config.fill : '#999999';
 		const borderColor = config ? config.stroke : '#666666';
 		
@@ -512,7 +498,7 @@ function drawSVG(params) {
 			x: x,
 			date: event.date,
 			dateStr: event.dateStr,
-			title: event.documentTitle || event.document,
+			title: event.detail || event.title,
 			nodeEmoji: event.displayEmoji,
 			originalEmoji: event.caselineEmoji,
 			nodeLabel: nodeLabel,
@@ -1295,5 +1281,14 @@ document.addEventListener('DOMContentLoaded', () => {
 			// Scroll horizontally instead
 			mainContent.scrollLeft += e.deltaY;
 		}, { passive: false });
+	}
+});
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+	const container = document.querySelector('.case-filter-container');
+	if (container && !container.contains(event.target)) {
+		const dropdown = document.getElementById('case-filter-dropdown');
+		if (dropdown) dropdown.style.display = 'none';
 	}
 });

@@ -1,0 +1,130 @@
+/**
+ * event-parser.js
+ * Converts table rows into structured event objects
+ * 
+ * REFERENCES:
+ * - Original parsing: timeline-auto-generated-old.html lines 505-589
+ * - Date parsing: splits on '-', uses new Date(year, month-1, day)
+ * - Document parsing: extracts [title](url) markdown links
+ * - Timeline events: have 🟢 in markers
+ * - Caseline events: have other emojis (not 🟢, 🔒, ❌)
+ * - Label overrides: **text** in procedural column
+ */
+
+/**
+ * Parses all table rows into event objects
+ * @param {Array<string[]>} tableRows - Array of parsed column arrays from data-loader
+ * @returns {Object[]} Array of event objects
+ */
+export function parseEvents(tableRows) {
+    const events = [];
+    
+    tableRows.forEach(row => {
+        const [dateStr, document, caseNumber, markers, procedural, legal, environmental] = row;
+        
+        // Parse date
+        const [year, month, day] = dateStr.split('-');
+        const date = new Date(year, parseInt(month) - 1, day);
+        
+        // Parse document link
+        let title = document;
+        let documentUrl = null;
+        const linkMatch = document.match(/\[([^\]]+)\]\(([^)]+)\)/);
+        if (linkMatch) {
+            title = linkMatch[1];
+            documentUrl = linkMatch[2];
+        }
+        
+        // Clean up title
+        title = title.replace(/_/g, ' ')
+                    .replace(/MISSING:/g, '❌ ')
+                    .replace(/\.txt$/g, '')
+                    .replace(/\.pdf$/g, '');
+        
+        // Check for label override in procedural column
+        let proceduralLabel = null;
+        const labelMatch = procedural.match(/\*\*([^*]+)\*\*/);
+        if (labelMatch) {
+            proceduralLabel = labelMatch[1];
+        }
+        
+        // Extract display detail (remove bold markers)
+        const displayDetail = procedural.replace(/\*\*/g, '').trim().substring(0, 100);
+        
+        // Basic flags
+        const isPrivate = markers.includes('🔒');
+        const hasMissingDoc = markers.includes('❌');
+        const isTimelineEvent = markers.includes('🟢');
+        
+        // Find main caseline emoji (not 🔒, ❌, or 🟢)
+        const emojiRegex = /([\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{2B00}-\u{2BFF}]|[\u{23F0}-\u{23FF}])[\u{FE0F}]?/gu;
+        const allEmojis = markers.match(emojiRegex) || [];
+        const caselineEmoji = allEmojis.find(e => e !== '🔒' && e !== '❌' && e !== '🟢') || null;
+        
+        // Create base event object
+        const baseEvent = {
+            date,
+            dateStr,
+            title,
+            documentUrl,
+            caseNumber: caseNumber.trim(),
+            markers,
+            procedural,
+            proceduralLabel,
+            displayDetail,
+            isPrivate,
+            hasMissingDoc,
+            isTimelineEvent,
+            caselineEmoji
+        };
+        
+        // Add timeline event if has 🟢
+        if (isTimelineEvent) {
+            events.push({
+                ...baseEvent,
+                eventType: 'timeline',
+                eventClass: isPrivate ? 'tracked-event-priv' : 'tracked-event'
+            });
+        }
+        
+        // Add caseline event if has other emoji
+        if (caselineEmoji) {
+            events.push({
+                ...baseEvent,
+                eventType: 'caseline',
+                eventClass: 'case-procedural'
+            });
+        }
+    });
+    
+    // Sort by date
+    return events.sort((a, b) => a.date - b.date);
+}
+
+/**
+ * Gets unique case numbers from events
+ * @param {Object[]} events - Array of parsed events
+ * @returns {string[]} Sorted array of unique case numbers
+ */
+export function extractCaseNumbers(events) {
+    const cases = new Set();
+    events.forEach(event => {
+        if (event.caseNumber) {
+            cases.add(event.caseNumber);
+        }
+    });
+    return Array.from(cases).sort();
+}
+
+/**
+ * Gets date range from events
+ * @param {Object[]} events - Array of parsed events
+ * @returns {Object} {minDate, maxDate}
+ */
+export function getEventDateRange(events) {
+    const dates = events.map(e => e.date);
+    return {
+        minDate: new Date(Math.min(...dates)),
+        maxDate: new Date(Math.max(...dates))
+    };
+}
