@@ -16,6 +16,7 @@ import { calculateStats, renderStats } from './stats.js';
 import { applyFilters, getDefaultFilterState } from './filters.js';
 import { initAllControls } from './controls-v2.js';
 import { createLabelsWithCollisionDetection } from './label-layout.js';
+import { renderCaseTitles } from './case-titles.js';
 
 // Application state
 const state = {
@@ -93,6 +94,9 @@ async function init() {
     
     // Render caseline labels with collision detection
     createLabelsWithCollisionDetection(caselineData.nodes, container);
+    
+    // Render case titles above caseline
+    renderCaseTitles(caselineData.caseGroups, state.filters.selectedCases);
     
     // Draw connection lines
     drawTimelineConnections(nodePositions, connectionsContainer);
@@ -182,7 +186,14 @@ function render() {
     const yearMarkersContainer = document.getElementById('year-markers-container');
     const connectionsContainer = document.getElementById('connections-container');
     
-    if (caselineContainer) caselineContainer.innerHTML = '';
+    if (caselineContainer) {
+        // Preserve the case titles container if it exists
+        const titlesContainer = document.getElementById('case-titles-container');
+        caselineContainer.innerHTML = '';
+        if (titlesContainer) {
+            caselineContainer.appendChild(titlesContainer);
+        }
+    }
     if (timelineContainer) timelineContainer.innerHTML = '';
     if (yearMarkersContainer) yearMarkersContainer.innerHTML = '';
     if (connectionsContainer) connectionsContainer.innerHTML = '';
@@ -205,6 +216,11 @@ function render() {
     
     // Render labels with collision detection
     createLabelsWithCollisionDetection(caselineData.nodes, container);
+    
+    // Render case titles
+    const visibleCases = state.filters.selectedCases && state.filters.selectedCases.length > 0 ?
+        state.filters.selectedCases : state.caseNumbers;
+    renderCaseTitles(caselineData.caseGroups, visibleCases);
     
     // Draw connections
     drawTimelineConnections(nodePositions, connectionsContainer);

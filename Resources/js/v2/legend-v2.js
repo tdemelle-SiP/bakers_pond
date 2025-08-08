@@ -40,39 +40,49 @@ export function initLegend() {
         navBottomRow.appendChild(legendContainer);
     }
     
-    // Build legend HTML
-    let html = '<div style="display: flex; gap: 40px;">';
+    // Build legend HTML matching original two-row table format
+    let html = '<div style="display: flex; gap: 20px; align-items: center;">';
     
-    // Caseline legend
-    html += '<div><span style="font-weight: bold; margin-right: 10px;">Caseline:</span>';
-    EMOJI_LEGEND.caseline.forEach(item => {
-        const hideClass = item.class ? ` class="${item.class}"` : '';
-        html += `<span${hideClass} style="margin-right: 12px;">`;
-        html += `<span style="font-size: 14px;">${item.emoji}</span> `;
-        html += `<span style="font-size: 11px;">${item.label}</span>`;
-        html += '</span>';
-    });
+    // Caseline legend (two-row table)
+    html += '<div style="padding-right: 20px; border-right: 2px solid #546e7a;">';
+    html += '<table style="border-collapse: collapse; color: white; font-size: 12px;">';
     
-    // Add continuance checkbox
-    html += '<label style="margin-left: 10px; font-size: 11px;">';
-    html += '<input type="checkbox" id="show-continuances" checked> ';
-    html += 'Show Continuances</label>';
+    // First row of caseline
+    html += '<tr>';
+    html += '<td style="padding: 2px 10px 2px 0; font-weight: bold; white-space: nowrap; vertical-align: top;" rowspan="2">Caseline:</td>';
+    html += '<td style="padding: 2px 12px;">⭐ Filing</td>';
+    html += '<td style="padding: 2px 12px;">✅ Approved</td>';
+    html += '<td style="padding: 2px 12px;">⛔ Denied</td>';
+    html += '<td style="padding: 2px 12px;">📐 Plan</td>';
+    html += '<td style="padding: 2px 12px;">🔍 Review</td>';
+    html += '</tr>';
+    
+    // Second row of caseline with continuance checkbox
+    html += '<tr>';
+    html += '<td style="padding: 2px 12px;">';
+    html += '<label style="cursor: pointer;">';
+    html += '<input type="checkbox" id="show-continuances" style="margin-right: 4px; cursor: pointer;" checked>';
+    html += '🐢 Continued';
+    html += '</label>';
+    html += '</td>';
+    html += '<td style="padding: 2px 12px;">🏛️ Hearing</td>';
+    html += '<td style="padding: 2px 12px;">⏰ Expired</td>';
+    html += '<td style="padding: 2px 12px;">♻️ Extended</td>';
+    html += '<td style="padding: 2px 12px;">🔒 Private</td>';
+    html += '</tr>';
+    html += '</table>';
     html += '</div>';
     
-    // Timeline legend
-    html += '<div><span style="font-weight: bold; margin-right: 10px;">Timeline:</span>';
-    EMOJI_LEGEND.timeline.forEach(item => {
-        html += '<span style="margin-right: 12px;">';
-        if (item.emoji === '🟢') {
-            html += '<span style="display: inline-block; width: 8px; height: 8px; background: #4caf50; border-radius: 50%; margin-right: 4px;"></span>';
-        } else if (item.emoji === '🔴') {
-            html += '<span style="display: inline-block; width: 8px; height: 8px; background: #f44336; border-radius: 50%; margin-right: 4px;"></span>';
-        } else {
-            html += `<span style="font-size: 14px;">${item.emoji}</span> `;
-        }
-        html += `<span style="font-size: 11px;">${item.label}</span>`;
-        html += '</span>';
-    });
+    // Timeline legend (single row)
+    html += '<div>';
+    html += '<table style="border-collapse: collapse; color: white; font-size: 12px;">';
+    html += '<tr>';
+    html += '<td style="padding: 2px 10px 2px 0; font-weight: bold; white-space: nowrap;">Timeline:</td>';
+    html += '<td style="padding: 2px 12px;"><span style="display: inline-block; width: 10px; height: 10px; background: #4caf50; border: 1px solid #388e3c; margin-right: 5px;"></span>Public Event</td>';
+    html += '<td style="padding: 2px 12px;"><span style="display: inline-block; width: 10px; height: 10px; background: #f44336; border: 1px solid #d32f2f; margin-right: 5px;"></span>Private Event</td>';
+    html += '<td style="padding: 2px 12px;">❌ Missing Document</td>';
+    html += '</tr>';
+    html += '</table>';
     html += '</div>';
     
     html += '</div>';

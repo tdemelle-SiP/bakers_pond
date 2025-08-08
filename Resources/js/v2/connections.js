@@ -126,9 +126,14 @@ export function drawCaselineConnections(caseGroups, container) {
             
             const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             line.setAttribute('x1', current.x);
-            // Convert Y to percentage within caseline section
-            const y1 = current.isPrivate ? sectionHeight * 0.65 : sectionHeight * 0.35;
-            const y2 = next.isPrivate ? sectionHeight * 0.65 : sectionHeight * 0.35;
+            // Convert Y to percentage within caseline section, matching node positions
+            // Center is at 50%, nodes are ±12.5px from center, emoji center is +8px
+            const y1 = current.isPrivate ? 
+                (sectionHeight * 0.5 + 12.5 + 8) : // Private node center
+                (sectionHeight * 0.5 - 12.5 + 8);  // Public node center
+            const y2 = next.isPrivate ? 
+                (sectionHeight * 0.5 + 12.5 + 8) : // Private node center
+                (sectionHeight * 0.5 - 12.5 + 8);  // Public node center
             line.setAttribute('y1', y1);
             line.setAttribute('x2', next.x);
             line.setAttribute('y2', y2);
@@ -139,10 +144,10 @@ export function drawCaselineConnections(caseGroups, container) {
                 line.classList.add('continuance');
             }
             
-            // Use the node color for the line
+            // Use the current node's color for the line (following original pattern)
             line.setAttribute('stroke', current.color);
-            line.setAttribute('stroke-width', '3');
-            line.setAttribute('stroke-opacity', '0.6');
+            line.setAttribute('stroke-width', '4');  // Thicker lines per original
+            line.setAttribute('stroke-opacity', '0.7'); // Match original opacity
             
             svg.appendChild(line);
         }

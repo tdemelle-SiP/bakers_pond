@@ -11,7 +11,6 @@
 export function calculateStats(events) {
     const stats = {
         total: events.length,
-        critical: 0,
         missing: 0,
         private: 0,
         continued: 0,
@@ -43,12 +42,6 @@ export function calculateStats(events) {
         // Count continuances
         if (event.caselineEmoji === '🐢') {
             stats.continued++;
-        }
-        
-        // Count critical (you may need to define what makes an event critical)
-        // For now, let's say denied events are critical
-        if (event.caselineEmoji === '⛔') {
-            stats.critical++;
         }
     });
     
@@ -85,24 +78,23 @@ export function renderStats(stats) {
         }
     }
     
-    // Build stats HTML with colored badges
+    // Build stats HTML matching original simple format
     const statsHtml = `
-        <div style="display: flex; gap: 20px; align-items: center;">
-            <span style="background: #ffd700; color: #333; padding: 2px 8px; border-radius: 12px; font-size: 14px; font-weight: bold;">
-                ${stats.critical} Critical
-            </span>
-            <span style="background: #ff5252; color: white; padding: 2px 8px; border-radius: 12px; font-size: 14px; font-weight: bold;">
-                ${stats.missing} Missing
-            </span>
-            <span style="background: #f44336; color: white; padding: 2px 8px; border-radius: 12px; font-size: 14px; font-weight: bold;">
-                ${stats.private} Private
-            </span>
-            <span style="background: #ff9800; color: white; padding: 2px 8px; border-radius: 12px; font-size: 14px; font-weight: bold;">
-                ${stats.continued} Continued
-            </span>
-            <span style="background: #2196f3; color: white; padding: 2px 8px; border-radius: 12px; font-size: 14px; font-weight: bold;">
-                ${stats.total} Total
-            </span>
+        <div class="stat-item">
+            <span class="stat-number">${stats.missing}</span>
+            <span class="stat-label">Missing</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">${stats.private}</span>
+            <span class="stat-label">Private</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">${stats.continued}</span>
+            <span class="stat-label">Continued</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">${stats.total}</span>
+            <span class="stat-label">Total</span>
         </div>
     `;
     

@@ -118,16 +118,16 @@ body {
     width: 100%;
 }
 
-/* Caseline takes 55% of vertical space */
+/* Caseline takes 60% of vertical space */
 .caseline-section {
-    height: 55%;
+    height: 60%;
     position: relative;
     z-index: 10;
 }
 
-/* Timeline takes 45% of vertical space */
+/* Timeline takes 40% of vertical space */
 .timeline-events-section {
-    height: 45%;
+    height: 40%;
     position: relative;
     z-index: 10;
 }
@@ -184,7 +184,8 @@ body {
 .caseline-label {
     color: #0066cc;
     font-size: 16px;
-    top: 75px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .public-label {
@@ -303,16 +304,16 @@ body {
     z-index: 15;
 }
 
-/* Caseline public events - above the dividing line */
+/* Caseline public events - above the center (12.5px above center in original) */
 .caseline-node.public,
 .case-procedural-above {
-    top: 35%; /* Well above center in caseline section */
+    top: calc(50% - 12.5px); /* 12.5px above center to match original spacing */
 }
 
-/* Caseline private events - below the dividing line */  
+/* Caseline private events - below the center (12.5px below center in original) */  
 .caseline-node.private,
 .case-procedural-below {
-    top: 65%; /* Well below center in caseline section */
+    top: calc(50% + 12.5px); /* 12.5px below center to match original spacing */
 }
 
 /* Caseline labels */
@@ -321,9 +322,8 @@ body {
     font-size: 10px;
     font-weight: 600;
     padding: 2px 6px;
-    background: white;
-    border: 1px solid;
-    border-radius: 3px;
+    background: transparent;
+    border: none;
     white-space: nowrap;
     text-align: center;
     z-index: 20;
@@ -331,30 +331,24 @@ body {
 }
 
 .node-label-above {
-    top: 70px; /* Above caseline nodes */
+    /* Will be positioned dynamically by JS based on label height */
 }
 
 .node-label-below {
-    top: 120px; /* Below caseline nodes */
+    /* Will be positioned dynamically by JS - top edge 30px below node */
 }
 
-/* Status colors for labels */
+/* Status colors for labels - text only, no backgrounds */
 .status-approved {
-    background: #e8f5e9;
-    border-color: #4caf50;
-    color: #2e7d32;
+    color: #4caf50;
 }
 
 .status-denied {
-    background: #ffebee;
-    border-color: #f44336;
-    color: #c62828;
+    color: #f44336;
 }
 
 .status-pending {
-    background: #fffde7;
-    border-color: #ffd700;
-    color: #f57f17;
+    color: #ffd700;
 }
 
 /* Continuance hiding */
@@ -606,13 +600,14 @@ body {
 .stat-number {
     font-size: 18px;
     font-weight: bold;
-    color: #4fc3f7;
+    color: #ffd700;
 }
 
 .stat-label {
     font-size: 11px;
     text-transform: uppercase;
-    opacity: 0.8;
+    color: #ccc;
+    opacity: 0.9;
 }
 
 /* Loading state */

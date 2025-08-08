@@ -131,13 +131,18 @@ export function createLabelsWithCollisionDetection(nodeData, container) {
         const caselineSection = document.getElementById('caseline-section');
         const sectionHeight = caselineSection ? caselineSection.offsetHeight : 300;
         
+        // Calculate node Y positions (matching the CSS)
+        const nodeY = node.isPrivate ? 
+            (sectionHeight * 0.5 + 12.5) :  // Private: center + 12.5px
+            (sectionHeight * 0.5 - 12.5);   // Public: center - 12.5px
+        
         if (node.isPrivate) {
-            // Labels below: position below the node (65% + offset)
-            baseY = sectionHeight * 0.65 + 25;
+            // Labels below: top edge at fixed distance (30px) from node
+            baseY = nodeY + 30;
         } else {
-            // Labels above: position above the node (35% - offset)
-            const singleLineHeight = 20;
-            const centerPoint = sectionHeight * 0.35 - 30 - (singleLineHeight / 2);
+            // Labels above: center the label vertically around a fixed point
+            const singleLineHeight = 20; // Approximate height of single line label
+            const centerPoint = nodeY - 25 - (singleLineHeight / 2);
             baseY = centerPoint - (height / 2);
         }
         
@@ -216,12 +221,14 @@ function drawLeaderLine(container, node, labelData) {
     const nodeCenter = node.x;
     const labelCenter = labelData.x + labelData.width / 2;
     
-    // Calculate node Y position based on percentage
+    // Calculate node Y position based on percentage (matching CSS)
     const caselineSection = document.getElementById('caseline-section');
     const sectionHeight = caselineSection ? caselineSection.offsetHeight : 300;
+    
+    // Node center Y with emoji center offset (8px)
     const nodeCenterY = labelData.isPrivate ? 
-        sectionHeight * 0.65 + 8 : // Private node center
-        sectionHeight * 0.35 + 8; // Public node center
+        (sectionHeight * 0.5 + 12.5 + 8) : // Private: center + 12.5px + emoji center
+        (sectionHeight * 0.5 - 12.5 + 8); // Public: center - 12.5px + emoji center
     
     const labelEdgeY = labelData.isPrivate ? 
         labelData.y : // Top edge for labels below
