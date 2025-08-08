@@ -46,8 +46,9 @@ export function initDateControls(onUpdate) {
  * Initialize case filter dropdown
  * @param {string[]} caseNumbers - Available case numbers
  * @param {Function} onUpdate - Callback when selection changes
+ * @param {string[]} initialSelected - Initially selected cases
  */
-export function initCaseControls(caseNumbers, onUpdate) {
+export function initCaseControls(caseNumbers, onUpdate, initialSelected = null) {
     const button = document.getElementById('case-filter-button');
     const dropdown = document.getElementById('case-filter-dropdown');
     const checkboxList = document.getElementById('case-checkboxes');
@@ -62,6 +63,9 @@ export function initCaseControls(caseNumbers, onUpdate) {
     
     // Build checkbox list
     checkboxList.innerHTML = '';
+    // Use saved state or default to all selected
+    const selectedCases = initialSelected || caseNumbers;
+    
     caseNumbers.forEach(caseNum => {
         const label = document.createElement('label');
         label.className = 'case-checkbox-label';
@@ -70,7 +74,7 @@ export function initCaseControls(caseNumbers, onUpdate) {
         checkbox.type = 'checkbox';
         checkbox.className = 'case-checkbox';
         checkbox.value = caseNum;
-        checkbox.checked = true; // Start with all selected
+        checkbox.checked = selectedCases.includes(caseNum);
         
         label.appendChild(checkbox);
         label.appendChild(document.createTextNode(caseNum));
@@ -182,7 +186,11 @@ export function initFitToWindow(calculateFitScale, onUpdate, initialValue = fals
                 onUpdate({ scale: fitScale, fitToWindow: true });
             }
         } else {
-            onUpdate({ fitToWindow: false });
+            // Reset to default scale when fit-to-window is turned off
+            const defaultScale = 0.8;
+            slider.value = defaultScale;
+            valueDisplay.textContent = defaultScale.toFixed(1);
+            onUpdate({ scale: defaultScale, fitToWindow: false });
         }
     });
 }
@@ -235,15 +243,8 @@ export function initAllControls(options = {}) {
     if (caseNumbers.length > 0) {
         initCaseControls(caseNumbers, (caseFilter) => {
             onFilterUpdate(caseFilter);
-        });
+        }, initialFilters.selectedCases);
         
-        // Set initial case selections if provided
-        if (initialFilters.selectedCases && initialFilters.selectedCases.length > 0) {
-            // Trigger filter update with saved cases
-            setTimeout(() => {
-                onFilterUpdate({ selectedCases: initialFilters.selectedCases });
-            }, 100);
-        }
     }
     
     // Scale controls

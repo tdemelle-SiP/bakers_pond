@@ -70,7 +70,8 @@ export function resolveCollisions(labelData) {
         // Find and resolve overlaps
         let hasOverlap = true;
         let iterations = 0;
-        const minLeftBound = 20; // Minimum left position to keep labels on screen
+        const minLeftBound = 0; // No left boundary constraint
+        const maxRightBound = window.innerWidth; // Symmetrical - no right boundary constraint
         
         while (hasOverlap && iterations < 30) {
             hasOverlap = false;
@@ -84,9 +85,13 @@ export function resolveCollisions(labelData) {
                 if (overlap > 0) {
                     hasOverlap = true;
                     
-                    // Split the overlap - move both labels
-                    prev.x -= overlap * 0.5;
-                    curr.x += overlap * 0.5;
+                    // Move labels apart to achieve exactly minGap spacing
+                    const targetGap = minGap;
+                    const currentGap = curr.x - (prev.x + prev.width);
+                    const adjustment = (targetGap - currentGap) / 2;
+                    
+                    prev.x -= adjustment;
+                    curr.x += adjustment;
                 }
             }
             

@@ -92,12 +92,25 @@ export function initLegend() {
     // Set up continuance toggle
     const continuanceCheckbox = document.getElementById('show-continuances');
     if (continuanceCheckbox) {
+        // Load saved state
+        const savedState = localStorage.getItem('timeline-v2-show-continuances');
+        if (savedState !== null) {
+            const showContinuances = JSON.parse(savedState);
+            continuanceCheckbox.checked = showContinuances;
+            if (!showContinuances) {
+                document.body.classList.add('hide-continuances');
+            }
+        }
+        
         continuanceCheckbox.addEventListener('change', (e) => {
-            if (e.target.checked) {
+            const checked = e.target.checked;
+            if (checked) {
                 document.body.classList.remove('hide-continuances');
             } else {
                 document.body.classList.add('hide-continuances');
             }
+            // Save state
+            localStorage.setItem('timeline-v2-show-continuances', JSON.stringify(checked));
         });
     }
 }
