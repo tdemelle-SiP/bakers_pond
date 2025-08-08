@@ -1,6 +1,6 @@
 # 42 Mill Street Development History Resource
 
-[Experimental Visual Timeline](https://tdemelle-sip.github.io/bakers_pond/Resources/timeline-auto-generated.html)
+[Experimental Visual Timeline](https://tdemelle-sip.github.io/bakers_pond/Resources/timeline-v2.html)
 
 ---
 
