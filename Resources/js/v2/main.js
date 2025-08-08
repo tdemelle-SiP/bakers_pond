@@ -131,6 +131,7 @@ async function init() {
     // Initialize controls with saved state
     initAllControls({
         caseNumbers: caseNumbers,
+        eventDateRange: eventDateRange,  // Pass actual date range
         initialScale: state.scale,
         initialFitToWindow: state.fitToWindow,
         initialFilters: state.filters,
@@ -140,6 +141,46 @@ async function init() {
     });
     
     // All modules now initialized
+}
+
+/**
+ * Update date filter range based on selected cases
+ */
+function updateDateFilterRange() {
+    const startInput = document.getElementById('filter-start-date');
+    const endInput = document.getElementById('filter-end-date');
+    
+    if (!startInput || !endInput) return;
+    
+    // Determine which events to use for date range
+    let eventsForDateRange = state.allEvents;
+    if (state.filters.selectedCases && state.filters.selectedCases.length > 0) {
+        // Filter to only selected cases
+        eventsForDateRange = state.allEvents.filter(e => 
+            state.filters.selectedCases.includes(e.caseNumber)
+        );
+    }
+    
+    // Calculate date range for these events
+    if (eventsForDateRange.length > 0) {
+        const dateRange = getEventDateRange(eventsForDateRange);
+        
+        // Check if dates are valid before updating
+        if (dateRange.minDate && dateRange.maxDate && 
+            !isNaN(dateRange.minDate.getTime()) && !isNaN(dateRange.maxDate.getTime())) {
+            
+            const minDateStr = dateRange.minDate.toISOString().split('T')[0];
+            const maxDateStr = dateRange.maxDate.toISOString().split('T')[0];
+            
+            // Update date inputs with new range
+            startInput.value = minDateStr;
+            endInput.value = maxDateStr;
+            startInput.min = minDateStr;
+            startInput.max = maxDateStr;
+            endInput.min = minDateStr;
+            endInput.max = maxDateStr;
+        }
+    }
 }
 
 /**
@@ -162,6 +203,11 @@ function handleFilterUpdate(filterUpdate) {
         const caseEvents = state.filteredEvents.filter(e => e.caseNumber === state.filters.selectedCases[0]);
         console.log('Events for case', state.filters.selectedCases[0], ':', 
             caseEvents.map(e => ({date: e.dateStr, title: e.title.substring(0, 20)})));
+    }
+    
+    // Update date filter range if case selection changed
+    if (filterUpdate.selectedCases !== undefined) {
+        updateDateFilterRange();
     }
     
     // Check if fit-to-window is enabled and recalculate scale

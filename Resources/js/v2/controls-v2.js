@@ -6,8 +6,9 @@
 /**
  * Initialize date filter controls
  * @param {Function} onUpdate - Callback when dates change
+ * @param {Object} eventDateRange - Actual date range from events {min, max}
  */
-export function initDateControls(onUpdate) {
+export function initDateControls(onUpdate, eventDateRange = null) {
     const startInput = document.getElementById('filter-start-date');
     const endInput = document.getElementById('filter-end-date');
     const applyButton = document.getElementById('apply-date-filter');
@@ -32,8 +33,16 @@ export function initDateControls(onUpdate) {
     const resetButton = document.getElementById('reset-filters');
     if (resetButton) {
         resetButton.addEventListener('click', () => {
-            startInput.value = '2014-01-01';
-            endInput.value = '2025-12-31';
+            // Reset to actual data range if available
+            if (eventDateRange) {
+                const minDateStr = new Date(eventDateRange.minDate).toISOString().split('T')[0];
+                const maxDateStr = new Date(eventDateRange.maxDate).toISOString().split('T')[0];
+                startInput.value = minDateStr;
+                endInput.value = maxDateStr;
+            } else {
+                startInput.value = '';
+                endInput.value = '';
+            }
             onUpdate({
                 startDate: null,
                 endDate: null
@@ -215,6 +224,7 @@ export function initMouseWheelScroll() {
 export function initAllControls(options = {}) {
     const {
         caseNumbers = [],
+        eventDateRange = null,
         onFilterUpdate = () => {},
         onScaleUpdate = () => {},
         calculateFitScale = () => 1.0,
@@ -226,18 +236,66 @@ export function initAllControls(options = {}) {
     // Date filters - set initial values if provided
     const startInput = document.getElementById('filter-start-date');
     const endInput = document.getElementById('filter-end-date');
-    if (startInput && initialFilters.startDate) {
-        const dateStr = new Date(initialFilters.startDate).toISOString().split('T')[0];
-        startInput.value = dateStr;
-    }
-    if (endInput && initialFilters.endDate) {
-        const dateStr = new Date(initialFilters.endDate).toISOString().split('T')[0];
-        endInput.value = dateStr;
+    
+    // Use actual event date range if provided
+    if (eventDateRange && eventDateRange.minDate && eventDateRange.maxDate) {
+        // Check if dates are valid
+        const minDate = new Date(eventDateRange.minDate);
+        const maxDate = new Date(eventDateRange.maxDate);
+        
+        if (!isNaN(minDate.getTime()) && !isNaN(maxDate.getTime())) {
+            // Set min/max attributes based on actual data range
+            const minDateStr = minDate.toISOString().split('T')[0];
+            const maxDateStr = maxDate.toISOString().split('T')[0];
+            
+            if (startInput) {
+                startInput.min = minDateStr;
+                startInput.max = maxDateStr;
+                // Set initial value from saved filter or use min date
+                if (initialFilters.startDate) {
+                    const filterDate = new Date(initialFilters.startDate);
+                    if (!isNaN(filterDate.getTime())) {
+                        startInput.value = filterDate.toISOString().split('T')[0];
+                    } else {
+                        startInput.value = minDateStr;
+                    }
+                } else {
+                    startInput.value = minDateStr;
+                }
+            }
+            if (endInput) {
+                endInput.min = minDateStr;
+                endInput.max = maxDateStr;
+                // Set initial value from saved filter or use max date
+                if (initialFilters.endDate) {
+                    const filterDate = new Date(initialFilters.endDate);
+                    if (!isNaN(filterDate.getTime())) {
+                        endInput.value = filterDate.toISOString().split('T')[0];
+                    } else {
+                        endInput.value = maxDateStr;
+                    }
+                } else {
+                    endInput.value = maxDateStr;
+                }
+            }
+        } else {
+            console.warn('Invalid dates in eventDateRange:', eventDateRange);
+        }
+    } else if (initialFilters.startDate || initialFilters.endDate) {
+        // Fallback to saved filters only if they exist
+        if (startInput && initialFilters.startDate) {
+            const dateStr = new Date(initialFilters.startDate).toISOString().split('T')[0];
+            startInput.value = dateStr;
+        }
+        if (endInput && initialFilters.endDate) {
+            const dateStr = new Date(initialFilters.endDate).toISOString().split('T')[0];
+            endInput.value = dateStr;
+        }
     }
     
     initDateControls((dateFilter) => {
         onFilterUpdate(dateFilter);
-    });
+    }, eventDateRange);
     
     // Case filter
     if (caseNumbers.length > 0) {

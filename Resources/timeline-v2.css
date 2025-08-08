@@ -146,8 +146,8 @@ body {
     top: 50%; /* Center line divides public/private */
     left: 155px;
     right: 0;
-    height: 1px; /* Thinner line per user request */
-    background: #34495e;
+    height: 1px; /* Single pixel width */
+    background: rgba(52, 73, 94, 0.25); /* 25% opacity */
     z-index: 4; /* Timeline center line */
     transform: translateY(-50%);
 }
@@ -158,8 +158,8 @@ body {
     top: calc(50% + 45px); /* Adjusted center line position */
     left: 155px;
     right: 0;
-    height: 1px;
-    background: #34495e;
+    height: 1px; /* Single pixel width */
+    background: rgba(52, 73, 94, 0.25); /* 25% opacity */
     z-index: 4; /* Caseline center line */
     transform: translateY(-50%);
 }

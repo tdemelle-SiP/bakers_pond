@@ -44,7 +44,11 @@ def download_and_convert():
     try:
         # Download latest TSV
         print(f"📥 Downloading latest data from Google Sheets...")
-        urllib.request.urlretrieve(GOOGLE_SHEET_TSV_URL, tsv_file)
+        # Use urlopen to handle redirects properly
+        with urllib.request.urlopen(GOOGLE_SHEET_TSV_URL) as response:
+            tsv_content = response.read()
+        with open(tsv_file, 'wb') as f:
+            f.write(tsv_content)
         print(f"✅ Downloaded to {os.path.basename(tsv_file)}")
         
         # Run conversion

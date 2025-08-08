@@ -129,9 +129,21 @@ export function extractCaseNumbers(events) {
  * @returns {Object} {minDate, maxDate}
  */
 export function getEventDateRange(events) {
-    const dates = events.map(e => e.date);
+    // Filter out invalid dates
+    const validDates = events
+        .map(e => e.date)
+        .filter(date => date && !isNaN(date.getTime()));
+    
+    if (validDates.length === 0) {
+        console.warn('No valid dates found in events');
+        return {
+            minDate: new Date(),
+            maxDate: new Date()
+        };
+    }
+    
     return {
-        minDate: new Date(Math.min(...dates)),
-        maxDate: new Date(Math.max(...dates))
+        minDate: new Date(Math.min(...validDates)),
+        maxDate: new Date(Math.max(...validDates))
     };
 }

@@ -85,6 +85,9 @@ export function drawYearMarkers(container, dateRange, pixelsPerDay) {
     const firstEventYear = minDate.getFullYear();
     const lastEventYear = maxDate.getFullYear();
     
+    // Determine if we should show decade markers instead of yearly markers
+    const useDecadeMarkers = pixelsPerDay < 0.2;
+    
     for (let year = startDate.getFullYear(); year <= lastEventYear; year++) {
         const yearStart = new Date(year, 0, 1);
         const yearEnd = new Date(year + 1, 0, 1);
@@ -99,16 +102,62 @@ export function drawYearMarkers(container, dateRange, pixelsPerDay) {
         if (yearEndX > TIMELINE_LEFT_OFFSET && yearStartX < timelineWidth + TIMELINE_LEFT_OFFSET) {
             // Add vertical line at year boundary
             if (yearStartX >= TIMELINE_LEFT_OFFSET && yearStartX <= timelineWidth + TIMELINE_LEFT_OFFSET) {
-                // Add thin vertical line through the entire timeline
-                const vertLine = document.createElement('div');
-                vertLine.style.position = 'absolute';
-                vertLine.style.left = yearStartX + 'px';
-                vertLine.style.top = '0px';
-                vertLine.style.width = '1px';
-                vertLine.style.height = '100%';
-                vertLine.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
-                vertLine.style.zIndex = '2'; // Year lines at bottom
-                container.appendChild(vertLine);
+                const isDecadeYear = year % 10 === 0;
+                
+                if (useDecadeMarkers) {
+                    // In decade mode: show full lines for decades, small ticks for other years
+                    if (isDecadeYear) {
+                        // Add full vertical line for decade
+                        const vertLine = document.createElement('div');
+                        vertLine.style.position = 'absolute';
+                        vertLine.style.left = yearStartX + 'px';
+                        vertLine.style.top = '0px';
+                        vertLine.style.width = '1px';
+                        vertLine.style.height = '100%';
+                        vertLine.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
+                        vertLine.style.zIndex = '2';
+                        container.appendChild(vertLine);
+                    } else {
+                        // Add small tick marks for interim years on center lines only
+                        // Timeline tick
+                        const timelineInterimTick = document.createElement('div');
+                        timelineInterimTick.className = 'year-tick-small';
+                        timelineInterimTick.style.position = 'absolute';
+                        timelineInterimTick.style.left = yearStartX + 'px';
+                        timelineInterimTick.style.top = (timelineCenterY - 3) + 'px';
+                        timelineInterimTick.style.width = '1px';
+                        timelineInterimTick.style.height = '6px';
+                        timelineInterimTick.style.backgroundColor = 'rgba(52, 73, 94, 0.3)';
+                        timelineInterimTick.style.zIndex = '2';
+                        container.appendChild(timelineInterimTick);
+                        
+                        // Caseline tick
+                        if (caselineSection) {
+                            const caselineInterimTick = document.createElement('div');
+                            caselineInterimTick.className = 'year-tick-small';
+                            caselineInterimTick.style.position = 'absolute';
+                            caselineInterimTick.style.left = yearStartX + 'px';
+                            caselineInterimTick.style.top = (caselineCenterY - 3) + 'px';
+                            caselineInterimTick.style.width = '1px';
+                            caselineInterimTick.style.height = '6px';
+                            caselineInterimTick.style.backgroundColor = 'rgba(52, 73, 94, 0.3)';
+                            caselineInterimTick.style.zIndex = '2';
+                            container.appendChild(caselineInterimTick);
+                        }
+                        continue; // Skip the rest for interim years
+                    }
+                } else {
+                    // Normal mode: show all year lines
+                    const vertLine = document.createElement('div');
+                    vertLine.style.position = 'absolute';
+                    vertLine.style.left = yearStartX + 'px';
+                    vertLine.style.top = '0px';
+                    vertLine.style.width = '1px';
+                    vertLine.style.height = '100%';
+                    vertLine.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
+                    vertLine.style.zIndex = '2';
+                    container.appendChild(vertLine);
+                }
                 
                 // Add tick mark on timeline center line
                 const timelineTickMark = document.createElement('div');
@@ -118,7 +167,7 @@ export function drawYearMarkers(container, dateRange, pixelsPerDay) {
                 timelineTickMark.style.top = (timelineCenterY - 5) + 'px'; // 5px above and below center
                 timelineTickMark.style.width = '1px';
                 timelineTickMark.style.height = '10px';
-                timelineTickMark.style.backgroundColor = '#34495e';
+                timelineTickMark.style.backgroundColor = 'rgba(52, 73, 94, 0.7)'; // 70% opacity
                 timelineTickMark.style.zIndex = '2'; // Year ticks at bottom
                 container.appendChild(timelineTickMark);
                 
@@ -131,7 +180,7 @@ export function drawYearMarkers(container, dateRange, pixelsPerDay) {
                     caselineTickMark.style.top = (caselineCenterY - 5) + 'px'; // 5px above and below center
                     caselineTickMark.style.width = '1px';
                     caselineTickMark.style.height = '10px';
-                    caselineTickMark.style.backgroundColor = '#34495e';
+                    caselineTickMark.style.backgroundColor = 'rgba(52, 73, 94, 0.7)'; // 70% opacity
                     caselineTickMark.style.zIndex = '2'; // Year ticks at bottom
                     container.appendChild(caselineTickMark);
                 }
@@ -139,9 +188,15 @@ export function drawYearMarkers(container, dateRange, pixelsPerDay) {
             
             // Add year labels if within event range
             if (year >= firstEventYear && year <= lastEventYear) {
+                // In decade mode, only show labels for decade years, positioned on the line
+                if (useDecadeMarkers && year % 10 !== 0) {
+                    continue; // Skip labels for non-decade years in decade mode
+                }
+                
                 const visibleStartX = Math.max(TIMELINE_LEFT_OFFSET, yearStartX);
                 const visibleEndX = Math.min(timelineWidth + TIMELINE_LEFT_OFFSET, yearEndX);
-                const labelX = (visibleStartX + visibleEndX) / 2;
+                // Center labels on the decade line when in decade mode, otherwise center in year span
+                const labelX = useDecadeMarkers ? yearStartX : (visibleStartX + visibleEndX) / 2;
                 
                 // Timeline year label
                 const timelineLabel = document.createElement('div');

@@ -1,6 +1,6 @@
 # 42 Mill Street Development History Resource
 
-[Experimental Visual Timeline](https://tdemelle-sip.github.io/bakers_pond/Resources/timeline-v2.html)
+[Interactive Visual Timeline](https://tdemelle-sip.github.io/bakers_pond/Resources/timeline-v2.html) - **Now fully functional with all features implemented**
 
 ---
 
@@ -42,7 +42,18 @@ Efforts are underway to accurately assess the intent and consequences of the pro
 
 **[Research Images/](https://github.com/tdemelle-SiP/bakers_pond/tree/master/Research%20Images)** - This is mostly images I've put together to improve my understanding and to demonstrate issues I've found
 
-**[Resources/](https://github.com/tdemelle-SiP/bakers_pond/tree/master/Resources)** - Working files
+**[Resources/](https://github.com/tdemelle-SiP/bakers_pond/tree/master/Resources)** - Working files and timeline application
+
+### Timeline v2 Features
+The interactive timeline visualization includes:
+- **Dual-section layout**: Caseline (60%) for procedural events and Timeline (40%) for document events
+- **Interactive filtering**: By date range and case number
+- **Zoom/scale control**: Adjustable view with fit-to-window option
+- **Smart labeling**: Collision detection with leader lines for clarity
+- **Connection visualization**: Lines showing relationships between events
+- **State persistence**: Settings saved between sessions
+- **Continuance toggle**: Hide/show continued events
+- **Responsive design**: Horizontal scrolling with mouse wheel support
 
 ---
 ![Bakers Pond](https://github.com/tdemelle-SiP/bakers_pond/blob/master/Research%20Images/IMG_2514.jpg?raw=true)
