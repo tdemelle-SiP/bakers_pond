@@ -160,7 +160,7 @@ export function initScaleControls(onUpdate, initialScale = 0.8) {
  * @param {Function} calculateFitScale - Function to calculate scale for fitting
  * @param {Function} onUpdate - Callback to apply the calculated scale
  */
-export function initFitToWindow(calculateFitScale, onUpdate) {
+export function initFitToWindow(calculateFitScale, onUpdate, initialValue = false) {
     const checkbox = document.getElementById('fit-to-window');
     const slider = document.getElementById('scale-slider');
     const valueDisplay = document.getElementById('scale-value');
@@ -169,6 +169,9 @@ export function initFitToWindow(calculateFitScale, onUpdate) {
         console.warn('Fit-to-window checkbox not found');
         return;
     }
+    
+    // Set initial value
+    checkbox.checked = initialValue;
     
     checkbox.addEventListener('change', (e) => {
         if (e.target.checked) {
@@ -207,10 +210,23 @@ export function initAllControls(options = {}) {
         onFilterUpdate = () => {},
         onScaleUpdate = () => {},
         calculateFitScale = () => 1.0,
-        initialScale = 0.8
+        initialScale = 0.8,
+        initialFitToWindow = false,
+        initialFilters = {}
     } = options;
     
-    // Date filters
+    // Date filters - set initial values if provided
+    const startInput = document.getElementById('filter-start-date');
+    const endInput = document.getElementById('filter-end-date');
+    if (startInput && initialFilters.startDate) {
+        const dateStr = new Date(initialFilters.startDate).toISOString().split('T')[0];
+        startInput.value = dateStr;
+    }
+    if (endInput && initialFilters.endDate) {
+        const dateStr = new Date(initialFilters.endDate).toISOString().split('T')[0];
+        endInput.value = dateStr;
+    }
+    
     initDateControls((dateFilter) => {
         onFilterUpdate(dateFilter);
     });
@@ -220,6 +236,14 @@ export function initAllControls(options = {}) {
         initCaseControls(caseNumbers, (caseFilter) => {
             onFilterUpdate(caseFilter);
         });
+        
+        // Set initial case selections if provided
+        if (initialFilters.selectedCases && initialFilters.selectedCases.length > 0) {
+            // Trigger filter update with saved cases
+            setTimeout(() => {
+                onFilterUpdate({ selectedCases: initialFilters.selectedCases });
+            }, 100);
+        }
     }
     
     // Scale controls
@@ -230,7 +254,7 @@ export function initAllControls(options = {}) {
     // Fit to window
     initFitToWindow(calculateFitScale, (fitUpdate) => {
         onScaleUpdate(fitUpdate);
-    });
+    }, initialFitToWindow);
     
     // Mouse wheel scrolling
     initMouseWheelScroll();

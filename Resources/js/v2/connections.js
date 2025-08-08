@@ -127,13 +127,13 @@ export function drawCaselineConnections(caseGroups, container) {
             const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             line.setAttribute('x1', current.x);
             // Convert Y to percentage within caseline section, matching node positions
-            // Center is at 50%, nodes are ±12.5px from center, emoji center is +8px
+            // Center is at 50% + 35px offset, nodes are ±20px from center, emoji center is +8px
             const y1 = current.isPrivate ? 
-                (sectionHeight * 0.5 + 12.5 + 8) : // Private node center
-                (sectionHeight * 0.5 - 12.5 + 8);  // Public node center
+                (sectionHeight * 0.5 + 35 + 20 + 8) : // Private node center with title offset
+                (sectionHeight * 0.5 + 35 - 20 + 8);  // Public node center with title offset
             const y2 = next.isPrivate ? 
-                (sectionHeight * 0.5 + 12.5 + 8) : // Private node center
-                (sectionHeight * 0.5 - 12.5 + 8);  // Public node center
+                (sectionHeight * 0.5 + 35 + 20 + 8) : // Private node center with title offset
+                (sectionHeight * 0.5 + 35 - 20 + 8);  // Public node center with title offset
             line.setAttribute('y1', y1);
             line.setAttribute('x2', next.x);
             line.setAttribute('y2', y2);

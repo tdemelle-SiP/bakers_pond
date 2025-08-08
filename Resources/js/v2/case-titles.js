@@ -17,7 +17,7 @@ const CASE_INFO = {
 const CASE_COLORS = {
     'Historical': '#999999',
     '338-0303': '#2196f3',
-    '338-0594': '#0066cc',
+    '338-0594': '#37A0F4',  // Bright blue per user request
     '338-0706': '#4caf50',
     '338-0756': '#ff9800'
 };
@@ -32,10 +32,10 @@ function getCaseTitlesContainer() {
         container = document.createElement('div');
         container.id = 'case-titles-container';
         container.style.position = 'absolute';
-        container.style.top = '10px'; // Fixed position at top of caseline section
+        container.style.top = '35px'; // Lower to avoid header border overlap
         container.style.left = '0';
         container.style.right = '0';
-        container.style.height = '40px';
+        container.style.height = '50px'; // More height for titles
         container.style.zIndex = '25';
         
         const caselineContainer = document.getElementById('caseline-container');
@@ -86,8 +86,8 @@ export function renderCaseTitles(caseGroups, visibleCases = null) {
             titleLabel.style.left = (firstNode.x + 90) + 'px';
             titleLabel.style.top = '0';
             titleLabel.style.color = color;
-            titleLabel.style.fontSize = '14px';
-            titleLabel.style.fontWeight = 'bold';
+            titleLabel.style.fontSize = '22px'; // Much bigger like original
+            titleLabel.style.fontWeight = '900'; // Much bolder
             titleLabel.style.whiteSpace = 'nowrap';
             titleLabel.textContent = `${info.year} ${info.name}`.trim();
             container.appendChild(titleLabel);
@@ -97,9 +97,9 @@ export function renderCaseTitles(caseGroups, visibleCases = null) {
             depLabel.className = 'case-label';
             depLabel.style.position = 'absolute';
             depLabel.style.left = (firstNode.x + 90) + 'px';
-            depLabel.style.top = '18px';
+            depLabel.style.top = '28px'; // Adjusted spacing for same-size text
             depLabel.style.color = color;
-            depLabel.style.fontSize = '12px';
+            depLabel.style.fontSize = '22px'; // Same size as main title
             depLabel.style.whiteSpace = 'nowrap';
             
             const depText = caseNumber === 'Historical' ? 

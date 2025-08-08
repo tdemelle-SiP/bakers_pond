@@ -131,10 +131,10 @@ export function createLabelsWithCollisionDetection(nodeData, container) {
         const caselineSection = document.getElementById('caseline-section');
         const sectionHeight = caselineSection ? caselineSection.offsetHeight : 300;
         
-        // Calculate node Y positions (matching the CSS)
+        // Calculate node Y positions (matching the CSS with title offset)
         const nodeY = node.isPrivate ? 
-            (sectionHeight * 0.5 + 12.5) :  // Private: center + 12.5px
-            (sectionHeight * 0.5 - 12.5);   // Public: center - 12.5px
+            (sectionHeight * 0.5 + 35 + 20) :  // Private: center + title offset + 20px
+            (sectionHeight * 0.5 + 35 - 20);   // Public: center + title offset - 20px
         
         if (node.isPrivate) {
             // Labels below: top edge at fixed distance (30px) from node
@@ -225,10 +225,10 @@ function drawLeaderLine(container, node, labelData) {
     const caselineSection = document.getElementById('caseline-section');
     const sectionHeight = caselineSection ? caselineSection.offsetHeight : 300;
     
-    // Node center Y with emoji center offset (8px)
+    // Node center Y with emoji center offset (8px) and title offset
     const nodeCenterY = labelData.isPrivate ? 
-        (sectionHeight * 0.5 + 12.5 + 8) : // Private: center + 12.5px + emoji center
-        (sectionHeight * 0.5 - 12.5 + 8); // Public: center - 12.5px + emoji center
+        (sectionHeight * 0.5 + 35 + 20 + 8) : // Private: center + title offset + 20px + emoji center
+        (sectionHeight * 0.5 + 35 - 20 + 8); // Public: center + title offset - 20px + emoji center
     
     const labelEdgeY = labelData.isPrivate ? 
         labelData.y : // Top edge for labels below

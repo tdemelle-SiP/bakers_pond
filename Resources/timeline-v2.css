@@ -146,9 +146,21 @@ body {
     top: 50%; /* Center line divides public/private */
     left: 200px;
     right: 0;
-    height: 2px;
+    height: 1px; /* Thinner line per user request */
     background: #34495e;
-    z-index: 15;
+    z-index: 4; /* Timeline center line */
+    transform: translateY(-50%);
+}
+
+/* Center line for caseline section - exactly between upper and lower nodes */
+.caseline-center-line {
+    position: absolute;
+    top: calc(50% + 45px); /* Adjusted center line position */
+    left: 200px;
+    right: 0;
+    height: 1px;
+    background: #34495e;
+    z-index: 4; /* Caseline center line */
     transform: translateY(-50%);
 }
 
@@ -159,7 +171,7 @@ body {
     right: 0;
     top: 0;
     bottom: 0;
-    z-index: 0;
+    z-index: 1; /* Background at very bottom */
 }
 
 .public-section-bg {
@@ -178,13 +190,13 @@ body {
     transform: translateY(-50%);
     font-size: 14px;
     font-weight: bold;
-    z-index: 5;
+    z-index: 10; /* Section labels above year lines */
 }
 
 .caseline-label {
     color: #0066cc;
     font-size: 16px;
-    top: 50%;
+    top: calc(50% + 35px); /* Align with actual caseline vertical center */
     transform: translateY(-50%);
 }
 
@@ -208,11 +220,11 @@ body {
 }
 
 .year-markers-overlay {
-    z-index: 20;
+    z-index: 2; /* Year markers at bottom */
 }
 
 .connections-overlay {
-    z-index: 5;
+    z-index: 20; /* Connections above case titles */
 }
 
 /* ========== 4. TIMELINE EVENTS (GREEN/RED DOTS) ========== */
@@ -225,7 +237,7 @@ body {
     border: 1px solid;
     cursor: pointer;
     transition: all 0.3s ease;
-    z-index: 10;
+    z-index: 30; /* Nodes above connections */
     transform: translateX(-50%);
 }
 
@@ -248,7 +260,7 @@ body {
 .event:hover,
 .timeline-node:hover {
     transform: translateX(-50%) scale(1.2, 1.1);
-    z-index: 30;
+    z-index: 35; /* Hovered nodes slightly above */
     box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
@@ -264,7 +276,7 @@ body {
     background: rgba(255, 255, 255, 0.9);
     padding: 1px 3px;
     border-radius: 2px;
-    z-index: 8;
+    z-index: 40; /* Date labels above nodes */
 }
 
 .event-above .event-date-label {
@@ -281,7 +293,7 @@ body {
 .missing-indicator {
     position: absolute;
     font-size: 14px;
-    z-index: 11;
+    z-index: 41; /* Missing indicators above date labels */
 }
 
 .event-above .missing-indicator {
@@ -301,19 +313,19 @@ body {
     font-size: 16px;
     transform: translateX(-50%);
     cursor: pointer;
-    z-index: 15;
+    z-index: 30; /* Caseline nodes same as timeline nodes */
 }
 
-/* Caseline public events - above the center (12.5px above center in original) */
+/* Caseline public events - above the center (with offset for title space) */
 .caseline-node.public,
 .case-procedural-above {
-    top: calc(50% - 12.5px); /* 12.5px above center to match original spacing */
+    top: calc(50% - 20px + 35px); /* 20px above center + 35px down for title space */
 }
 
-/* Caseline private events - below the center (12.5px below center in original) */  
+/* Caseline private events - below the center (with offset for title space) */  
 .caseline-node.private,
 .case-procedural-below {
-    top: calc(50% + 12.5px); /* 12.5px below center to match original spacing */
+    top: calc(50% + 20px + 35px); /* 20px below center + 35px down for title space */
 }
 
 /* Caseline labels */
@@ -326,7 +338,7 @@ body {
     border: none;
     white-space: nowrap;
     text-align: center;
-    z-index: 20;
+    z-index: 40; /* Labels above nodes */
     cursor: pointer;
 }
 
@@ -357,24 +369,23 @@ body {
 }
 
 /* ========== 6. YEAR MARKERS ========== */
-.year-marker {
+.year-tick {
     position: absolute;
-    top: 295px;
-    width: 2px;
+    width: 1px;
     height: 10px;
     background: #34495e;
-    z-index: 2;
+    z-index: 2; /* Year markers at bottom */
 }
 
 .year-label {
     position: absolute;
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateY(-50%);
     font-weight: bold;
     color: #34495e;
     background: rgba(255,255,255,0.9);
     padding: 0 6px;
     font-size: 12px;
-    z-index: 3;
+    z-index: 3; /* Year labels just above lines */
 }
 
 /* ========== 7. CONTROLS & FILTERS ========== */

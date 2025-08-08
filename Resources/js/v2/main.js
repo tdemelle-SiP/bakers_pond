@@ -17,15 +17,17 @@ import { applyFilters, getDefaultFilterState } from './filters.js';
 import { initAllControls } from './controls-v2.js';
 import { createLabelsWithCollisionDetection } from './label-layout.js';
 import { renderCaseTitles } from './case-titles.js';
+import { initializeState, saveFilterState, saveScaleState } from './state-persistence.js';
 
-// Application state
+// Application state - initialize with saved values
+const savedState = initializeState();
 const state = {
     allEvents: [],
     filteredEvents: [],
-    scale: DEFAULT_SCALE,
-    filters: getDefaultFilterState(),
+    scale: savedState.scale || DEFAULT_SCALE,
+    filters: { ...getDefaultFilterState(), ...savedState.filters },
     caseNumbers: [],
-    fitToWindow: false
+    fitToWindow: savedState.fitToWindow || false
 };
 
 /**
@@ -43,6 +45,17 @@ async function init() {
     
     const events = parseEvents(tableRows);
     console.log('Parsed events:', events.length);
+    
+    // Debug: Check for duplicate dates
+    const dateCounts = {};
+    events.forEach(e => {
+        const dateStr = e.dateStr;
+        dateCounts[dateStr] = (dateCounts[dateStr] || 0) + 1;
+    });
+    const duplicates = Object.entries(dateCounts).filter(([date, count]) => count > 2);
+    if (duplicates.length > 0) {
+        console.warn('Dates appearing more than twice:', duplicates);
+    }
     
     // Store in state
     state.allEvents = events;
@@ -87,13 +100,15 @@ async function init() {
     // Render timeline nodes (they get their own containers internally)
     const nodePositions = renderTimelineNodes(events, dateRange, pixelsPerDay);
     console.log('Rendered timeline nodes:', nodePositions.length);
+    console.log('Node X positions:', nodePositions.map(n => ({date: n.event.dateStr, x: Math.round(n.x)})));
     
     // Render caseline nodes (gets its own container internally)
     const caselineData = renderCaselineNodes(events, dateRange, pixelsPerDay);
     console.log('Rendered caseline nodes:', caselineData.nodes.length);
     
     // Render caseline labels with collision detection
-    createLabelsWithCollisionDetection(caselineData.nodes, container);
+    const caselineContainer = document.getElementById('caseline-container');
+    createLabelsWithCollisionDetection(caselineData.nodes, caselineContainer);
     
     // Render case titles above caseline
     renderCaseTitles(caselineData.caseGroups, state.filters.selectedCases);
@@ -113,10 +128,12 @@ async function init() {
     // Store case numbers in state
     state.caseNumbers = caseNumbers;
     
-    // Initialize controls
+    // Initialize controls with saved state
     initAllControls({
         caseNumbers: caseNumbers,
         initialScale: state.scale,
+        initialFitToWindow: state.fitToWindow,
+        initialFilters: state.filters,
         onFilterUpdate: handleFilterUpdate,
         onScaleUpdate: handleScaleUpdate,
         calculateFitScale: calculateFitToWindowScale
@@ -134,8 +151,32 @@ function handleFilterUpdate(filterUpdate) {
     // Update state
     Object.assign(state.filters, filterUpdate);
     
+    // Save to localStorage
+    saveFilterState(state.filters);
+    
     // Apply filters
     state.filteredEvents = applyFilters(state.allEvents, state.filters);
+    
+    // Debug: Check for duplicate events with same content but different dates
+    if (state.filters.selectedCases && state.filters.selectedCases.length === 1) {
+        const caseEvents = state.filteredEvents.filter(e => e.caseNumber === state.filters.selectedCases[0]);
+        console.log('Events for case', state.filters.selectedCases[0], ':', 
+            caseEvents.map(e => ({date: e.dateStr, title: e.title.substring(0, 20)})));
+    }
+    
+    // Check if fit-to-window is enabled and recalculate scale
+    if (state.fitToWindow) {
+        const fitScale = calculateFitToWindowScale();
+        state.scale = fitScale;
+        
+        // Update the scale slider to reflect the new scale
+        const scaleSlider = document.getElementById('scale-slider');
+        const scaleValue = document.getElementById('scale-value');
+        if (scaleSlider && scaleValue) {
+            scaleSlider.value = fitScale;
+            scaleValue.textContent = fitScale.toFixed(1);
+        }
+    }
     
     // Re-render
     render();
@@ -154,6 +195,9 @@ function handleScaleUpdate(scaleUpdate) {
     if (scaleUpdate.fitToWindow !== undefined) {
         state.fitToWindow = scaleUpdate.fitToWindow;
     }
+    
+    // Save to localStorage
+    saveScaleState(state.scale, state.fitToWindow);
     
     // Re-render with new scale
     render();
@@ -214,8 +258,8 @@ function render() {
     const nodePositions = renderTimelineNodes(state.filteredEvents, dateRange, pixelsPerDay);
     const caselineData = renderCaselineNodes(state.filteredEvents, dateRange, pixelsPerDay);
     
-    // Render labels with collision detection
-    createLabelsWithCollisionDetection(caselineData.nodes, container);
+    // Render labels with collision detection  
+    createLabelsWithCollisionDetection(caselineData.nodes, caselineContainer);
     
     // Render case titles
     const visibleCases = state.filters.selectedCases && state.filters.selectedCases.length > 0 ?

@@ -26,6 +26,13 @@ export function parseEvents(tableRows) {
         const [year, month, day] = dateStr.split('-');
         const date = new Date(year, parseInt(month) - 1, day);
         
+        // Debug: Check if date is valid
+        if (isNaN(date.getTime())) {
+            console.error(`Invalid date parsed from: ${dateStr}`);
+        } else if (date.getFullYear() !== parseInt(year)) {
+            console.error(`Date parsing error: ${dateStr} became ${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`);
+        }
+        
         // Parse document link
         let title = document;
         let documentUrl = null;
