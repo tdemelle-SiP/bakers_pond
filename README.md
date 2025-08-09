@@ -1,10 +1,6 @@
 # 42 Mill Street Development History Resource
 
-[Interactive Visual Timeline](https://tdemelle-sip.github.io/bakers_pond/Resources/timeline-v2.html) - **Now fully functional with all features implemented**
-
----
-
-This repository is a resource documenting the decades-long history of development attempts at 42 Mill Street in Westwood, Massachusetts. This site, located next to historic Bakers Pond, has been the subject of multiple permit applications, environmental reviews, and legal proceedings since at least 2000.
+This repository is a resource documenting the decades-long history of development attempts at 42 Mill Street in Westwood, Massachusetts. This site, located next to historic Bakers Pond, has been the subject of multiple permit applications, environmental reviews, and legal proceedings for over 50 years. [Interactive Visual Timeline](https://tdemelle-sip.github.io/bakers_pond/Resources/timeline-v2.html)
 
 ---
 
@@ -44,17 +40,6 @@ Efforts are underway to accurately assess the intent and consequences of the pro
 
 **[Resources/](https://github.com/tdemelle-SiP/bakers_pond/tree/master/Resources)** - Working files and timeline application
 
-### Timeline v2 Features
-The interactive timeline visualization includes:
-- **Dual-section layout**: Caseline (60%) for procedural events and Timeline (40%) for document events
-- **Interactive filtering**: By date range and case number
-- **Zoom/scale control**: Adjustable view with fit-to-window option
-- **Smart labeling**: Collision detection with leader lines for clarity
-- **Connection visualization**: Lines showing relationships between events
-- **State persistence**: Settings saved between sessions
-- **Continuance toggle**: Hide/show continued events
-- **Responsive design**: Horizontal scrolling with mouse wheel support
-
 ---
 ![Bakers Pond](https://github.com/tdemelle-SiP/bakers_pond/blob/master/Research%20Images/IMG_2514.jpg?raw=true)
 
@@ -66,11 +51,9 @@ The interactive timeline visualization includes:
 
 [Re: NOI for Lot 2B Mill Street (DEP File #338-0706) — Parcel Boundary, Dam Location, and Scale Discrepancies](https://docs.google.com/document/d/1XqBJjFqbXGKIyikNQZMzPyUSU6W0EAPF37DNyGwe-i8/edit?usp=sharing)
 
-[Re: NOI for Lot 2B Mill Street (DEP File #338-0706) — Expired SOC](https://docs.google.com/document/d/1rFPh2nAFR3PbEKMZM0cLZzL174oV-v5gESPvF3wq0Yc/edit?usp=sharing)
-
 [RE: 42 Mill StreetUnbuildable Lot Status Due to Unresolved Subdivision Issues](https://docs.google.com/document/d/1VBTaT9irJAqS0Zx9Q_fWZE51eqEElwP7lZ3O_z1xWcg/edit?usp=sharing)
 
-[2025_07_29 WCC Documents Request](https://docs.google.com/document/d/1aTuwKN8ClZdpTS8MXKj5Fsh2QCiWgmMlIX4puK6gw2g/edit?usp=sharing)
+[~~Re: NOI for Lot 2B Mill Street (DEP File #338-0706) — Expired SOC~~](https://docs.google.com/document/d/1rFPh2nAFR3PbEKMZM0cLZzL174oV-v5gESPvF3wq0Yc/edit?usp=sharing)
 
 ---
 

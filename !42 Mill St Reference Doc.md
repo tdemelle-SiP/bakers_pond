@@ -55,7 +55,80 @@
 ---
 ## FOLLOW - UP
 
+### MISSING DOCUMENTS
+
 #### * Don Foley mentioned "the owner has applied 3 times and has been denied each time" at October 28, 2015 meeting
+
+#### * All available documents associated with 338-0303
+
+2014_10_27 Wetland Delineation Plan | RDA submission prepared by GLM Engineering of Hopkinton - (I have Delapa’s letter, but not the application and the plan that accompanied it.) 
+
+2014_11_14 ANRAD Application DEP #338-0594 (Have application form 4A and letter, but not the plan 
+-USGS Site Locus. Goddard Consulting, LLC
+-Wetland Border Report. Goddard Consulting LLC
+-DEP Bordering Vegetated Wetland Delineation Field Data Forms
+-Wetland Delineation Plan, 42 Mill Street, Westwood, MA by GLM Engineering and Consultants, LLC Dated 10/27/14.
+
+Any GEC Peer Review Reports from:
+2015_09_04 First GEC Site Visit - (MISSING DOCUMENT)
+2015_10_07 Second GEC Site Visit (MISSING DOCUMENT)
+
+2015_11_20 Delapa files ORAD appeal (MISSING DOCUMENT)
+	claims intermittent stream based on 4 photos (9/1-9/4/2014) of the impoundment that were apparently not in the appeal
+
+Is the interaction between Mr Watski the Delapa Attorney and the Town Counsel following WCC giving him permission to talk to counsel directly at the 2015_12_09 WCC meeting publicly available or privileged?
+
+2015_12_16 MassDEP conducted a site visit (MISSING DOCUMENT)
+2 more additional site visits made - dates unknown
+
+2016_01_20 MISSING related to ANR filing - survey plan prepared by Hoyt Land Surveying for 44 Mill St, Westwood
+
+2016_12_19 MassDEP issued a Final Order of Resource Area Delineation (FORAD)  (MISSING DOCUMENT)
+DEP File #338-0594, for the project site.
+
+2016_01_20 Plan of Land, 44 Mill Street, Westwood, Massachusetts (MISSING DOCUMENT)
+prepared by Hoyt Land Surveying, 1287 Washington St, Weymouth, MA 02189
+
+2016_01_27 GEC Peer Reiew of RDA -- this was presented in 2015_10_21 WCC Hearing (MISSING DOCUMENT)
+
+2016_02_02 ANR Plan for 44 Mill St (Map 28, Lot 14) filed with Town Clerk (MISSING DOCUMENT)
+
+2016_02_11 Further materials submitted by applicant (MISSING DOCUMENT)
+
+2016_06_13 Revised Plan (MISSING DOCUMENT)
+
+2016_09_15 Delapa DEP appeal (MISSING DOCUMENT)
+
+2016_11_09 Executive Session (MISSING DOCUMENTS)
+
+2016_11_10 Settlement Agreement (MISSING DOCUMENT)
+
+2016_12_19 DEP Final Decision - FORAD issued (MISSING DOCUMENT)
+
+Docket No. WET-2016_022 (MISSING DOCUMENT)
+
+File No. SORAD/338-0594 (MISSING DOCUMENT)
+
+2019_12_17 DEP #338-0594 FORAD - Rachel Freed attests that FORAD is True Copy that resides in this file (MISSING DOCUMENT)
+
+2020_09_09 WCC Minutes Missing (WRONG DOCUMENT ON TOWN SITE - JULY 22 MINUTES)
+
+2022_01_06 (MISSING DOCUMENT)
+On January 6, 2022, MassDEP conducted a site visit. In attendance were your representative, a representative from the WCC and their third-party reviewer. At the site visit, the MassDEP discussed the project and observed the areas where work is proposed.
+
+2022_02_23 (MISSING DOCUMENT)
+On February 23, 2022, MassDEP requested you to provide a cut and fill table as requested in the January 11, 2022 information request letter.
+
+2022_02_25 (MISSING DOCUMENT)
+On February 25, 2022, your representative submitted a BLSF cut/fill chart.
+
+
+
+
+
+
+
+
 
 #### * figure out what to ask/send to:
 - DEP
