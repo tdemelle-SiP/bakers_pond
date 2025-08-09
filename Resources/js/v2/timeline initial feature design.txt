@@ -1,0 +1,52 @@
+Data comes from the !!42 Mill St timeline overview.md
+
+Data is used to create two timelines
+	-Caseline
+	-Public/Private Timeline
+
+The mousewheel scrolls the timeline horizontally.
+
+it's pretty obvious that the date creates the point where the node goes on the timeline
+
+--- Public/Private Timeline (referred to as the timeline)
+
+items with a green circle emoji in the mrkr column go on the public/private timeline.  
+
+They show up as green dots unless they have a private (padlock) emoji in the mrkr column in which case, being private events, they show up as red dots.
+
+public and private events draw above and below a central horizontal timeline respectively to show which meetings are public and which are private
+
+timeline nodes have small mm/dd labels above them if they are public, below them if they are private
+
+If there is a red x in the mrkr column, which means the file is missing in the database it draws next to the event node... above if public, below if private
+
+timeline nodes have tooltips derived from table data and are hotlinked to the file referenced in the table data
+
+----Caseline----
+
+items with emojis other than green dot, padlock, red X go on the caseline
+
+if an element is on the caseline, it has a default label that can be over-ridden by the content of the procedural step column that is bolded (within **s)
+
+the labels have leader lines and collision detection
+
+each caseline node has a tooltip that shows the document title and date
+
+each node is hotlinked to the document url
+
+--- sticky header ---
+In the timeline header there is 
+a link back to the readme
+
+some summary data counts
+
+a key that explains what the emojis mean
+the continued emoji has a toggle that toggles visibility of continuations
+
+There's a filter that shows and hides entries based on the case # row data
+
+elements on the  timeline can be filtered by date
+
+There's a scale slider that the user can use to tune in what part of the timeline is shown
+
+The fit to window button will fit the visible nodes onto the timeline and update whenever the cases pulldown selector is changed.
