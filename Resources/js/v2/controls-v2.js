@@ -29,26 +29,7 @@ export function initDateControls(onUpdate, eventDateRange = null) {
         });
     });
     
-    // Clear dates on reset
-    const resetButton = document.getElementById('reset-filters');
-    if (resetButton) {
-        resetButton.addEventListener('click', () => {
-            // Reset to actual data range if available
-            if (eventDateRange) {
-                const minDateStr = new Date(eventDateRange.minDate).toISOString().split('T')[0];
-                const maxDateStr = new Date(eventDateRange.maxDate).toISOString().split('T')[0];
-                startInput.value = minDateStr;
-                endInput.value = maxDateStr;
-            } else {
-                startInput.value = '';
-                endInput.value = '';
-            }
-            onUpdate({
-                startDate: null,
-                endDate: null
-            });
-        });
-    }
+    // Reset button is handled globally - don't add handler here
 }
 
 /**
@@ -72,8 +53,14 @@ export function initCaseControls(caseNumbers, onUpdate, initialSelected = null) 
     
     // Build checkbox list
     checkboxList.innerHTML = '';
-    // Use saved state or default to all selected
-    const selectedCases = initialSelected || caseNumbers;
+    // Use saved state or default to all selected except Historical
+    let selectedCases;
+    if (initialSelected) {
+        selectedCases = initialSelected;
+    } else {
+        // Default: exclude Historical to prevent timeline from breaking
+        selectedCases = caseNumbers.filter(caseNum => caseNum !== 'Historical');
+    }
     
     caseNumbers.forEach(caseNum => {
         const label = document.createElement('label');
@@ -158,8 +145,11 @@ export function initScaleControls(onUpdate, initialScale = 0.8) {
         return;
     }
     
-    slider.value = initialScale;
-    valueDisplay.textContent = initialScale;
+    // Ensure initialScale is a number
+    const scaleValue = typeof initialScale === 'number' ? initialScale : parseFloat(initialScale) || 0.8;
+    
+    slider.value = scaleValue;
+    valueDisplay.textContent = scaleValue.toFixed(1);
     
     slider.addEventListener('input', (e) => {
         const scale = parseFloat(e.target.value);
@@ -317,4 +307,12 @@ export function initAllControls(options = {}) {
     
     // Mouse wheel scrolling
     initMouseWheelScroll();
+    
+    // Reset button - use global reset function
+    const resetButton = document.getElementById('reset-filters');
+    if (resetButton && window.resetToDefaults) {
+        resetButton.addEventListener('click', () => {
+            window.resetToDefaults();
+        });
+    }
 }

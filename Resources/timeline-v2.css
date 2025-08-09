@@ -418,6 +418,12 @@ body {
     background: #1a252f;
     color: white;
     font-size: 13px;
+    transition: background-color 0.2s;
+}
+
+.filter-input.active-filter {
+    background: #5c1616; /* Dark red background when filter is active */
+    border-color: #8b2020;
 }
 
 .filter-button {
@@ -428,11 +434,20 @@ body {
     color: white;
     font-size: 13px;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: background 0.3s ease, border-color 0.3s ease;
 }
 
 .filter-button:hover {
     background: #455a71;
+}
+
+#reset-filters.active-filters {
+    background: #8b2020; /* Dark red when filters are active */
+    border-color: #a52a2a;
+}
+
+#reset-filters.active-filters:hover {
+    background: #a52a2a;
 }
 
 /* Case filter dropdown */
@@ -454,10 +469,20 @@ body {
     gap: 8px;
     min-width: 150px;
     justify-content: space-between;
+    transition: background-color 0.2s, border-color 0.2s;
 }
 
 .case-filter-button:hover {
     background: #2c3e50;
+}
+
+.case-filter-button.active-filter {
+    background: #5c1616; /* Dark red when not showing all cases */
+    border-color: #8b2020;
+}
+
+.case-filter-button.active-filter:hover {
+    background: #6c2020;
 }
 
 .dropdown-arrow {

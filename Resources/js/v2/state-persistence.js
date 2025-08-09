@@ -67,7 +67,7 @@ export function loadFilterState() {
     return {
         startDate: loadState(STORAGE_KEYS.START_DATE),
         endDate: loadState(STORAGE_KEYS.END_DATE),
-        selectedCases: loadState(STORAGE_KEYS.SELECTED_CASES) || [],
+        selectedCases: loadState(STORAGE_KEYS.SELECTED_CASES), // Return null if not saved
         showContinuances: loadState(STORAGE_KEYS.SHOW_CONTINUANCES) ?? true
     };
 }

@@ -59,11 +59,18 @@ async function init() {
     
     // Store in state
     state.allEvents = events;
-    state.filteredEvents = events;
     
     // Extract metadata
     const caseNumbers = extractCaseNumbers(events);
     console.log('Case numbers:', caseNumbers);
+    
+    // If no saved case selection, default to all except Historical
+    if (state.filters.selectedCases === null || state.filters.selectedCases === undefined) {
+        state.filters.selectedCases = caseNumbers.filter(c => c !== 'Historical');
+    }
+    
+    // Apply initial filters
+    state.filteredEvents = applyFilters(events, state.filters);
     
     const eventDateRange = getEventDateRange(events);
     console.log('Date range:', eventDateRange);
@@ -140,7 +147,157 @@ async function init() {
         calculateFitScale: calculateFitToWindowScale
     });
     
+    // Check for active filters on initial load
+    checkActiveFilters();
+    
     // All modules now initialized
+}
+
+/**
+ * Reset all filters and controls to defaults
+ */
+function resetToDefaults() {
+    console.log('Resetting to defaults...');
+    
+    // Get default case selection (all except Historical)
+    const defaultCases = state.caseNumbers.filter(c => c !== 'Historical');
+    
+    // Reset all state to defaults
+    state.filters.selectedCases = defaultCases;
+    state.filters.startDate = null;
+    state.filters.endDate = null;
+    state.scale = 0.8;
+    state.fitToWindow = false;
+    
+    // Update UI elements directly without triggering events
+    const scaleSlider = document.getElementById('scale-slider');
+    const scaleValue = document.getElementById('scale-value');
+    const fitCheckbox = document.getElementById('fit-to-window');
+    
+    if (scaleSlider) {
+        scaleSlider.value = 0.8;
+        console.log('Reset scale slider to:', scaleSlider.value);
+    }
+    if (scaleValue) {
+        scaleValue.textContent = '0.8';
+    }
+    if (fitCheckbox) {
+        fitCheckbox.checked = false;
+        console.log('Reset fit checkbox to:', fitCheckbox.checked);
+    }
+    
+    // Update case checkboxes
+    const checkboxes = document.querySelectorAll('.case-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = defaultCases.includes(checkbox.value);
+    });
+    
+    // Update case filter button text
+    const caseFilterText = document.getElementById('case-filter-text');
+    if (caseFilterText) {
+        // Check if we have all cases except Historical
+        const hasHistorical = state.caseNumbers.includes('Historical');
+        const isDefaultSelection = hasHistorical && 
+                                  defaultCases.length === (state.caseNumbers.length - 1);
+        
+        caseFilterText.textContent = isDefaultSelection 
+            ? `${defaultCases.length} of ${state.caseNumbers.length} Cases`
+            : 'All Cases';
+    }
+    
+    // Apply filters
+    state.filteredEvents = applyFilters(state.allEvents, state.filters);
+    
+    // Update date range to match the filtered events
+    updateDateFilterRange();
+    
+    // Save the reset state
+    saveFilterState(state.filters);
+    saveScaleState(state.scale, state.fitToWindow);
+    
+    // Re-render with the new state
+    render();
+    
+    // Update visual indicators
+    checkActiveFilters();
+}
+
+// Export for use in controls
+window.resetToDefaults = resetToDefaults;
+
+/**
+ * Check if filters are active (non-default state)
+ */
+function checkActiveFilters() {
+    const startInput = document.getElementById('filter-start-date');
+    const endInput = document.getElementById('filter-end-date');
+    const resetButton = document.getElementById('reset-filters');
+    const caseButton = document.getElementById('case-filter-button');
+    const scaleSlider = document.getElementById('scale-slider');
+    const fitCheckbox = document.getElementById('fit-to-window');
+    
+    // Get default case selection (all except Historical)
+    const defaultCases = state.caseNumbers.filter(c => c !== 'Historical');
+    
+    // Check if we have non-default filters
+    let hasActiveFilters = false;
+    
+    // Check date filters - dates are only "active" if manually changed from the default range for selected cases
+    // The default is the date range of the currently selected cases
+    const selectedCaseEvents = state.filters.selectedCases && state.filters.selectedCases.length > 0
+        ? state.allEvents.filter(e => state.filters.selectedCases.includes(e.caseNumber))
+        : state.allEvents.filter(e => defaultCases.includes(e.caseNumber));
+    
+    if (selectedCaseEvents.length > 0 && startInput && endInput) {
+        const defaultRange = getEventDateRange(selectedCaseEvents);
+        if (defaultRange.minDate && defaultRange.maxDate) {
+            const defaultStart = new Date(defaultRange.minDate).toISOString().split('T')[0];
+            const defaultEnd = new Date(defaultRange.maxDate).toISOString().split('T')[0];
+            const currentStart = startInput.value;
+            const currentEnd = endInput.value;
+            
+            // Only mark as active if dates differ from the default for selected cases
+            if (currentStart !== defaultStart || currentEnd !== defaultEnd) {
+                hasActiveFilters = true;
+                startInput.classList.add('active-filter');
+                endInput.classList.add('active-filter');
+            } else {
+                startInput.classList.remove('active-filter');
+                endInput.classList.remove('active-filter');
+            }
+        }
+    }
+    
+    // Check case filters - if they differ from default
+    const currentCases = state.filters.selectedCases || [];
+    const isDefaultCases = defaultCases.length === currentCases.length && 
+                          defaultCases.every(c => currentCases.includes(c));
+    
+    if (!isDefaultCases) {
+        hasActiveFilters = true;
+        if (caseButton) caseButton.classList.add('active-filter');
+    } else {
+        if (caseButton) caseButton.classList.remove('active-filter');
+    }
+    
+    // Check scale - default is 0.8
+    if (scaleSlider && parseFloat(scaleSlider.value) !== 0.8) {
+        hasActiveFilters = true;
+    }
+    
+    // Check fit to window - default is unchecked
+    if (fitCheckbox && fitCheckbox.checked) {
+        hasActiveFilters = true;
+    }
+    
+    // Update reset button
+    if (resetButton) {
+        if (hasActiveFilters) {
+            resetButton.classList.add('active-filters');
+        } else {
+            resetButton.classList.remove('active-filters');
+        }
+    }
 }
 
 /**
@@ -226,6 +383,9 @@ function handleFilterUpdate(filterUpdate) {
     
     // Re-render
     render();
+    
+    // Update visual indicators for active filters
+    checkActiveFilters();
 }
 
 /**
@@ -247,6 +407,9 @@ function handleScaleUpdate(scaleUpdate) {
     
     // Re-render with new scale
     render();
+    
+    // Update visual indicators for active filters
+    checkActiveFilters();
 }
 
 /**
