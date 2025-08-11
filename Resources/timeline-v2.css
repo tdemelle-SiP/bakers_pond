@@ -313,7 +313,13 @@ body {
     font-size: 16px;
     transform: translateX(-50%);
     cursor: pointer;
-    z-index: 30; /* Caseline nodes same as timeline nodes */
+    z-index: 50; /* Caseline nodes well above labels (40) to ensure tooltips show properly */
+}
+
+/* When hovering caseline nodes, bring them to front */
+.caseline-node:hover,
+.case-procedural:hover {
+    z-index: 100; /* Bring hovered node and its tooltip above everything */
 }
 
 /* Caseline public events - above the center (with offset for title space) */
@@ -562,7 +568,7 @@ body {
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
-    z-index: 100;
+    z-index: 500; /* High z-index to ensure tooltips appear above all other elements */
     white-space: nowrap;
     max-width: 400px;
 }

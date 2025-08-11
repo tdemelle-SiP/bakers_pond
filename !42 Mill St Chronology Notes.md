@@ -31,7 +31,7 @@
 ---
 ## 2014_10_01 GEC Revised Wetland Boundary and Resource Area Plan
 
-- original plan from GLM. I don't see GLM's report in public records.  Where is it? **question for Brian Donahoe?**
+- MISSING - original plan from GLM. I don't see GLM's report in public records.  Where is it? **question for Brian Donahoe?**
 [RDA submission prepared by GLM Engineering of Hopkinton]
 
 ---
@@ -57,3 +57,65 @@
 - Lindsey Mahoney asks if this land is classified undevelopable, would there be an order issued. **Mr. Rogers states that is out of our jurisdiction.**
 - Mr. Rogers ask Ms. Catrone to invite **Tom McCusker** to come to the next meeting [who is Tom McCusker?]
 - **Tom Palmer of the Neponset River Water shed/Willett Pond is present**. He states he has a **problem with siltation and algae.**
+
+---
+## 2/2016 MISSING ANR Application
+files requested by email from Planning Board 8/9/2025
+
+---
+## 2016_01_27 GEC peer review
+- "The results provided in this report were presented by GEC at the public hearing scheduled and held on October 21, 2015"
+- "The dam was in some disrepair and **did not completely contain the volume of water original intended based on our review of historical aerial photographs**"
+- **The dam appears to be about 60 years old** based on a review of historic USGS maps available on-line.
+- **Since this is a privately owned dam the responsibility for maintenance and repairs lie with the owner.**
+- the following issues and discrepancies that were made by the applicant
+    - Mill Brook was not a perennial stream
+    - In another document, the stream was an unnamed stream
+    - Statements were made in the submittal that no estimated priority habitats or vernal pools were located on or near the site.
+    - below the dam and along the driveway GEC observed an extension of both an intermittent stream and additional streams that are part of the normal perennial stream flow through Mill Brook and the dam spillways.
+
+---
+## 2016_06_13 MISSING Revised Plan
+Not sure where this is referenced...
+
+---
+## 2016_08_25 SORAD Appeal
+- a clear and concise statement of the alleged errors contained in the Department's decision and how each alleged error
+
+---
+## 2016_09_15_MISSING_DEP_Appeal_Document
+- MISSING
+
+---
+## 2016_10_20 #338-0594 DEP FORAD
+- Modified: The boundaries described on tha plan(s) referenced above, as modified by the Department from the plans contained In the Abbreviated Notice of Resource Area Delineation, are accurately drawn for the following resource areas:
+    - Borderfng Vegetated Wetlands
+    - Other Resource Area(s), specifically:
+Mill Brook perennial stream/Riverfront Area. Note that **Riverfront associated With portions or Mill Brook off site extending north of wetlands flag GC37 has not been delineated**. Prior to submission of an NOI, the culverted portion of Mill Brook will be survey located and the extent of riverfront, and whether it impacts the site, wlll be determined.
+
+## 2016_11_21 Settlement Agreement re WET-2016_022
+- MISSING
+
+# NEED TO GET ALL THESE MISSING DOCUMENTS
+## request complete file from MassDEP docket WET-2016-022 SORAD 338-0594 from DEP Northeast Regional Office
+### DEP
+- Delapa's Appeal 8/25/2016
+- DEP FORAD 10/20/2016
+### WCC ?
+- WCC Executive Session Minutes 11/9/2016
+- Settlement Agreement 11/21/2016
+- FORAD Technical Document 12/19/2016
+
+## 2025_08_10 Northeast Region File Review & Public Records Request - Confirmation
+Requested files and documents related to:
+- **DEP #338-0303**: Pre 2015 filing
+- **DEP #338-0594**: Single-family home (2014-2016)
+- **DEP #338-0706**: Single-family home (2020-2022)
+- **DEP #338-0756**: Dam restoration project (2023-present)
+- **Westwood Map 28 Lot 2**: 1355 High St
+- **Westwood Map 28 Lot 13**: 42 or 00 Mill St
+- **Westwood Map 28 Lot 14**: 44 Mill St
+Your MassDEP Northeast Region File Review & Public Records Request Form was submitted.
+
+## 2018_11_02_Site_Plan
+Why is this site plan from 2018? The FORAD was from 2016.  The final FORAD was filed in 2019. Is this the delineation in the final ORAD?  **This plan has the WRONG PLOT BORDERS**

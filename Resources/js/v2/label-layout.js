@@ -242,10 +242,11 @@ function drawLeaderLine(container, node, labelData) {
     const caselineSection = document.getElementById('caseline-section');
     const sectionHeight = caselineSection ? caselineSection.offsetHeight : 300;
     
-    // Node center Y with emoji center offset (8px) and title offset
+    // Node position matches CSS: calc(50% ± 20px + 35px)
+    // Public nodes work fine, private nodes need more offset to reach center
     const nodeCenterY = labelData.isPrivate ? 
-        (sectionHeight * 0.5 + 35 + 20 + 8) : // Private: center + title offset + 20px + emoji center
-        (sectionHeight * 0.5 + 35 - 20 + 8); // Public: center + title offset - 20px + emoji center
+        (sectionHeight * 0.5 + 55 + 16) : // Private: needs more offset to reach emoji center
+        (sectionHeight * 0.5 + 15 + 8); // Public: working correctly as-is
     
     const labelEdgeY = labelData.isPrivate ? 
         labelData.y : // Top edge for labels below

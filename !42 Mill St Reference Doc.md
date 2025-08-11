@@ -4,6 +4,8 @@
 
 ## LINKS
 
+### [Westwood Citizens' Callendar](https://westwoodtownma.iqm2.com/Citizens/calendar.aspx)
+
 ### [Commission meeting minutes](https://www.townhall.westwood.ma.us/government/agendas-minutes/minutes/conservation-commission-minutes/-folder-1145#widget_14_771_706)
 
 ### [MA Coldwater Fish Resources](https://www.mass.gov/info-details/coldwater-fish-resources)
@@ -19,6 +21,10 @@
 - **DEP #338-0706**: Single-family home (2020-2022)
 - **DEP #338-0756**: Dam restoration project (2023-present)
 
+### Key Lot Numbers:
+- **Westwood Map 28 Lot 2**: 1355 High St
+- **Westwood Map 28 Lot 13**: 42 or 00 Mill St
+- **Westwood Map 28 Lot 14**: 44 Mill St
 ---
 ## IN MOTION
 
@@ -27,7 +33,6 @@
 - reached out to Suffolk U Environmental Law & Policy Clinic 
 
 ---
-
 ## TO DO
 
 #### * Create Updated Agent Document
@@ -123,14 +128,6 @@ On February 23, 2022, MassDEP requested you to provide a cut and fill table as r
 
 2022_02_25 (MISSING DOCUMENT)
 On February 25, 2022, your representative submitted a BLSF cut/fill chart.
-
-
-
-
-
-
-
-
 
 #### * figure out what to ask/send to:
 - DEP
