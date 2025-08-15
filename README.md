@@ -29,6 +29,7 @@ Efforts are underway to accurately assess the intent and consequences of the pro
 - Legal proceedings and settlements
 - Historical maps and deeds
 - Environmental assessments and peer reviews
+- Massachusetts Audobon Society - publisher of [Losing Ground](https://www.massaudubon.org/content/download/8600/149718/file/LosingGround_web.pdf)
 
 **[!42 Mill St Timeline Overview.md](https://github.com/tdemelle-SiP/bakers_pond/blob/master/!!42_Mill_St_Timeline_Overview.md)** - Comprehensive timeline of all documents in the Dated Documents directory with notations
 

@@ -4,9 +4,17 @@
 
 ## LINKS
 
-### [Westwood Citizens' Callendar](https://westwoodtownma.iqm2.com/Citizens/calendar.aspx)
+### [Westwood Citizens' Calendar](https://westwoodtownma.iqm2.com/Citizens/calendar.aspx)
 
 ### [Commission meeting minutes](https://www.townhall.westwood.ma.us/government/agendas-minutes/minutes/conservation-commission-minutes/-folder-1145#widget_14_771_706)
+
+### [Open file, MassDEP Online Map Viewer for Wetland & Wetland Change Area](https://maps.massgis.digital.mass.gov/images/dep/omv/wetviewer.htm)
+
+### [Conservation Assessment and Prioritization System (CAPS)](https://umasscaps.org/data_maps/maps.html)
+
+### [MassGIS Data Layerss](https://www.mass.gov/info-details/massgis-data-layers)
+
+### [Mass Data Hub](https://data.mass.gov/)
 
 ### [MA Coldwater Fish Resources](https://www.mass.gov/info-details/coldwater-fish-resources)
 
@@ -43,9 +51,9 @@
 - Building Dept
 - Other project history participants
 	- Neponsett blah blah
-	- Natural Heritage Program
 	- Historical Society?
 	- Other enviro groups?
+	- The Massachusetts Natural Heritage and Endangered Species Program (NHESP) has certified over 3100 vernal pools (CVPs)
 - Abutters, neighbors, supporters
 	
 #### * Authority Meta Org Chart - chart personnel/documentation/meetings
