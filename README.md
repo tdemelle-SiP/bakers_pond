@@ -7,6 +7,7 @@ This repository is a resource documenting the decades-long history of developmen
 ![Bakers Pond](https://github.com/tdemelle-SiP/bakers_pond/blob/master/Research%20Images/2023-01-28_15-16.png?raw=true)
 
 **[Bakers Pond Photo Album](https://photos.app.goo.gl/K6Unm29vK9vhhPuDA)**
+**[Bakers Pond 2025 Presentation](https://docs.google.com/presentation/d/1hIF5AfIbouOsjQ5r0m9D_rbYAf2FxcUkmvbtBtxq50s/edit?usp=sharing)**
 
 ---
 
@@ -30,6 +31,7 @@ Efforts are underway to accurately assess the intent and consequences of the pro
 - Historical maps and deeds
 - Environmental assessments and peer reviews
 - Massachusetts Audobon Society - publisher of [Losing Ground](https://www.massaudubon.org/content/download/8600/149718/file/LosingGround_web.pdf)
+    - Recommended actions: Prioritize protection of large, high-IEI blocks and threatened cores; shift zoning toward compact, infrastructure-served growth (e.g., Land Use Partnership Act; improve CPA); maintain/update land-use and open-space datasets; pair reserve acquisition with local habitat management.
 
 **[!42 Mill St Timeline Overview.md](https://github.com/tdemelle-SiP/bakers_pond/blob/master/!!42_Mill_St_Timeline_Overview.md)** - Comprehensive timeline of all documents in the Dated Documents directory with notations
 

@@ -55,12 +55,13 @@
 	- Other enviro groups?
 	- The Massachusetts Natural Heritage and Endangered Species Program (NHESP) has certified over 3100 vernal pools (CVPs)
 - Abutters, neighbors, supporters
+- Charles Costello, Section Chief - Wetlands Mapping Program - "A wetland is not fully protected 'til it's safely in a geo-database" -Massachusetts Wetlands Mapping and Monitoring Program
 	
 #### * Authority Meta Org Chart - chart personnel/documentation/meetings
 
 #### * Compile Friends of Bakers Pond list to reach out to
 
-#### * Compile wildlife photos/videos
+#### * Compile wildlife photos/videos Near far no matter where you are
 
 #### * Compile pond over the years photos/videos
 

@@ -1,5 +1,18 @@
+# SPACE - maps and classifications
+---
+[National Wetlands Inventory](https://fwsprimary.wim.usgs.gov/wetlands/apps/wetlands-mapper/)
 
-# CHRONOLOGICAL DOCUMENT NOTES AND QUOTES
+Classification code: PUB/EM1Fh
+System Palustrine (P) : The Palustrine System includes all nontidal wetlands dominated by trees, shrubs, persistent emergents, emergent mosses or lichens, and all such wetlands that occur in tidal areas where salinity due to ocean-derived salts is below 0.5 ppt. It also includes wetlands lacking such vegetation, but with all of the following four characteristics: (1) area less than 8 ha (20 acres); (2) active wave-formed or bedrock shoreline features lacking; (3) water depth in the deepest part of basin less than 2.5 m (8.2 ft) at low water; and (4) salinity due to ocean-derived salts less than 0.5 ppt.
+Class Unconsolidated Bottom (UB) : Includes all wetlands and deepwater habitats with at least 25% cover of particles smaller than stones (less than 6-7 cm), and a vegetative cover less than 30%.
+Split Class Emergent (EM) : Characterized by erect, rooted, herbaceous hydrophytes, excluding mosses and lichens. This vegetation is present for most of the growing season in most years. These wetlands are usually dominated by perennial plants.
+Split Subclass Persistent (1) : Dominated by species that normally remain standing at least until the beginning of the next growing season. This subclass is found only in the Estuarine and Palustrine systems.
+Water Regime Semipermanently Flooded (F) : **Surface water persists throughout the growing season in most years**. When surface water is absent, the water table is usually at or very near the land surface.
+Special Modifier Diked/Impounded (h) : These wetlands have been created or modified by a man-made barrier or dam that obstructs the inflow or outflow of water.
+
+
+
+# TIME - CHRONOLOGICAL DOCUMENT NOTES AND QUOTES
 ---
 - **Pre-1897**: Mill operations establish industrial use patterns in area
 - **1897**: Westwood incorporates as separate town from Dedham WikipediaMassachusetts Municipal Association
