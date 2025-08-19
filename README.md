@@ -6,8 +6,9 @@ This repository is a resource documenting the decades-long history of developmen
 
 ![Bakers Pond](https://github.com/tdemelle-SiP/bakers_pond/blob/master/Research%20Images/2023-01-28_15-16.png?raw=true)
 
-**[Bakers Pond Photo Album](https://photos.app.goo.gl/K6Unm29vK9vhhPuDA)**
-**[Bakers Pond 2025 Presentation](https://docs.google.com/presentation/d/1hIF5AfIbouOsjQ5r0m9D_rbYAf2FxcUkmvbtBtxq50s/edit?usp=sharing)**
+- **[Bakers Pond Photo Album](https://photos.app.goo.gl/K6Unm29vK9vhhPuDA)**
+
+- **[Bakers Pond 2025 Presentation](https://docs.google.com/presentation/d/1hIF5AfIbouOsjQ5r0m9D_rbYAf2FxcUkmvbtBtxq50s/edit?usp=sharing)**
 
 ---
 
