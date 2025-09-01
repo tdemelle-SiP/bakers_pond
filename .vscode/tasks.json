@@ -13,7 +13,12 @@
         "reveal": "always",
         "panel": "dedicated",
         "showReuseMessage": false,
-        "clear": false
+        "clear": false,
+        "group": "Timeline Monitor"
+      },
+      "icon": {
+        "id": "watch",
+        "color": "terminal.ansiYellow"
       },
       "isBackground": true,
       "problemMatcher": {

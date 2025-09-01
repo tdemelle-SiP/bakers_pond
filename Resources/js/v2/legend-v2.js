@@ -3,26 +3,8 @@
  * Renders the emoji legend in the header
  */
 
-// Emoji configuration
-const EMOJI_LEGEND = {
-    caseline: [
-        { emoji: '⭐', label: 'Filing', color: '#ffd700' },
-        { emoji: '✅', label: 'Approved', color: '#4caf50' },
-        { emoji: '⛔', label: 'Denied', color: '#f44336' },
-        { emoji: '📐', label: 'Plan', color: '#ffd700' },
-        { emoji: '🔍', label: 'Review', color: '#2196f3' },
-        { emoji: '🐢', label: 'Continued', color: '#ff9800', class: 'continuance' },
-        { emoji: '🏛️', label: 'Hearing', color: '#9c27b0' },
-        { emoji: '⏰', label: 'Expired', color: '#f44336' },
-        { emoji: '♻️', label: 'Extended', color: '#4caf50' },
-        { emoji: '🔒', label: 'Private', color: '#f44336' }
-    ],
-    timeline: [
-        { emoji: '🟢', label: 'Public Event', color: '#4caf50' },
-        { emoji: '🔴', label: 'Private Event', color: '#f44336' },
-        { emoji: '❌', label: 'Missing Document', color: '#ff0000' }
-    ]
-};
+import { getEmojiArray } from './emoji-config.js';
+import { saveEmojiVisibility, loadEmojiVisibility } from './state-persistence.js';
 
 /**
  * Initialize legend in the header
@@ -40,6 +22,10 @@ export function initLegend() {
         navBottomRow.appendChild(legendContainer);
     }
     
+    // Get emoji configurations
+    const caselineEmojis = getEmojiArray('caseline');
+    const timelineEmojis = getEmojiArray('timeline');
+    
     // Build legend HTML matching original two-row table format
     let html = '<div style="display: flex; gap: 20px; align-items: center;">';
     
@@ -47,28 +33,38 @@ export function initLegend() {
     html += '<div style="padding-right: 20px; border-right: 2px solid #546e7a;">';
     html += '<table style="border-collapse: collapse; color: white; font-size: 12px;">';
     
+    // Split caseline emojis into two rows (balanced)
+    const splitPoint = Math.ceil(caselineEmojis.length / 2);
+    const firstRowEmojis = caselineEmojis.slice(0, splitPoint);
+    const secondRowEmojis = caselineEmojis.slice(splitPoint);
+    
+    // Helper function to create emoji cell with optional checkbox
+    const createEmojiCell = (item) => {
+        if (item.class) {
+            return `<td style="padding: 2px 12px;">
+                <label style="cursor: pointer;">
+                    <input type="checkbox" id="show-${item.class}" class="emoji-toggle" 
+                           data-class="${item.class}" style="margin-right: 4px; cursor: pointer;" checked>
+                    ${item.emoji} ${item.label}
+                </label>
+            </td>`;
+        }
+        return `<td style="padding: 2px 12px;">${item.emoji} ${item.label}</td>`;
+    };
+    
     // First row of caseline
     html += '<tr>';
     html += '<td style="padding: 2px 10px 2px 0; font-weight: bold; white-space: nowrap; vertical-align: top;" rowspan="2">Caseline:</td>';
-    html += '<td style="padding: 2px 12px;">⭐ Filing</td>';
-    html += '<td style="padding: 2px 12px;">✅ Approved</td>';
-    html += '<td style="padding: 2px 12px;">⛔ Denied</td>';
-    html += '<td style="padding: 2px 12px;">📐 Plan</td>';
-    html += '<td style="padding: 2px 12px;">🔍 Review</td>';
+    firstRowEmojis.forEach(item => {
+        html += createEmojiCell(item);
+    });
     html += '</tr>';
     
-    // Second row of caseline with continuance checkbox
+    // Second row of caseline
     html += '<tr>';
-    html += '<td style="padding: 2px 12px;">';
-    html += '<label style="cursor: pointer;">';
-    html += '<input type="checkbox" id="show-continuances" style="margin-right: 4px; cursor: pointer;" checked>';
-    html += '🐢 Continued';
-    html += '</label>';
-    html += '</td>';
-    html += '<td style="padding: 2px 12px;">🏛️ Hearing</td>';
-    html += '<td style="padding: 2px 12px;">⏰ Expired</td>';
-    html += '<td style="padding: 2px 12px;">♻️ Extended</td>';
-    html += '<td style="padding: 2px 12px;">🔒 Private</td>';
+    secondRowEmojis.forEach(item => {
+        html += createEmojiCell(item);
+    });
     html += '</tr>';
     html += '</table>';
     html += '</div>';
@@ -78,9 +74,16 @@ export function initLegend() {
     html += '<table style="border-collapse: collapse; color: white; font-size: 12px;">';
     html += '<tr>';
     html += '<td style="padding: 2px 10px 2px 0; font-weight: bold; white-space: nowrap;">Timeline:</td>';
-    html += '<td style="padding: 2px 12px;"><span style="display: inline-block; width: 10px; height: 10px; background: #4caf50; border: 1px solid #388e3c; margin-right: 5px;"></span>Public Event</td>';
-    html += '<td style="padding: 2px 12px;"><span style="display: inline-block; width: 10px; height: 10px; background: #f44336; border: 1px solid #d32f2f; margin-right: 5px;"></span>Private Event</td>';
-    html += '<td style="padding: 2px 12px;">❌ Missing Document</td>';
+    timelineEmojis.forEach(item => {
+        if (item.emoji === '❌') {
+            // Missing document uses emoji
+            html += `<td style="padding: 2px 12px;">${item.emoji} ${item.label}</td>`;
+        } else {
+            // Public/Private use colored squares
+            const borderColor = item.borderColor || item.color;
+            html += `<td style="padding: 2px 12px;"><span style="display: inline-block; width: 10px; height: 10px; background: ${item.color}; border: 1px solid ${borderColor}; margin-right: 5px;"></span>${item.label}</td>`;
+        }
+    });
     html += '</tr>';
     html += '</table>';
     html += '</div>';
@@ -89,28 +92,76 @@ export function initLegend() {
     
     legendContainer.innerHTML = html;
     
-    // Set up continuance toggle
-    const continuanceCheckbox = document.getElementById('show-continuances');
-    if (continuanceCheckbox) {
-        // Load saved state
-        const savedState = localStorage.getItem('timeline-v2-show-continuances');
-        if (savedState !== null) {
-            const showContinuances = JSON.parse(savedState);
-            continuanceCheckbox.checked = showContinuances;
-            if (!showContinuances) {
-                document.body.classList.add('hide-continuances');
-            }
-        }
+    // Get all toggle checkboxes
+    const toggleCheckboxes = document.querySelectorAll('.emoji-toggle');
+    let beforeIsolation = null; // Store state before isolation
+    
+    // Helper function to update node visibility based on checkboxes
+    function updateNodeVisibility() {
+        const visibility = {};
         
-        continuanceCheckbox.addEventListener('change', (e) => {
-            const checked = e.target.checked;
-            if (checked) {
-                document.body.classList.remove('hide-continuances');
-            } else {
-                document.body.classList.add('hide-continuances');
-            }
-            // Save state
-            localStorage.setItem('timeline-v2-show-continuances', JSON.stringify(checked));
+        toggleCheckboxes.forEach(checkbox => {
+            const emojiClass = checkbox.dataset.class;
+            const isVisible = checkbox.checked;
+            visibility[emojiClass] = isVisible;
+            
+            // Update nodes
+            const nodes = document.querySelectorAll(`.caseline-node.${emojiClass}`);
+            nodes.forEach(node => {
+                node.style.display = isVisible ? '' : 'none';
+            });
         });
+        
+        // Save state
+        saveEmojiVisibility(visibility);
     }
+    
+    // Load and apply saved visibility state
+    const savedVisibility = loadEmojiVisibility();
+    toggleCheckboxes.forEach(checkbox => {
+        const emojiClass = checkbox.dataset.class;
+        // Default to visible if no saved state
+        checkbox.checked = savedVisibility[emojiClass] !== false;
+    });
+    
+    // Apply initial visibility
+    updateNodeVisibility();
+    
+    // Add event listeners
+    toggleCheckboxes.forEach(checkbox => {
+        // Single click - just update visibility
+        checkbox.addEventListener('change', updateNodeVisibility);
+        
+        // Double click - isolate/restore
+        checkbox.addEventListener('dblclick', (e) => {
+            e.preventDefault();
+            
+            if (beforeIsolation) {
+                // Restore previous state
+                Object.entries(beforeIsolation).forEach(([cls, checked]) => {
+                    const cb = document.querySelector(`[data-class="${cls}"]`);
+                    if (cb) cb.checked = checked;
+                });
+                beforeIsolation = null;
+            } else {
+                // Save current state and isolate
+                beforeIsolation = {};
+                toggleCheckboxes.forEach(cb => {
+                    beforeIsolation[cb.dataset.class] = cb.checked;
+                    cb.checked = (cb === checkbox);
+                });
+            }
+            
+            updateNodeVisibility();
+        });
+    });
+    
+    // Reset function for the reset button
+    window.resetEmojiVisibility = function() {
+        toggleCheckboxes.forEach(checkbox => {
+            checkbox.checked = true;
+        });
+        beforeIsolation = null;
+        updateNodeVisibility();
+    };
 }

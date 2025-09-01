@@ -10,20 +10,7 @@
  */
 
 import { getXPosition } from './date-scale.js';
-
-// Emoji configuration from original
-const EMOJI_CONFIG = {
-    '⭐': { label: '', color: '#ffd700', borderColor: '#ccac00' },
-    '✅': { label: 'APPROVED', color: '#4caf50', borderColor: '#388e3c' },
-    '⛔': { label: 'DENIED', color: '#f44336', borderColor: '#d32f2f' },
-    '📐': { label: 'PLAN', color: '#ffd700', borderColor: '#ccac00' },
-    '🔍': { label: 'REVIEW', color: '#ffd700', borderColor: '#ccac00' },
-    '🐢': { label: '', color: '#ffd700', borderColor: '#ccac00' },
-    '🏛️': { label: 'HEARING', color: '#ffd700', borderColor: '#ccac00' },
-    '🔒': { label: 'PRIVATE', color: '#f44336', borderColor: '#d32f2f' },
-    '⏰': { label: 'EXPIRED', color: '#f44336', borderColor: '#d32f2f' },
-    '♻️': { label: 'EXTENDED', color: '#4caf50', borderColor: '#388e3c' }
-};
+import { getEmojiConfig } from './emoji-config.js';
 
 /**
  * Render caseline nodes (emoji markers)
@@ -47,10 +34,10 @@ export function renderCaselineNodes(events, dateRange, pixelsPerDay) {
         
         // Determine display emoji (show 🔒 if private, otherwise the main emoji)
         const displayEmoji = event.isPrivate ? '🔒' : event.caselineEmoji;
-        const config = EMOJI_CONFIG[event.caselineEmoji] || {};
+        const config = getEmojiConfig(event.caselineEmoji, 'caseline') || {};
         
         // Get label - prefer bold override from procedural column
-        const nodeLabel = event.proceduralLabel || config.label || '';
+        const nodeLabel = event.proceduralLabel || config.displayLabel || '';
         
         // Create node element
         const node = document.createElement('div');
@@ -65,9 +52,10 @@ export function renderCaselineNodes(events, dateRange, pixelsPerDay) {
             node.classList.add('case-procedural-above');
         }
         
-        // Add continuance class for hiding
-        if (event.caselineEmoji === '🐢') {
-            node.classList.add('continuance');
+        // Add emoji-specific class if defined
+        const emojiConfig = getEmojiConfig(event.caselineEmoji, 'caseline');
+        if (emojiConfig && emojiConfig.class) {
+            node.classList.add(emojiConfig.class);
         }
         
         node.style.left = x + 'px'; // Absolute positioning

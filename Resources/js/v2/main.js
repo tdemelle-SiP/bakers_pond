@@ -211,6 +211,11 @@ function resetToDefaults() {
     // Update date range to match the filtered events
     updateDateFilterRange();
     
+    // Reset emoji visibility
+    if (window.resetEmojiVisibility) {
+        window.resetEmojiVisibility();
+    }
+    
     // Save the reset state
     saveFilterState(state.filters);
     saveScaleState(state.scale, state.fitToWindow);

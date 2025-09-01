@@ -11,7 +11,8 @@ const STORAGE_KEYS = {
     SELECTED_CASES: STORAGE_PREFIX + 'selected-cases',
     SCALE: STORAGE_PREFIX + 'scale',
     FIT_TO_WINDOW: STORAGE_PREFIX + 'fit-to-window',
-    SHOW_CONTINUANCES: STORAGE_PREFIX + 'show-continuances'
+    SHOW_CONTINUANCES: STORAGE_PREFIX + 'show-continuances',
+    EMOJI_VISIBILITY: STORAGE_PREFIX + 'emoji-visibility'
 };
 
 /**
@@ -103,15 +104,33 @@ export function clearAllState() {
 }
 
 /**
+ * Save emoji visibility state
+ * @param {Object} emojiVisibility - Object with emoji classes as keys and boolean visibility as values
+ */
+export function saveEmojiVisibility(emojiVisibility) {
+    saveState(STORAGE_KEYS.EMOJI_VISIBILITY, emojiVisibility);
+}
+
+/**
+ * Load emoji visibility state
+ * @returns {Object} Saved emoji visibility state or empty object
+ */
+export function loadEmojiVisibility() {
+    return loadState(STORAGE_KEYS.EMOJI_VISIBILITY) || {};
+}
+
+/**
  * Initialize state from localStorage on page load
  * @returns {Object} Complete saved state
  */
 export function initializeState() {
     const filters = loadFilterState();
     const scale = loadScaleState();
+    const emojiVisibility = loadEmojiVisibility();
     
     return {
         filters,
-        ...scale
+        ...scale,
+        emojiVisibility
     };
 }

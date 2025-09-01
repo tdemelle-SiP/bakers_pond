@@ -22,6 +22,12 @@ export function parseEvents(tableRows) {
     tableRows.forEach(row => {
         const [dateStr, document, caseNumber, markers, procedural, legal, environmental] = row;
         
+        // Skip rows with empty dates
+        if (!dateStr || dateStr.trim() === '') {
+            console.warn(`Skipping row with empty date: ${document}`);
+            return;
+        }
+        
         // Parse date
         const [year, month, day] = dateStr.split('-');
         const date = new Date(year, parseInt(month) - 1, day);

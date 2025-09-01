@@ -4,6 +4,9 @@ To Update The Timeline, all you have to do is update the google sheet here: http
 
 If VS Code is running with this workspace loaded, a python script will be listening and converting changes to the .gsheet file to the !!42_Mill_St_Timeline_Overview.md file that then feeds the Timeline.  Booyakasha
 
+If you need to install Python, you can do it from the microsoft store or python.org
+You'll also need watchdog
+
 ## Timeline Emoji System
 
 The timeline visualization uses emojis in the **Mrkr** column to determine event types and appearance:
