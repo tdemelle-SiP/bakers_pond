@@ -31,6 +31,9 @@ const state = {
     fitToWindow: savedState.fitToWindow || false
 };
 
+// Store caseline nodes globally for label recalculation
+let allCaselineNodes = [];
+
 /**
  * Initialize the timeline application
  */
@@ -113,6 +116,9 @@ async function init() {
     // Render caseline nodes (gets its own container internally)
     const caselineData = renderCaselineNodes(events, dateRange, pixelsPerDay);
     console.log('Rendered caseline nodes:', caselineData.nodes.length);
+    
+    // Store nodes globally for label recalculation
+    allCaselineNodes = caselineData.nodes;
     
     // Render caseline labels with collision detection
     const caselineContainer = document.getElementById('caseline-container');
@@ -567,6 +573,9 @@ function render() {
     const nodePositions = renderTimelineNodes(state.filteredEvents, dateRange, pixelsPerDay);
     const caselineData = renderCaselineNodes(state.filteredEvents, dateRange, pixelsPerDay);
     
+    // Store for label refresh when emoji visibility changes
+    allCaselineNodes = caselineData.nodes;
+    
     // Render labels with collision detection  
     createLabelsWithCollisionDetection(caselineData.nodes, caselineContainer);
     
@@ -583,6 +592,33 @@ function render() {
     const stats = calculateStats(state.filteredEvents);
     renderStats(stats);
 }
+
+/**
+ * Refresh labels when emoji visibility changes
+ * Simply re-runs label collision detection with only visible nodes
+ */
+window.refreshCaselineLabels = function() {
+    if (!allCaselineNodes || allCaselineNodes.length === 0) return;
+    
+    const caselineContainer = document.getElementById('caseline-container');
+    if (!caselineContainer) return;
+    
+    // Filter to only visible nodes
+    const visibleNodes = allCaselineNodes.filter(node => {
+        if (!node.emojiType) return true;
+        // Check if this emoji type is visible
+        const nodeElement = node.node;  // We stored the actual DOM node
+        return nodeElement && nodeElement.style.display !== 'none';
+    });
+    
+    // Remove existing labels and leader lines only
+    caselineContainer.querySelectorAll('.node-label, svg[data-emoji-type]').forEach(el => {
+        el.remove();
+    });
+    
+    // Re-create labels with updated collision detection
+    createLabelsWithCollisionDetection(visibleNodes, caselineContainer);
+};
 
 // Start when DOM is ready
 if (document.readyState === 'loading') {

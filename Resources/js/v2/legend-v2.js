@@ -116,6 +116,11 @@ export function initLegend() {
         
         // Save state
         saveEmojiVisibility(visibility);
+        
+        // Recalculate label collisions with visible nodes
+        if (window.refreshCaselineLabels) {
+            window.refreshCaselineLabels();
+        }
     }
     
     // Load and apply saved visibility state
