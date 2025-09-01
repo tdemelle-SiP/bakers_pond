@@ -44,26 +44,49 @@ for i, line in enumerate(lines):
 # Keep everything before table
 output = lines[:table_start]
 
-# Add table header
+# Get headers from first row and create column mapping
+headers = rows[0] if rows else []
+col_map = {}
+for i, header in enumerate(headers):
+    header_lower = header.lower().replace('_', ' ').replace('-', ' ')
+    if 'date' in header_lower:
+        col_map['date'] = i
+    elif 'mrkr' in header_lower or 'marker' in header_lower:
+        col_map['markers'] = i
+    elif 'document' in header_lower and 'url' not in header_lower:
+        col_map['doc_title'] = i
+    elif 'procedural' in header_lower:
+        col_map['procedural'] = i
+    elif 'case' in header_lower:
+        col_map['case_num'] = i
+    elif 'environmental' in header_lower or 'strategic' in header_lower:
+        col_map['environmental'] = i
+    elif 'notes' in header_lower:
+        col_map['notes'] = i
+    elif 'url' in header_lower:
+        col_map['doc_url'] = i
+
+# Debug: Print column mapping
+print(f"\nColumn mapping detected:")
+print(f"  Headers found: {headers}")
+print(f"  Mapped positions: {col_map}")
+
+# Add table header (keeping original format for compatibility)
 output.append('| Date | Document | Case # | Mrkr | Procedural Step | Environmental/Strategic Analysis | Notes |\n')
 output.append('|------|----------|--------|------|-----------------|----------------------------------|-------|\n')
 
 # Build new table rows and track changes
 new_table_rows = []
 for row in rows[1:]:
-    # Ensure we have enough columns
-    while len(row) < 8:
-        row.append('')
-    
-    # Extract columns from TSV
-    date_raw = row[0]
-    doc_title = row[1]
-    doc_url = row[2]
-    case_num = row[3]
-    markers = row[4]
-    procedural = row[5]
-    environmental = row[6]
-    notes = row[7]
+    # Extract columns from TSV using mapped positions
+    date_raw = row[col_map.get('date', 0)] if col_map.get('date', 0) < len(row) else ''
+    doc_title = row[col_map.get('doc_title', 1)] if col_map.get('doc_title', 1) < len(row) else ''
+    doc_url = row[col_map.get('doc_url', 7)] if col_map.get('doc_url', 7) < len(row) else ''
+    case_num = row[col_map.get('case_num', 4)] if col_map.get('case_num', 4) < len(row) else ''
+    markers = row[col_map.get('markers', 1)] if col_map.get('markers', 1) < len(row) else ''
+    procedural = row[col_map.get('procedural', 3)] if col_map.get('procedural', 3) < len(row) else ''
+    environmental = row[col_map.get('environmental', 5)] if col_map.get('environmental', 5) < len(row) else ''
+    notes = row[col_map.get('notes', 6)] if col_map.get('notes', 6) < len(row) else ''
     
     # Convert date from M/D/YYYY to YYYY-MM-DD format
     try:

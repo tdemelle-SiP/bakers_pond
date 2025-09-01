@@ -45,10 +45,11 @@ async function init() {
     const markdown = await loadTableData();
     console.log('Loaded markdown:', markdown.length, 'characters');
     
-    const tableRows = extractTableRows(markdown);
-    console.log('Extracted rows:', tableRows.length);
+    const tableData = extractTableRows(markdown);
+    console.log('Extracted rows:', tableData.rows.length);
+    console.log('Column headers:', tableData.headers);
     
-    const events = parseEvents(tableRows);
+    const events = parseEvents(tableData);
     console.log('Parsed events:', events.length);
     
     // Debug: Check for duplicate dates
@@ -135,13 +136,24 @@ async function init() {
     // Initialize legend
     initLegend();
     
-    // Calculate and display stats
-    const stats = calculateStats(events);
-    renderStats(stats);
+    // Calculate and display stats with emoji visibility
+    const initialVisibility = loadEmojiVisibility();
+    const stats = calculateStats(events, initialVisibility);
+    renderStats(stats, initialVisibility);
     console.log('Stats:', stats);
     
     // Store case numbers in state
     state.caseNumbers = caseNumbers;
+    
+    // Set default case selection if no saved filters
+    if (!state.filters.selectedCases || state.filters.selectedCases.length === 0) {
+        // Default: all cases except Historical
+        state.filters.selectedCases = caseNumbers.filter(c => c !== 'Historical');
+    }
+    
+    // Apply initial filters
+    state.allEvents = events;
+    state.filteredEvents = applyFilters(events, state.filters);
     
     // Initialize controls with saved state
     initAllControls({
@@ -170,54 +182,19 @@ function resetToDefaults() {
     // Get default case selection (all except Historical)
     const defaultCases = state.caseNumbers.filter(c => c !== 'Historical');
     
-    // Reset all state to defaults
-    state.filters.selectedCases = defaultCases;
-    state.filters.startDate = null;
-    state.filters.endDate = null;
+    // Reset scale to defaults
     state.scale = 0.8;
     state.fitToWindow = false;
     
-    // Update UI elements directly without triggering events
-    const scaleSlider = document.getElementById('scale-slider');
-    const scaleValue = document.getElementById('scale-value');
-    const fitCheckbox = document.getElementById('fit-to-window');
+    // Clear manual date override flag when resetting
+    state.filters.manualDateOverride = false;
     
-    if (scaleSlider) {
-        scaleSlider.value = 0.8;
-        console.log('Reset scale slider to:', scaleSlider.value);
-    }
-    if (scaleValue) {
-        scaleValue.textContent = '0.8';
-    }
-    if (fitCheckbox) {
-        fitCheckbox.checked = false;
-        console.log('Reset fit checkbox to:', fitCheckbox.checked);
-    }
-    
-    // Update case checkboxes
-    const checkboxes = document.querySelectorAll('.case-checkbox');
-    checkboxes.forEach(checkbox => {
-        checkbox.checked = defaultCases.includes(checkbox.value);
+    // Use centralized filter update (will auto-compute dates)
+    handleFilterUpdate({
+        selectedCases: defaultCases,
+        startDate: null,
+        endDate: null
     });
-    
-    // Update case filter button text
-    const caseFilterText = document.getElementById('case-filter-text');
-    if (caseFilterText) {
-        // Check if we have all cases except Historical
-        const hasHistorical = state.caseNumbers.includes('Historical');
-        const isDefaultSelection = hasHistorical && 
-                                  defaultCases.length === (state.caseNumbers.length - 1);
-        
-        caseFilterText.textContent = isDefaultSelection 
-            ? `${defaultCases.length} of ${state.caseNumbers.length} Cases`
-            : 'All Cases';
-    }
-    
-    // Apply filters
-    state.filteredEvents = applyFilters(state.allEvents, state.filters);
-    
-    // Update date range to match the filtered events
-    updateDateFilterRange();
     
     // Reset emoji visibility
     if (window.resetEmojiVisibility) {
@@ -227,15 +204,8 @@ function resetToDefaults() {
     // Clear any isolation mode
     clearIsolationMode();
     
-    // Save the reset state
-    saveFilterState(state.filters);
+    // Save scale state
     saveScaleState(state.scale, state.fitToWindow);
-    
-    // Re-render with the new state
-    render();
-    
-    // Update visual indicators
-    checkActiveFilters();
 }
 
 // Export for use in controls
@@ -253,7 +223,6 @@ function updateUIFromState() {
     if (fitCheckbox) fitCheckbox.checked = state.fitToWindow;
     if (scaleSlider) {
         scaleSlider.value = state.scale;
-        scaleSlider.disabled = state.fitToWindow;
     }
     if (scaleValue) scaleValue.textContent = state.scale.toFixed(1);
     
@@ -281,8 +250,35 @@ function updateUIFromState() {
     // Update date inputs
     const startInput = document.getElementById('filter-start-date');
     const endInput = document.getElementById('filter-end-date');
-    if (startInput) startInput.value = state.filters.startDate || '';
-    if (endInput) endInput.value = state.filters.endDate || '';
+    if (startInput && endInput) {
+        // Format dates for input fields
+        if (state.filters.startDate) {
+            startInput.value = state.filters.startDate instanceof Date 
+                ? state.filters.startDate.toISOString().split('T')[0]
+                : state.filters.startDate;
+        } else {
+            startInput.value = '';
+        }
+        
+        if (state.filters.endDate) {
+            endInput.value = state.filters.endDate instanceof Date
+                ? state.filters.endDate.toISOString().split('T')[0]
+                : state.filters.endDate;
+        } else {
+            endInput.value = '';
+        }
+        
+        // Update min/max constraints based on available data
+        const dateRange = computeDateRangeForCases(state.filters.selectedCases);
+        if (dateRange) {
+            const minStr = dateRange.startDate.toISOString().split('T')[0];
+            const maxStr = dateRange.endDate.toISOString().split('T')[0];
+            startInput.min = minStr;
+            startInput.max = maxStr;
+            endInput.min = minStr;
+            endInput.max = maxStr;
+        }
+    }
 }
 
 /**
@@ -293,39 +289,36 @@ function isolateCase(caseNumber) {
     if (isIsolating('case', caseNumber)) {
         // Restore previous state
         const isolation = getIsolationMode();
-        state.filters.selectedCases = isolation.previousState.selectedCases;
-        state.fitToWindow = isolation.previousState.fitToWindow;
-        state.scale = isolation.previousState.scale;
         clearIsolationMode();
         
-        // Apply filters for restored state
-        state.filteredEvents = applyFilters(state.allEvents, state.filters);
+        // Restore filters
+        state.fitToWindow = isolation.previousState.fitToWindow;
+        state.scale = isolation.previousState.scale;
+        saveScaleState(state.scale, state.fitToWindow);
+        
+        // Use centralized handler for filter update
+        handleFilterUpdate({
+            selectedCases: isolation.previousState.selectedCases,
+            manualDateOverride: isolation.previousState.manualDateOverride
+        });
     } else {
-        // Save current state and isolate
+        // Save current state for restore
         setIsolationMode('case', caseNumber, {
             selectedCases: [...state.filters.selectedCases],
             fitToWindow: state.fitToWindow,
-            scale: state.scale
+            scale: state.scale,
+            manualDateOverride: state.filters.manualDateOverride
         });
         
-        // Set to only show this case
-        state.filters.selectedCases = [caseNumber];
+        // Enable fit-to-window for isolation
         state.fitToWindow = true;
         
-        // Apply filters first to get the correct filtered events
-        state.filteredEvents = applyFilters(state.allEvents, state.filters);
-        
-        // Calculate and apply the fit-to-window scale
-        const fitScale = calculateFitToWindowScale();
-        state.scale = fitScale;
+        // Use centralized handler to isolate case (will auto-compute dates)
+        handleFilterUpdate({
+            selectedCases: [caseNumber],
+            manualDateOverride: false  // Reset to auto-compute for isolated case
+        });
     }
-    
-    // Update UI and re-render
-    updateUIFromState();
-    saveFilterState(state.filters);
-    saveScaleState(state.scale, state.fitToWindow);
-    render();
-    checkActiveFilters();
 }
 
 // Export for use in case-titles
@@ -407,90 +400,85 @@ function checkActiveFilters() {
 }
 
 /**
- * Update date filter range based on selected cases
+ * Compute date range for selected cases
+ * @returns {Object|null} Object with startDate and endDate, or null if no valid range
  */
-function updateDateFilterRange() {
-    const startInput = document.getElementById('filter-start-date');
-    const endInput = document.getElementById('filter-end-date');
+function computeDateRangeForCases(selectedCases) {
+    if (!selectedCases || selectedCases.length === 0) return null;
     
-    if (!startInput || !endInput) return;
+    const eventsForCases = state.allEvents.filter(e => 
+        selectedCases.includes(e.caseNumber)
+    );
     
-    // Determine which events to use for date range
-    let eventsForDateRange = state.allEvents;
-    if (state.filters.selectedCases && state.filters.selectedCases.length > 0) {
-        // Filter to only selected cases
-        eventsForDateRange = state.allEvents.filter(e => 
-            state.filters.selectedCases.includes(e.caseNumber)
-        );
-    }
+    if (eventsForCases.length === 0) return null;
     
-    // Calculate date range for these events
-    if (eventsForDateRange.length > 0) {
-        const dateRange = getEventDateRange(eventsForDateRange);
-        
-        // Check if dates are valid before updating
-        if (dateRange.minDate && dateRange.maxDate && 
-            !isNaN(dateRange.minDate.getTime()) && !isNaN(dateRange.maxDate.getTime())) {
-            
-            const minDateStr = dateRange.minDate.toISOString().split('T')[0];
-            const maxDateStr = dateRange.maxDate.toISOString().split('T')[0];
-            
-            // Update date inputs with new range
-            startInput.value = minDateStr;
-            endInput.value = maxDateStr;
-            startInput.min = minDateStr;
-            startInput.max = maxDateStr;
-            endInput.min = minDateStr;
-            endInput.max = maxDateStr;
-        }
-    }
+    const dateRange = getEventDateRange(eventsForCases);
+    if (!dateRange.minDate || !dateRange.maxDate) return null;
+    
+    console.log('Computed date range for', eventsForCases.length, 'events:', 
+        dateRange.minDate.toISOString().split('T')[0], 'to', 
+        dateRange.maxDate.toISOString().split('T')[0]);
+    
+    return {
+        startDate: dateRange.minDate,
+        endDate: dateRange.maxDate
+    };
 }
 
 /**
- * Handle filter updates
+ * Central handler for all filter updates - single source of truth
+ * Implements hybrid date filtering: auto-compute from cases unless manually overridden
  */
 function handleFilterUpdate(filterUpdate) {
     console.log('Filter update:', filterUpdate);
     
+    const casesChanged = filterUpdate.selectedCases !== undefined;
+    const datesChanged = filterUpdate.startDate !== undefined || filterUpdate.endDate !== undefined;
+    
+    // If dates are being manually set, mark override
+    if (datesChanged && filterUpdate.startDate !== null && filterUpdate.endDate !== null) {
+        filterUpdate.manualDateOverride = true;
+    }
+    
+    // If resetting (dates set to null), clear override
+    if (datesChanged && filterUpdate.startDate === null && filterUpdate.endDate === null) {
+        filterUpdate.manualDateOverride = false;
+    }
+    
     // Update state
     Object.assign(state.filters, filterUpdate);
     
-    // Save to localStorage
-    saveFilterState(state.filters);
+    // Auto-compute dates if:
+    // 1. Cases changed AND
+    // 2. Dates weren't manually overridden
+    if (casesChanged && !state.filters.manualDateOverride) {
+        const computedDates = computeDateRangeForCases(state.filters.selectedCases);
+        if (computedDates) {
+            state.filters.startDate = computedDates.startDate;
+            state.filters.endDate = computedDates.endDate;
+        }
+    }
     
     // Apply filters
     state.filteredEvents = applyFilters(state.allEvents, state.filters);
     
-    // Debug: Check for duplicate events with same content but different dates
-    if (state.filters.selectedCases && state.filters.selectedCases.length === 1) {
-        const caseEvents = state.filteredEvents.filter(e => e.caseNumber === state.filters.selectedCases[0]);
-        console.log('Events for case', state.filters.selectedCases[0], ':', 
-            caseEvents.map(e => ({date: e.dateStr, title: e.title.substring(0, 20)})));
-    }
+    // Save state
+    saveFilterState(state.filters);
     
-    // Update date filter range if case selection changed
-    if (filterUpdate.selectedCases !== undefined) {
-        updateDateFilterRange();
-    }
-    
-    // Check if fit-to-window is enabled and recalculate scale
+    // Update scale if fit-to-window
     if (state.fitToWindow) {
         const fitScale = calculateFitToWindowScale();
         state.scale = fitScale;
-        
-        // Update the scale slider to reflect the new scale
-        const scaleSlider = document.getElementById('scale-slider');
-        const scaleValue = document.getElementById('scale-value');
-        if (scaleSlider && scaleValue) {
-            scaleSlider.value = fitScale;
-            scaleValue.textContent = fitScale.toFixed(1);
-        }
+        saveScaleState(state.scale, state.fitToWindow);
     }
     
-    // Re-render
+    // Update UI from state (single source of truth)
+    updateUIFromState();
+    
+    // Re-render timeline
     render();
     
-    // Update visual indicators for active filters
+    // Update visual indicators
     checkActiveFilters();
 }
 
@@ -589,9 +577,10 @@ function render() {
     drawTimelineConnections(nodePositions, connectionsContainer);
     drawCaselineConnections(caselineData.caseGroups, connectionsContainer);
     
-    // Update stats
-    const stats = calculateStats(state.filteredEvents);
-    renderStats(stats);
+    // Update stats with emoji visibility
+    const emojiVisibility = loadEmojiVisibility();
+    const stats = calculateStats(state.filteredEvents, emojiVisibility);
+    renderStats(stats, emojiVisibility);
     
     // Reapply emoji visibility state after re-rendering
     applyEmojiVisibility();
@@ -615,6 +604,10 @@ function applyEmojiVisibility() {
     if (window.refreshCaselineLabels) {
         window.refreshCaselineLabels();
     }
+    
+    // Update stats to reflect visible emojis only
+    const stats = calculateStats(state.filteredEvents, savedVisibility);
+    renderStats(stats, savedVisibility);
 }
 
 // Make it available to legend

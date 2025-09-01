@@ -13,14 +13,47 @@
 
 /**
  * Parses all table rows into event objects
- * @param {Array<string[]>} tableRows - Array of parsed column arrays from data-loader
+ * @param {Object} tableData - {headers: string[], rows: Array<string[]>} from data-loader
  * @returns {Object[]} Array of event objects
  */
-export function parseEvents(tableRows) {
+export function parseEvents(tableData) {
     const events = [];
+    const { headers, rows } = tableData;
     
-    tableRows.forEach(row => {
-        const [dateStr, document, caseNumber, markers, procedural, legal, environmental] = row;
+    // Find column indices by header name (case-insensitive)
+    const findColumn = (names) => {
+        for (const name of names) {
+            const index = headers.findIndex(h => h.toLowerCase().includes(name.toLowerCase()));
+            if (index !== -1) return index;
+        }
+        return -1;
+    };
+    
+    // Map column names to indices - try multiple possible names
+    const cols = {
+        date: findColumn(['date']),
+        document: findColumn(['document_title', 'document', 'doc']),
+        caseNumber: findColumn(['case_num', 'case #', 'case', 'case number']),
+        markers: findColumn(['mrkrs', 'mrkr', 'marker', 'markers']),
+        procedural: findColumn(['procedural_step', 'procedural step', 'procedural', 'procedure']),
+        legal: findColumn(['notes', 'legal']),
+        environmental: findColumn(['environmental_analysis', 'environmental/strategic', 'environmental', 'environ', 'strategic']),
+        documentUrl: findColumn(['document_url', 'url', 'link'])
+    };
+    
+    // Validate we have minimum required columns
+    if (cols.date === -1 || cols.document === -1) {
+        throw new Error('Missing required columns: Date and Document');
+    }
+    
+    rows.forEach(row => {
+        const dateStr = row[cols.date];
+        const document = row[cols.document] || '';
+        const caseNumber = cols.caseNumber !== -1 ? row[cols.caseNumber] : '';
+        const markers = cols.markers !== -1 ? row[cols.markers] : '';
+        const procedural = cols.procedural !== -1 ? row[cols.procedural] : '';
+        const legal = cols.legal !== -1 ? row[cols.legal] : '';
+        const environmental = cols.environmental !== -1 ? row[cols.environmental] : '';
         
         // Skip rows with empty dates
         if (!dateStr || dateStr.trim() === '') {
@@ -39,13 +72,20 @@ export function parseEvents(tableRows) {
             console.error(`Date parsing error: ${dateStr} became ${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`);
         }
         
-        // Parse document link
+        // Parse document link - check for separate URL column first
         let title = document;
         let documentUrl = null;
-        const linkMatch = document.match(/\[([^\]]+)\]\(([^)]+)\)/);
-        if (linkMatch) {
-            title = linkMatch[1];
-            documentUrl = linkMatch[2];
+        
+        // If we have a separate document_url column, use that
+        if (cols.documentUrl !== -1 && row[cols.documentUrl]) {
+            documentUrl = row[cols.documentUrl];
+        } else {
+            // Otherwise try to extract from markdown link format
+            const linkMatch = document.match(/\[([^\]]+)\]\(([^)]+)\)/);
+            if (linkMatch) {
+                title = linkMatch[1];
+                documentUrl = linkMatch[2];
+            }
         }
         
         // Clean up title

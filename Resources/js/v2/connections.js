@@ -122,19 +122,31 @@ export function drawCaselineConnections(caseGroups, container) {
         // Track the active color for inheritance
         let activeColor = '#999999'; // Default color
         
-        // Draw lines between consecutive events in the same case
-        for (let i = 0; i < nodes.length - 1; i++) {
+        // Draw lines between nodes, skipping bypass nodes
+        let lastConnectedIndex = -1;
+        
+        for (let i = 0; i < nodes.length; i++) {
             const current = nodes[i];
-            const next = nodes[i + 1];
             
-            // Determine line color
-            if (current.caselineColor === 'inherit') {
+            // Update color tracking (but don't draw from bypass nodes)
+            if (current.caselineColor === 'bypass') {
+                continue; // Skip bypass nodes entirely
+            } else if (current.caselineColor === 'inherit') {
                 // Keep the previous color
-                // activeColor stays the same
             } else {
                 // Use this node's caselineColor and set it as active
                 activeColor = current.caselineColor;
             }
+            
+            // Find the next non-bypass node to connect to
+            let nextIndex = i + 1;
+            while (nextIndex < nodes.length && nodes[nextIndex].caselineColor === 'bypass') {
+                nextIndex++;
+            }
+            
+            if (nextIndex >= nodes.length) break; // No more nodes to connect
+            
+            const next = nodes[nextIndex];
             
             const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             line.setAttribute('x1', current.x);

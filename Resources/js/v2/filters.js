@@ -119,6 +119,7 @@ export function getDefaultFilterState() {
     return {
         startDate: null,
         endDate: null,
-        selectedCases: []
+        selectedCases: [],
+        manualDateOverride: false  // Track if dates were manually set by user
     };
 }

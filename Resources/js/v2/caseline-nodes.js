@@ -43,11 +43,16 @@ export function renderCaselineNodes(events, dateRange, pixelsPerDay) {
         const node = document.createElement('div');
         node.className = 'caseline-node';
         
-        // Add public/private class for vertical positioning
-        if (event.isPrivate) {
+        // Add positioning classes
+        if (config.caselineColor === 'bypass') {
+            // Bypass nodes are centered on the timeline
+            node.classList.add('centered');
+        } else if (event.isPrivate) {
+            // Private nodes below the line
             node.classList.add('private');
             node.classList.add('case-procedural-below');
         } else {
+            // Public nodes above the line
             node.classList.add('public');
             node.classList.add('case-procedural-above');
         }
@@ -81,14 +86,14 @@ export function renderCaselineNodes(events, dateRange, pixelsPerDay) {
         // Store data for labels and connections
         const nodeData = {
             x: x,
-            y: event.isPrivate ? 140 : 115, // Match original Y positions
+            y: config.caselineColor === 'bypass' ? 127.5 : (event.isPrivate ? 140 : 115), // Centered for bypass, else original positions
             node: node,
             emoji: event.caselineEmoji,
             displayEmoji: displayEmoji,
             label: nodeLabel,
-            caselineColor: config.caselineColor || '#999999',  // Can be 'inherit' or a color value
+            caselineColor: config.caselineColor || '#999999',  // Can be 'inherit', 'bypass', or a color value
             emojiType: config.class || null,  // Data attribute value for filtering
-            isPrivate: event.isPrivate,
+            isPrivate: config.caselineColor === 'bypass' ? false : event.isPrivate,  // Bypass nodes are neither public nor private
             caseNumber: event.caseNumber,
             date: event.date,
             event: event

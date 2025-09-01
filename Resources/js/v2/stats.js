@@ -3,27 +3,32 @@
  * Calculates and displays event statistics in the header
  */
 
+import { getEmojiConfig } from './emoji-config.js';
+
 /**
  * Calculate statistics from events
  * @param {Object[]} events - All parsed events
+ * @param {Object} emojiVisibility - Optional emoji visibility state (e.g., {filing: false, hearing: true})
  * @returns {Object} Statistics object
  */
-export function calculateStats(events) {
+export function calculateStats(events, emojiVisibility = null) {
     const stats = {
-        total: events.length,
-        missing: 0,
-        missingDocuments: [], // Store details of missing docs
-        private: 0,
+        denials: 0,
+        plans: 0,
         continued: 0,
         timeline: 0,
-        caseline: 0,
-        public: 0
+        caseline: 0
     };
     
-    // Track unique missing documents to avoid duplicates
-    const uniqueMissingDocs = new Map();
-    
     events.forEach(event => {
+        // Skip if emoji visibility is hidden for this event
+        if (emojiVisibility && event.eventType === 'caseline' && event.caselineEmoji) {
+            const config = getEmojiConfig(event.caselineEmoji, 'caseline');
+            if (config && config.class && emojiVisibility[config.class] === false) {
+                return; // Skip this event in counting
+            }
+        }
+        
         // Count by type
         if (event.eventType === 'timeline') {
             stats.timeline++;
@@ -31,25 +36,14 @@ export function calculateStats(events) {
             stats.caseline++;
         }
         
-        // Count private
-        if (event.isPrivate) {
-            stats.private++;
-        } else {
-            stats.public++;
+        // Count denials (⛔ emoji)
+        if (event.caselineEmoji === '⛔') {
+            stats.denials++;
         }
         
-        // Count and collect missing documents (deduplicated)
-        if (event.hasMissingDoc) {
-            // Create unique key from date, title, and case number
-            const key = `${event.dateStr}|${event.title}|${event.caseNumber}`;
-            
-            if (!uniqueMissingDocs.has(key)) {
-                uniqueMissingDocs.set(key, {
-                    date: event.dateStr,
-                    title: event.title,
-                    caseNumber: event.caseNumber || 'N/A'
-                });
-            }
+        // Count plans (📐 emoji)
+        if (event.caselineEmoji === '📐') {
+            stats.plans++;
         }
         
         // Count continuances
@@ -58,18 +52,15 @@ export function calculateStats(events) {
         }
     });
     
-    // Convert unique missing documents to array
-    stats.missingDocuments = Array.from(uniqueMissingDocs.values());
-    stats.missing = stats.missingDocuments.length;
-    
     return stats;
 }
 
 /**
  * Render statistics in the header
  * @param {Object} stats - Statistics object from calculateStats
+ * @param {Object} emojiVisibility - Optional emoji visibility state
  */
-export function renderStats(stats) {
+export function renderStats(stats, emojiVisibility = null) {
     // Find or create stats container
     let statsContainer = document.getElementById('stats-container');
     if (!statsContainer) {
@@ -95,128 +86,41 @@ export function renderStats(stats) {
         }
     }
     
-    // Store missing documents data globally for the click handler
-    window.missingDocumentsData = stats.missingDocuments;
+    // Build stats HTML, hiding stats for hidden emojis
+    let statsHtml = '';
     
-    // Build stats HTML matching original simple format
-    const statsHtml = `
-        <div class="stat-item clickable-stat" id="missing-stat">
-            <span class="stat-number">${stats.missing}</span>
-            <span class="stat-label">Missing</span>
-        </div>
-        <div class="stat-item">
-            <span class="stat-number">${stats.private}</span>
-            <span class="stat-label">Private</span>
-        </div>
-        <div class="stat-item">
-            <span class="stat-number">${stats.continued}</span>
-            <span class="stat-label">Continued</span>
-        </div>
-        <div class="stat-item">
-            <span class="stat-number">${stats.total}</span>
-            <span class="stat-label">Total</span>
-        </div>
-    `;
+    // Check visibility for each stat's emoji
+    const showDenials = !emojiVisibility || emojiVisibility['denied'] !== false;
+    const showPlans = !emojiVisibility || emojiVisibility['plan'] !== false;
+    const showContinued = !emojiVisibility || emojiVisibility['continuance'] !== false;
     
-    statsContainer.innerHTML = statsHtml;
-    
-    // Add click handler for missing stat
-    const missingStat = document.getElementById('missing-stat');
-    if (missingStat && stats.missing > 0) {
-        missingStat.addEventListener('click', showMissingDocumentsPopup);
-    }
-}
-
-/**
- * Show popup with missing documents details
- */
-function showMissingDocumentsPopup() {
-    // Check if popup already exists
-    let popup = document.getElementById('missing-docs-popup');
-    if (popup) {
-        popup.remove();
-    }
-    
-    // Create popup overlay
-    const overlay = document.createElement('div');
-    overlay.id = 'missing-docs-overlay';
-    overlay.className = 'popup-overlay';
-    
-    // Create popup container
-    popup = document.createElement('div');
-    popup.id = 'missing-docs-popup';
-    popup.className = 'popup-container';
-    
-    // Get missing documents data
-    const missingDocs = window.missingDocumentsData || [];
-    
-    // Sort by date
-    missingDocs.sort((a, b) => new Date(a.date) - new Date(b.date));
-    
-    // Build content
-    let content = `
-        <div class="popup-header">
-            <h3>Missing Documents (${missingDocs.length})</h3>
-            <div class="popup-header-actions">
-                <button class="copy-button" onclick="copyMissingDocsList()">Copy to Clipboard</button>
-                <button class="popup-close" onclick="document.getElementById('missing-docs-overlay').remove()">✕</button>
-            </div>
-        </div>
-        <div class="popup-content">
-            <div class="missing-docs-list">
-    `;
-    
-    missingDocs.forEach(doc => {
-        content += `
-            <div class="missing-doc-item">
-                <span class="missing-doc-date">${doc.date}</span>
-                <span class="missing-doc-case">[${doc.caseNumber}]</span>
-                <span class="missing-doc-title">${doc.title}</span>
+    if (showDenials) {
+        statsHtml += `
+            <div class="stat-item">
+                <span class="stat-number">${stats.denials}</span>
+                <span class="stat-label">Denials</span>
             </div>
         `;
-    });
+    }
     
-    content += `
+    if (showPlans) {
+        statsHtml += `
+            <div class="stat-item">
+                <span class="stat-number">${stats.plans}</span>
+                <span class="stat-label">Plans</span>
             </div>
-        </div>
-    `;
+        `;
+    }
     
-    popup.innerHTML = content;
-    overlay.appendChild(popup);
-    document.body.appendChild(overlay);
+    if (showContinued) {
+        statsHtml += `
+            <div class="stat-item">
+                <span class="stat-number">${stats.continued}</span>
+                <span class="stat-label">Continued</span>
+            </div>
+        `;
+    }
     
-    // Close on overlay click
-    overlay.addEventListener('click', (e) => {
-        if (e.target === overlay) {
-            overlay.remove();
-        }
-    });
+    statsContainer.innerHTML = statsHtml;
 }
 
-// Export function for copy button
-window.copyMissingDocsList = function() {
-    const missingDocs = window.missingDocumentsData || [];
-    let text = 'Missing Documents:\n\n';
-    
-    missingDocs.sort((a, b) => new Date(a.date) - new Date(b.date));
-    
-    missingDocs.forEach(doc => {
-        text += `${doc.date}\t[${doc.caseNumber}]\t${doc.title}\n`;
-    });
-    
-    // Copy to clipboard
-    navigator.clipboard.writeText(text).then(() => {
-        // Show feedback
-        const button = document.querySelector('.copy-button');
-        if (button) {
-            const originalText = button.textContent;
-            button.textContent = 'Copied!';
-            setTimeout(() => {
-                button.textContent = originalText;
-            }, 2000);
-        }
-    }).catch(err => {
-        console.error('Failed to copy:', err);
-        alert('Failed to copy to clipboard');
-    });
-};

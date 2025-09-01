@@ -63,7 +63,7 @@ export const EMOJI_CONFIG = {
         '📧': { 
             legendLabel: 'Email', 
             displayLabel: '',
-            caselineColor: 'inherit',
+            caselineColor: 'bypass',  // Skip this node when drawing caseline connections
             class: 'email'
         }
     },

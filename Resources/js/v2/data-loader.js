@@ -30,15 +30,23 @@ export async function loadTableData() {
 /**
  * Extracts and parses table rows from markdown text
  * @param {string} markdownText - Raw markdown content
- * @returns {Array<string[]>} Array of parsed column arrays
+ * @returns {Object} {headers: string[], rows: Array<string[]>}
  */
 export function extractTableRows(markdownText) {
     const lines = markdownText.split('\n');
     
-    // Find the table header
+    // Find any table header (starts with | and contains Date)
     const headerIndex = lines.findIndex(line => 
-        line.includes('| Date | Document | Case # | Mrkr |')
+        line.startsWith('|') && line.toLowerCase().includes('date')
     );
+    
+    if (headerIndex === -1) {
+        throw new Error('No table header found in markdown');
+    }
+    
+    // Parse header row to get column names
+    const headerLine = lines[headerIndex];
+    const headers = headerLine.split('|').slice(1, -1).map(s => s.trim());
     
     const tableRows = [];
     
@@ -56,12 +64,15 @@ export function extractTableRows(markdownText) {
             .map(p => p.trim());
         
         // Skip if wrong number of columns
-        if (parts.length !== 7) continue;
+        if (parts.length !== headers.length) {
+            console.warn(`Skipping row with ${parts.length} columns (expected ${headers.length})`);
+            continue;
+        }
         
         tableRows.push(parts);
     }
     
-    return tableRows;
+    return { headers, rows: tableRows };
 }
 
 /**

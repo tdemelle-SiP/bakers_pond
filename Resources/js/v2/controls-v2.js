@@ -154,7 +154,14 @@ export function initScaleControls(onUpdate, initialScale = 0.8) {
     slider.addEventListener('input', (e) => {
         const scale = parseFloat(e.target.value);
         valueDisplay.textContent = scale.toFixed(1);
-        onUpdate({ scale });
+        
+        // Uncheck fit-to-window when manually adjusting scale
+        const fitCheckbox = document.getElementById('fit-to-window');
+        if (fitCheckbox && fitCheckbox.checked) {
+            fitCheckbox.checked = false;
+        }
+        
+        onUpdate({ scale, fitToWindow: false });
     });
 }
 
