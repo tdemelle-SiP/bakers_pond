@@ -46,11 +46,11 @@ export function initLegend() {
                 <label style="cursor: pointer;">
                     <input type="checkbox" id="show-${item.class}" class="emoji-toggle" 
                            data-class="${item.class}" style="margin-right: 4px; cursor: pointer;" checked>
-                    ${item.emoji} ${item.label}
+                    ${item.emoji} ${item.legendLabel}
                 </label>
             </td>`;
         }
-        return `<td style="padding: 2px 12px;">${item.emoji} ${item.label}</td>`;
+        return `<td style="padding: 2px 12px;">${item.emoji} ${item.legendLabel}</td>`;
     };
     
     // First row of caseline
@@ -78,11 +78,11 @@ export function initLegend() {
     timelineEmojis.forEach(item => {
         if (item.emoji === '❌') {
             // Missing document uses emoji
-            html += `<td style="padding: 2px 12px;">${item.emoji} ${item.label}</td>`;
+            html += `<td style="padding: 2px 12px;">${item.emoji} ${item.legendLabel}</td>`;
         } else {
             // Public/Private use colored squares
             const borderColor = item.borderColor || item.color;
-            html += `<td style="padding: 2px 12px;"><span style="display: inline-block; width: 10px; height: 10px; background: ${item.color}; border: 1px solid ${borderColor}; margin-right: 5px;"></span>${item.label}</td>`;
+            html += `<td style="padding: 2px 12px;"><span style="display: inline-block; width: 10px; height: 10px; background: ${item.color}; border: 1px solid ${borderColor}; margin-right: 5px;"></span>${item.legendLabel}</td>`;
         }
     });
     html += '</tr>';
@@ -104,22 +104,14 @@ export function initLegend() {
             const emojiClass = checkbox.dataset.class;
             const isVisible = checkbox.checked;
             visibility[emojiClass] = isVisible;
-            
-            // Update nodes, labels, and leader lines using data attributes
-            const elements = document.querySelectorAll(
-                `[data-emoji-type="${emojiClass}"]`
-            );
-            elements.forEach(element => {
-                element.style.display = isVisible ? '' : 'none';
-            });
         });
         
         // Save state
         saveEmojiVisibility(visibility);
         
-        // Recalculate label collisions with visible nodes
-        if (window.refreshCaselineLabels) {
-            window.refreshCaselineLabels();
+        // Apply visibility using the shared function
+        if (window.applyEmojiVisibility) {
+            window.applyEmojiVisibility();
         }
     }
     

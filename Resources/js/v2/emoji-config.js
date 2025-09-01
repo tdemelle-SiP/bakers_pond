@@ -7,81 +7,81 @@
 export const EMOJI_CONFIG = {
     caseline: {
         '⭐': { 
-            label: 'Filing', 
+            legendLabel: 'Filing', 
             displayLabel: '',  // Label shown on timeline nodes
             caselineColor: '#ffd700',
             class: 'filing'
         },
         '✅': { 
-            label: 'Approved', 
+            legendLabel: 'Approved', 
             displayLabel: 'APPROVED',
             caselineColor: '#4caf50',
             class: 'approved'
         },
         '⛔': { 
-            label: 'Denied', 
+            legendLabel: 'Denied', 
             displayLabel: 'DENIED',
             caselineColor: '#f44336',
             class: 'denied'
         },
         '📐': { 
-            label: 'Plan', 
+            legendLabel: 'Plan', 
             displayLabel: 'PLAN',
             caselineColor: '#ffd700',
             class: 'plan'
         },
         '🔍': { 
-            label: 'Review', 
+            legendLabel: 'Review', 
             displayLabel: 'REVIEW',
-            caselineColor: '#2196f3',
+            caselineColor: 'inherit',
             class: 'review'
         },
         '🐢': { 
-            label: 'Continued', 
+            legendLabel: 'Continued', 
             displayLabel: '',
             caselineColor: 'inherit',  // Keep the incoming line color
             class: 'continuance'
         },
         '🏛️': { 
-            label: 'Hearing', 
+            legendLabel: 'Hearing', 
             displayLabel: 'HEARING',
-            caselineColor: '#9c27b0',
+            caselineColor: 'inherit',
             class: 'hearing'
         },
         '⏰': { 
-            label: 'Expired', 
+            legendLabel: 'Expired', 
             displayLabel: 'EXPIRED',
             caselineColor: '#f44336',
             class: 'expired'
         },
         '♻️': { 
-            label: 'Extended', 
+            legendLabel: 'Extended', 
             displayLabel: 'EXTENDED',
             caselineColor: '#4caf50',
             class: 'extended'
         },
         '📧': { 
-            label: 'Email', 
-            displayLabel: 'EMAIL',
-            caselineColor: '#2196f3',
+            legendLabel: 'Email', 
+            displayLabel: '',
+            caselineColor: 'inherit',
             class: 'email'
         }
     },
     timeline: {
         '🟢': { 
-            label: 'Public Event', 
+            legendLabel: 'Public Event', 
             color: '#4caf50',
             borderColor: '#388e3c',
             class: 'public-event'
         },
         '🔴': { 
-            label: 'Private Event', 
+            legendLabel: 'Private Event', 
             color: '#f44336',
             borderColor: '#d32f2f',
             class: 'private-event'
         },
         '❌': { 
-            label: 'Missing Document', 
+            legendLabel: 'Missing Document', 
             color: '#ff0000',
             borderColor: '#cc0000',
             class: 'missing-document'

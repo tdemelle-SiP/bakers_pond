@@ -18,7 +18,8 @@ import { initAllControls } from './controls-v2.js';
 import { createLabelsWithCollisionDetection } from './label-layout.js';
 import { renderCaseTitles } from './case-titles.js';
 import { initializeState, saveFilterState, saveScaleState,
-         setIsolationMode, getIsolationMode, clearIsolationMode, isIsolating } from './state-persistence.js';
+         setIsolationMode, getIsolationMode, clearIsolationMode, isIsolating,
+         loadEmojiVisibility } from './state-persistence.js';
 
 // Application state - initialize with saved values
 const savedState = initializeState();
@@ -591,7 +592,33 @@ function render() {
     // Update stats
     const stats = calculateStats(state.filteredEvents);
     renderStats(stats);
+    
+    // Reapply emoji visibility state after re-rendering
+    applyEmojiVisibility();
 }
+
+/**
+ * Apply saved emoji visibility state to current nodes
+ * Called after rendering and made available to legend
+ */
+function applyEmojiVisibility() {
+    const savedVisibility = loadEmojiVisibility();
+    
+    Object.entries(savedVisibility).forEach(([emojiClass, isVisible]) => {
+        const elements = document.querySelectorAll(`[data-emoji-type="${emojiClass}"]`);
+        elements.forEach(element => {
+            element.style.display = isVisible === false ? 'none' : '';
+        });
+    });
+    
+    // Refresh labels to account for hidden nodes
+    if (window.refreshCaselineLabels) {
+        window.refreshCaselineLabels();
+    }
+}
+
+// Make it available to legend
+window.applyEmojiVisibility = applyEmojiVisibility;
 
 /**
  * Refresh labels when emoji visibility changes
