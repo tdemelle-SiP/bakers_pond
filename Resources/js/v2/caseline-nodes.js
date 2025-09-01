@@ -88,6 +88,7 @@ export function renderCaselineNodes(events, dateRange, pixelsPerDay) {
             displayEmoji: displayEmoji,
             label: nodeLabel,
             caselineColor: config.caselineColor || '#999999',  // Can be 'inherit' or a color value
+            emojiClass: config.class || null,  // CSS class for filtering
             isPrivate: event.isPrivate,
             caseNumber: event.caseNumber,
             date: event.date,

@@ -185,6 +185,11 @@ export function createLabelsWithCollisionDetection(nodeData, container) {
         const label = document.createElement('div');
         label.className = `node-label ${ld.isPrivate ? 'node-label-below' : 'node-label-above'}`;
         
+        // Add emoji class for filtering
+        if (ld.node.emojiClass) {
+            label.classList.add(ld.node.emojiClass);
+        }
+        
         // Add status coloring
         if (ld.node.color === '#f44336') {
             label.classList.add('status-denied');
@@ -261,6 +266,11 @@ function drawLeaderLine(container, node, labelData) {
     svg.style.height = Math.abs(nodeCenterY - labelEdgeY) + 'px';
     svg.style.pointerEvents = 'none';
     svg.style.zIndex = '8';  // Leader lines below nodes but above connection lines
+    
+    // Add emoji class for filtering
+    if (node.emojiClass) {
+        svg.classList.add(node.emojiClass);
+    }
     
     const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
     line.setAttribute('x1', nodeCenter < labelCenter ? '0' : Math.abs(nodeCenter - labelCenter));

@@ -11,7 +11,6 @@ const STORAGE_KEYS = {
     SELECTED_CASES: STORAGE_PREFIX + 'selected-cases',
     SCALE: STORAGE_PREFIX + 'scale',
     FIT_TO_WINDOW: STORAGE_PREFIX + 'fit-to-window',
-    SHOW_CONTINUANCES: STORAGE_PREFIX + 'show-continuances',
     EMOJI_VISIBILITY: STORAGE_PREFIX + 'emoji-visibility'
 };
 
@@ -55,9 +54,6 @@ export function saveFilterState(filters) {
     if (filters.selectedCases) {
         saveState(STORAGE_KEYS.SELECTED_CASES, filters.selectedCases);
     }
-    if (filters.showContinuances !== undefined) {
-        saveState(STORAGE_KEYS.SHOW_CONTINUANCES, filters.showContinuances);
-    }
 }
 
 /**
@@ -68,8 +64,7 @@ export function loadFilterState() {
     return {
         startDate: loadState(STORAGE_KEYS.START_DATE),
         endDate: loadState(STORAGE_KEYS.END_DATE),
-        selectedCases: loadState(STORAGE_KEYS.SELECTED_CASES), // Return null if not saved
-        showContinuances: loadState(STORAGE_KEYS.SHOW_CONTINUANCES) ?? true
+        selectedCases: loadState(STORAGE_KEYS.SELECTED_CASES)
     };
 }
 

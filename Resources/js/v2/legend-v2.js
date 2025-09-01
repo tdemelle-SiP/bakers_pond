@@ -105,10 +105,14 @@ export function initLegend() {
             const isVisible = checkbox.checked;
             visibility[emojiClass] = isVisible;
             
-            // Update nodes
-            const nodes = document.querySelectorAll(`.caseline-node.${emojiClass}`);
-            nodes.forEach(node => {
-                node.style.display = isVisible ? '' : 'none';
+            // Update nodes, labels, and leader lines
+            const elements = document.querySelectorAll(
+                `.caseline-node.${emojiClass}, ` +
+                `.node-label.${emojiClass}, ` +
+                `svg.${emojiClass}`
+            );
+            elements.forEach(element => {
+                element.style.display = isVisible ? '' : 'none';
             });
         });
         
