@@ -52,10 +52,9 @@ export function renderCaselineNodes(events, dateRange, pixelsPerDay) {
             node.classList.add('case-procedural-above');
         }
         
-        // Add emoji-specific class if defined
-        const emojiConfig = getEmojiConfig(event.caselineEmoji, 'caseline');
-        if (emojiConfig && emojiConfig.class) {
-            node.classList.add(emojiConfig.class);
+        // Add emoji-specific data attribute if defined
+        if (config.class) {
+            node.dataset.emojiType = config.class;
         }
         
         node.style.left = x + 'px'; // Absolute positioning
@@ -88,7 +87,7 @@ export function renderCaselineNodes(events, dateRange, pixelsPerDay) {
             displayEmoji: displayEmoji,
             label: nodeLabel,
             caselineColor: config.caselineColor || '#999999',  // Can be 'inherit' or a color value
-            emojiClass: config.class || null,  // CSS class for filtering
+            emojiType: config.class || null,  // Data attribute value for filtering
             isPrivate: event.isPrivate,
             caseNumber: event.caseNumber,
             date: event.date,
@@ -109,49 +108,3 @@ export function renderCaselineNodes(events, dateRange, pixelsPerDay) {
     return { nodes: caselineData, caseGroups: caseGroups };
 }
 
-/**
- * Render labels for caseline nodes
- * @param {Object[]} nodeData - Array of node data from renderCaselineNodes
- * @param {HTMLElement} container - Timeline container
- */
-export function renderCaselineLabels(nodeData, container) {
-    const labels = [];
-    
-    nodeData.forEach(data => {
-        if (!data.label) return;
-        
-        const label = document.createElement('div');
-        label.className = 'node-label';
-        
-        // Position above or below based on private status
-        if (data.isPrivate) {
-            label.classList.add('node-label-below');
-        } else {
-            label.classList.add('node-label-above');
-        }
-        
-        // Add status color class
-        if (data.color === '#4caf50') {
-            label.classList.add('status-approved');
-        } else if (data.color === '#f44336') {
-            label.classList.add('status-denied');
-        } else if (data.color === '#ffd700') {
-            label.classList.add('status-pending');
-        }
-        
-        label.textContent = data.label;
-        label.style.left = data.x + 'px';
-        label.style.transform = 'translateX(-50%)';
-        
-        container.appendChild(label);
-        
-        labels.push({
-            element: label,
-            x: data.x,
-            width: 0, // Will be measured after rendering
-            nodeData: data
-        });
-    });
-    
-    return labels;
-}

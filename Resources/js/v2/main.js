@@ -9,7 +9,7 @@ import { loadTableData, extractTableRows } from './data-loader.js';
 import { parseEvents, extractCaseNumbers, getEventDateRange } from './event-parser.js';
 import { calculateDateRange, drawYearMarkers, calculateTimelineWidth, setContainerWidth, DEFAULT_SCALE } from './date-scale.js';
 import { renderTimelineNodes } from './timeline-nodes.js';
-import { renderCaselineNodes, renderCaselineLabels } from './caseline-nodes.js';
+import { renderCaselineNodes } from './caseline-nodes.js';
 import { drawTimelineConnections, drawCaselineConnections } from './connections.js';
 import { initLegend } from './legend-v2.js';
 import { calculateStats, renderStats } from './stats.js';

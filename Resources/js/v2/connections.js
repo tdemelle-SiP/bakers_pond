@@ -167,39 +167,3 @@ export function drawCaselineConnections(caseGroups, container) {
     container.appendChild(svg);
 }
 
-/**
- * Draw leader lines from labels to nodes
- * @param {Object[]} labels - Label data with positions
- * @param {HTMLElement} container - Timeline container
- */
-export function drawLeaderLines(labels, container) {
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.style.position = 'absolute';
-    svg.style.left = '0';
-    svg.style.top = '0';
-    svg.style.width = '100%';
-    svg.style.height = '400px';
-    svg.style.pointerEvents = 'none';
-    svg.style.zIndex = '8';  // Leader lines below nodes but above connection lines
-    
-    labels.forEach(label => {
-        // Only draw leader if label is offset from node
-        const labelCenter = label.x;
-        const nodeCenter = label.nodeData.x;
-        
-        if (Math.abs(labelCenter - nodeCenter) > 5) {
-            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            line.setAttribute('x1', nodeCenter);
-            line.setAttribute('y1', label.nodeData.y);
-            line.setAttribute('x2', labelCenter);
-            line.setAttribute('y2', label.nodeData.isPrivate ? 290 : 235);
-            line.setAttribute('stroke', '#999999');
-            line.setAttribute('stroke-width', '1');
-            line.setAttribute('stroke-opacity', '0.5');
-            
-            svg.appendChild(line);
-        }
-    });
-    
-    container.appendChild(svg);
-}

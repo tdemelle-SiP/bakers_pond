@@ -71,7 +71,6 @@ export function resolveCollisions(labelData) {
         let hasOverlap = true;
         let iterations = 0;
         const minLeftBound = 0; // No left boundary constraint
-        const maxRightBound = window.innerWidth; // Symmetrical - no right boundary constraint
         
         while (hasOverlap && iterations < 30) {
             hasOverlap = false;
@@ -185,9 +184,9 @@ export function createLabelsWithCollisionDetection(nodeData, container) {
         const label = document.createElement('div');
         label.className = `node-label ${ld.isPrivate ? 'node-label-below' : 'node-label-above'}`;
         
-        // Add emoji class for filtering
-        if (ld.node.emojiClass) {
-            label.classList.add(ld.node.emojiClass);
+        // Add emoji data attribute for filtering
+        if (ld.node.emojiType) {
+            label.dataset.emojiType = ld.node.emojiType;
         }
         
         // Add status coloring
@@ -267,9 +266,9 @@ function drawLeaderLine(container, node, labelData) {
     svg.style.pointerEvents = 'none';
     svg.style.zIndex = '8';  // Leader lines below nodes but above connection lines
     
-    // Add emoji class for filtering
-    if (node.emojiClass) {
-        svg.classList.add(node.emojiClass);
+    // Add emoji data attribute for filtering
+    if (node.emojiType) {
+        svg.dataset.emojiType = node.emojiType;
     }
     
     const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');

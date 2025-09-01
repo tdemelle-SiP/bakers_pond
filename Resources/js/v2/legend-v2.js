@@ -105,11 +105,9 @@ export function initLegend() {
             const isVisible = checkbox.checked;
             visibility[emojiClass] = isVisible;
             
-            // Update nodes, labels, and leader lines
+            // Update nodes, labels, and leader lines using data attributes
             const elements = document.querySelectorAll(
-                `.caseline-node.${emojiClass}, ` +
-                `.node-label.${emojiClass}, ` +
-                `svg.${emojiClass}`
+                `[data-emoji-type="${emojiClass}"]`
             );
             elements.forEach(element => {
                 element.style.display = isVisible ? '' : 'none';
