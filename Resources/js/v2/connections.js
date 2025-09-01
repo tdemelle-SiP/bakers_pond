@@ -119,10 +119,22 @@ export function drawCaselineConnections(caseGroups, container) {
         // Sort by date
         nodes.sort((a, b) => a.date - b.date);
         
+        // Track the active color for inheritance
+        let activeColor = '#999999'; // Default color
+        
         // Draw lines between consecutive events in the same case
         for (let i = 0; i < nodes.length - 1; i++) {
             const current = nodes[i];
             const next = nodes[i + 1];
+            
+            // Determine line color
+            if (current.caselineColor === 'inherit') {
+                // Keep the previous color
+                // activeColor stays the same
+            } else {
+                // Use this node's caselineColor and set it as active
+                activeColor = current.caselineColor;
+            }
             
             const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             line.setAttribute('x1', current.x);
@@ -143,8 +155,8 @@ export function drawCaselineConnections(caseGroups, container) {
             // Note: We don't add continuance class to lines anymore
             // Lines should remain visible even when continuance nodes are hidden
             
-            // Use the current node's color for the line (following original pattern)
-            line.setAttribute('stroke', current.color);
+            // Use the determined color for the line
+            line.setAttribute('stroke', activeColor);
             line.setAttribute('stroke-width', '4');  // Thicker lines per original
             line.setAttribute('stroke-opacity', '0.7'); // Match original opacity
             

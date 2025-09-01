@@ -32,8 +32,8 @@ export function renderCaselineNodes(events, dateRange, pixelsPerDay) {
     caselineEvents.forEach(event => {
         const x = getXPosition(event.date, dateRange.startDate, pixelsPerDay);
         
-        // Determine display emoji (show 🔒 if private, otherwise the main emoji)
-        const displayEmoji = event.isPrivate ? '🔒' : event.caselineEmoji;
+        // Use the actual emoji regardless of private status
+        const displayEmoji = event.caselineEmoji;
         const config = getEmojiConfig(event.caselineEmoji, 'caseline') || {};
         
         // Get label - prefer bold override from procedural column
@@ -87,8 +87,7 @@ export function renderCaselineNodes(events, dateRange, pixelsPerDay) {
             emoji: event.caselineEmoji,
             displayEmoji: displayEmoji,
             label: nodeLabel,
-            color: config.color || '#999999',
-            borderColor: config.borderColor || '#666666',
+            caselineColor: config.caselineColor || '#999999',  // Can be 'inherit' or a color value
             isPrivate: event.isPrivate,
             caseNumber: event.caseNumber,
             date: event.date,

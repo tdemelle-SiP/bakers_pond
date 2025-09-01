@@ -9,72 +9,62 @@ export const EMOJI_CONFIG = {
         '⭐': { 
             label: 'Filing', 
             displayLabel: '',  // Label shown on timeline nodes
-            color: '#ffd700', 
-            borderColor: '#ccac00',
+            caselineColor: '#ffd700',
             class: 'filing'
         },
         '✅': { 
             label: 'Approved', 
             displayLabel: 'APPROVED',
-            color: '#4caf50', 
-            borderColor: '#388e3c',
+            caselineColor: '#4caf50',
             class: 'approved'
         },
         '⛔': { 
             label: 'Denied', 
             displayLabel: 'DENIED',
-            color: '#f44336', 
-            borderColor: '#d32f2f',
+            caselineColor: '#f44336',
             class: 'denied'
         },
         '📐': { 
             label: 'Plan', 
             displayLabel: 'PLAN',
-            color: '#ffd700', 
-            borderColor: '#ccac00',
+            caselineColor: '#ffd700',
             class: 'plan'
         },
         '🔍': { 
             label: 'Review', 
             displayLabel: 'REVIEW',
-            color: '#2196f3', 
-            borderColor: '#1976d2',
+            caselineColor: '#2196f3',
             class: 'review'
         },
         '🐢': { 
             label: 'Continued', 
             displayLabel: '',
-            color: '#ff9800', 
-            borderColor: '#f57c00',
+            caselineColor: 'inherit',  // Keep the incoming line color
             class: 'continuance'
         },
         '🏛️': { 
             label: 'Hearing', 
             displayLabel: 'HEARING',
-            color: '#9c27b0', 
-            borderColor: '#7b1fa2',
+            caselineColor: '#9c27b0',
             class: 'hearing'
         },
         '⏰': { 
             label: 'Expired', 
             displayLabel: 'EXPIRED',
-            color: '#f44336', 
-            borderColor: '#d32f2f',
+            caselineColor: '#f44336',
             class: 'expired'
         },
         '♻️': { 
             label: 'Extended', 
             displayLabel: 'EXTENDED',
-            color: '#4caf50', 
-            borderColor: '#388e3c',
+            caselineColor: '#4caf50',
             class: 'extended'
         },
-        '🔒': { 
-            label: 'Private', 
-            displayLabel: 'PRIVATE',
-            color: '#f44336', 
-            borderColor: '#d32f2f',
-            class: 'private-icon'
+        '📧': { 
+            label: 'Email', 
+            displayLabel: 'EMAIL',
+            caselineColor: '#2196f3',
+            class: 'email'
         }
     },
     timeline: {
