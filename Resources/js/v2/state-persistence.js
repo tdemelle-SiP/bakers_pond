@@ -120,6 +120,50 @@ export function loadEmojiVisibility() {
 }
 
 /**
+ * Isolation mode management - temporary UI state
+ */
+let isolationMode = {
+    type: null,      // 'case' | 'emoji' | null
+    target: null,    // case number or emoji class
+    previousState: null // snapshot before isolation
+};
+
+/**
+ * Set isolation mode
+ * @param {string} type - 'case' or 'emoji'
+ * @param {string} target - The case number or emoji class to isolate
+ * @param {Object} previousState - State snapshot before isolation
+ */
+export function setIsolationMode(type, target, previousState) {
+    isolationMode = { type, target, previousState };
+}
+
+/**
+ * Get current isolation mode
+ * @returns {Object} Current isolation state
+ */
+export function getIsolationMode() {
+    return isolationMode;
+}
+
+/**
+ * Clear isolation mode
+ */
+export function clearIsolationMode() {
+    isolationMode = { type: null, target: null, previousState: null };
+}
+
+/**
+ * Check if currently isolating a specific target
+ * @param {string} type - 'case' or 'emoji'
+ * @param {string} target - The case number or emoji class
+ * @returns {boolean} Whether this target is currently isolated
+ */
+export function isIsolating(type, target) {
+    return isolationMode.type === type && isolationMode.target === target;
+}
+
+/**
  * Initialize state from localStorage on page load
  * @returns {Object} Complete saved state
  */

@@ -89,7 +89,9 @@ export function renderCaseTitles(caseGroups, visibleCases = null) {
             titleLabel.style.fontSize = '22px'; // Much bigger like original
             titleLabel.style.fontWeight = '900'; // Much bolder
             titleLabel.style.whiteSpace = 'nowrap';
+            titleLabel.style.cursor = 'pointer';
             titleLabel.textContent = `${info.year} ${info.name}`.trim();
+            titleLabel.dataset.caseNumber = caseNumber;
             container.appendChild(titleLabel);
             
             // Create DEP number label (bottom)
@@ -101,12 +103,23 @@ export function renderCaseTitles(caseGroups, visibleCases = null) {
             depLabel.style.color = color;
             depLabel.style.fontSize = '22px'; // Same size as main title
             depLabel.style.whiteSpace = 'nowrap';
+            depLabel.style.cursor = 'pointer';
+            depLabel.dataset.caseNumber = caseNumber;
             
             const depText = caseNumber === 'Historical' ? 
                 'Historical Records' : 
                 `DEP #${caseNumber}`;
             depLabel.textContent = depText;
             container.appendChild(depLabel);
+            
+            // Add double-click handler to both labels
+            [titleLabel, depLabel].forEach(label => {
+                label.addEventListener('dblclick', () => {
+                    if (window.isolateCase) {
+                        window.isolateCase(caseNumber);
+                    }
+                });
+            });
         }
     });
 }

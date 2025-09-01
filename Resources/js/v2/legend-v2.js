@@ -4,7 +4,8 @@
  */
 
 import { getEmojiArray } from './emoji-config.js';
-import { saveEmojiVisibility, loadEmojiVisibility } from './state-persistence.js';
+import { saveEmojiVisibility, loadEmojiVisibility, 
+         setIsolationMode, getIsolationMode, clearIsolationMode, isIsolating } from './state-persistence.js';
 
 /**
  * Initialize legend in the header
@@ -94,7 +95,6 @@ export function initLegend() {
     
     // Get all toggle checkboxes
     const toggleCheckboxes = document.querySelectorAll('.emoji-toggle');
-    let beforeIsolation = null; // Store state before isolation
     
     // Helper function to update node visibility based on checkboxes
     function updateNodeVisibility() {
@@ -118,17 +118,30 @@ export function initLegend() {
     
     // Load and apply saved visibility state
     const savedVisibility = loadEmojiVisibility();
-    toggleCheckboxes.forEach(checkbox => {
-        const emojiClass = checkbox.dataset.class;
-        // Default to visible if no saved state
-        checkbox.checked = savedVisibility[emojiClass] !== false;
-    });
+    
+    // Check if we're in emoji isolation mode
+    const isolation = getIsolationMode();
+    if (isolation.type === 'emoji') {
+        // Apply isolation state
+        toggleCheckboxes.forEach(checkbox => {
+            checkbox.checked = checkbox.dataset.class === isolation.target;
+        });
+    } else {
+        // Apply normal saved state
+        toggleCheckboxes.forEach(checkbox => {
+            const emojiClass = checkbox.dataset.class;
+            // Default to visible if no saved state
+            checkbox.checked = savedVisibility[emojiClass] !== false;
+        });
+    }
     
     // Apply initial visibility
     updateNodeVisibility();
     
     // Add event listeners
     toggleCheckboxes.forEach(checkbox => {
+        const emojiClass = checkbox.dataset.class;
+        
         // Single click - just update visibility
         checkbox.addEventListener('change', updateNodeVisibility);
         
@@ -136,19 +149,26 @@ export function initLegend() {
         checkbox.addEventListener('dblclick', (e) => {
             e.preventDefault();
             
-            if (beforeIsolation) {
+            if (isIsolating('emoji', emojiClass)) {
                 // Restore previous state
-                Object.entries(beforeIsolation).forEach(([cls, checked]) => {
+                const isolation = getIsolationMode();
+                Object.entries(isolation.previousState).forEach(([cls, checked]) => {
                     const cb = document.querySelector(`[data-class="${cls}"]`);
                     if (cb) cb.checked = checked;
                 });
-                beforeIsolation = null;
+                clearIsolationMode();
             } else {
                 // Save current state and isolate
-                beforeIsolation = {};
+                const previousState = {};
                 toggleCheckboxes.forEach(cb => {
-                    beforeIsolation[cb.dataset.class] = cb.checked;
-                    cb.checked = (cb === checkbox);
+                    previousState[cb.dataset.class] = cb.checked;
+                });
+                
+                setIsolationMode('emoji', emojiClass, previousState);
+                
+                // Set only this emoji as checked
+                toggleCheckboxes.forEach(cb => {
+                    cb.checked = (cb.dataset.class === emojiClass);
                 });
             }
             
@@ -158,10 +178,15 @@ export function initLegend() {
     
     // Reset function for the reset button
     window.resetEmojiVisibility = function() {
+        // Clear any emoji isolation
+        if (getIsolationMode().type === 'emoji') {
+            clearIsolationMode();
+        }
+        
+        // Reset all checkboxes to checked
         toggleCheckboxes.forEach(checkbox => {
             checkbox.checked = true;
         });
-        beforeIsolation = null;
         updateNodeVisibility();
     };
 }

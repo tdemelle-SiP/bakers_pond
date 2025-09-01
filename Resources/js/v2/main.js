@@ -17,7 +17,8 @@ import { applyFilters, getDefaultFilterState } from './filters.js';
 import { initAllControls } from './controls-v2.js';
 import { createLabelsWithCollisionDetection } from './label-layout.js';
 import { renderCaseTitles } from './case-titles.js';
-import { initializeState, saveFilterState, saveScaleState } from './state-persistence.js';
+import { initializeState, saveFilterState, saveScaleState,
+         setIsolationMode, getIsolationMode, clearIsolationMode, isIsolating } from './state-persistence.js';
 
 // Application state - initialize with saved values
 const savedState = initializeState();
@@ -216,6 +217,9 @@ function resetToDefaults() {
         window.resetEmojiVisibility();
     }
     
+    // Clear any isolation mode
+    clearIsolationMode();
+    
     // Save the reset state
     saveFilterState(state.filters);
     saveScaleState(state.scale, state.fitToWindow);
@@ -229,6 +233,96 @@ function resetToDefaults() {
 
 // Export for use in controls
 window.resetToDefaults = resetToDefaults;
+
+/**
+ * Update all UI elements to match current state
+ */
+function updateUIFromState() {
+    // Update scale controls
+    const fitCheckbox = document.getElementById('fit-to-window');
+    const scaleSlider = document.getElementById('scale-slider');
+    const scaleValue = document.getElementById('scale-value');
+    
+    if (fitCheckbox) fitCheckbox.checked = state.fitToWindow;
+    if (scaleSlider) {
+        scaleSlider.value = state.scale;
+        scaleSlider.disabled = state.fitToWindow;
+    }
+    if (scaleValue) scaleValue.textContent = state.scale.toFixed(1);
+    
+    // Update case checkboxes
+    const checkboxes = document.querySelectorAll('.case-checkbox');
+    checkboxes.forEach(cb => {
+        cb.checked = state.filters.selectedCases.includes(cb.value);
+    });
+    
+    // Update case filter button text
+    const caseFilterText = document.getElementById('case-filter-text');
+    if (caseFilterText) {
+        const selectedCount = state.filters.selectedCases.length;
+        const totalCount = state.caseNumbers.length;
+        
+        if (selectedCount === totalCount) {
+            caseFilterText.textContent = 'All Cases';
+        } else if (selectedCount === 1) {
+            caseFilterText.textContent = `1 Case`;
+        } else {
+            caseFilterText.textContent = `${selectedCount} of ${totalCount} Cases`;
+        }
+    }
+    
+    // Update date inputs
+    const startInput = document.getElementById('filter-start-date');
+    const endInput = document.getElementById('filter-end-date');
+    if (startInput) startInput.value = state.filters.startDate || '';
+    if (endInput) endInput.value = state.filters.endDate || '';
+}
+
+/**
+ * Isolate a single case or restore previous state
+ * @param {string} caseNumber - Case number to isolate
+ */
+function isolateCase(caseNumber) {
+    if (isIsolating('case', caseNumber)) {
+        // Restore previous state
+        const isolation = getIsolationMode();
+        state.filters.selectedCases = isolation.previousState.selectedCases;
+        state.fitToWindow = isolation.previousState.fitToWindow;
+        state.scale = isolation.previousState.scale;
+        clearIsolationMode();
+        
+        // Apply filters for restored state
+        state.filteredEvents = applyFilters(state.allEvents, state.filters);
+    } else {
+        // Save current state and isolate
+        setIsolationMode('case', caseNumber, {
+            selectedCases: [...state.filters.selectedCases],
+            fitToWindow: state.fitToWindow,
+            scale: state.scale
+        });
+        
+        // Set to only show this case
+        state.filters.selectedCases = [caseNumber];
+        state.fitToWindow = true;
+        
+        // Apply filters first to get the correct filtered events
+        state.filteredEvents = applyFilters(state.allEvents, state.filters);
+        
+        // Calculate and apply the fit-to-window scale
+        const fitScale = calculateFitToWindowScale();
+        state.scale = fitScale;
+    }
+    
+    // Update UI and re-render
+    updateUIFromState();
+    saveFilterState(state.filters);
+    saveScaleState(state.scale, state.fitToWindow);
+    render();
+    checkActiveFilters();
+}
+
+// Export for use in case-titles
+window.isolateCase = isolateCase;
 
 /**
  * Check if filters are active (non-default state)
