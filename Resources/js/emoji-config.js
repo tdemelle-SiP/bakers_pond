@@ -33,7 +33,7 @@ export const EMOJI_CONFIG = {
         },
         '📐': { 
             legendLabel: 'Plan', 
-            displayLabel: 'PLAN',
+            displayLabel: '',
             caselineColor: '#ffd700',
             class: 'plan',
             defaultVisible: true,
@@ -42,8 +42,8 @@ export const EMOJI_CONFIG = {
         },
         '🔍': { 
             legendLabel: 'Review', 
-            displayLabel: 'REVIEW',
-            caselineColor: 'inherit',
+            displayLabel: '',
+            caselineColor: 'bypass',
             class: 'review',
             defaultVisible: true
         },
@@ -82,9 +82,38 @@ export const EMOJI_CONFIG = {
             displayLabel: '',
             caselineColor: 'bypass',  // Skip this node when drawing caseline connections
             class: 'email',
+            defaultVisible: false
+        },
+        '✏️': { 
+            legendLabel: 'Prep', 
+            displayLabel: '',
+            caselineColor: 'bypass',
+            class: 'prep',
             defaultVisible: true
-        }
+        },
+        '❗': { 
+            legendLabel: 'Abutter Notice', 
+            displayLabel: '',
+            caselineColor: 'inherit',
+            class: 'notice',
+            defaultVisible: true
+        },
+        '↩️': { 
+            legendLabel: 'Appeal', 
+            displayLabel: '',
+            caselineColor: '#ffd700',
+            class: 'appeal',
+            defaultVisible: true
+        },
+        '📄': { 
+            legendLabel: 'Govt Form', 
+            displayLabel: '',
+            caselineColor: 'inherit',
+            class: 'govt-form',
+            defaultVisible: false
+        }   
     },
+
     timeline: {
         '🟢': { 
             legendLabel: 'Public Event', 

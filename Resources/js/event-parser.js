@@ -102,10 +102,10 @@ export function parseEvents(tableData) {
         const hasMissingDoc = markers.includes('❌');
         const isTimelineEvent = markers.includes('🟢');
         
-        // Find main caseline emoji (not 🔒, ❌, or 🟢)
-        const emojiRegex = /([\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{2B00}-\u{2BFF}]|[\u{23F0}-\u{23FF}])[\u{FE0F}]?/gu;
+        // Find ALL caseline emojis (not 🔒, ❌, or 🟢)
+        const emojiRegex = /([\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{2B00}-\u{2BFF}]|[\u{23F0}-\u{23FF}]|[\u{2190}-\u{21FF}])[\u{FE0F}]?/gu;
         const allEmojis = markers.match(emojiRegex) || [];
-        const caselineEmoji = allEmojis.find(e => e !== '🔒' && e !== '❌' && e !== '🟢') || null;
+        const caselineEmojis = allEmojis.filter(e => e !== '🔒' && e !== '❌' && e !== '🟢');
         
         // Create base event object
         const baseEvent = {
@@ -121,7 +121,7 @@ export function parseEvents(tableData) {
             isPrivate,
             hasMissingDoc,
             isTimelineEvent,
-            caselineEmoji
+            caselineEmojis
         };
         
         // Add timeline event if has 🟢
@@ -133,8 +133,8 @@ export function parseEvents(tableData) {
             });
         }
         
-        // Add caseline event if has other emoji
-        if (caselineEmoji) {
+        // Add caseline event if has other emojis
+        if (caselineEmojis.length > 0) {
             events.push({
                 ...baseEvent,
                 eventType: 'caseline',
