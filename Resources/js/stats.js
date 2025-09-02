@@ -36,18 +36,18 @@ export function calculateStats(events, emojiVisibility = null) {
             stats.caseline++;
         }
         
-        // Count denials (⛔ emoji)
-        if (event.caselineEmoji === '⛔') {
+        // Count denials (⛔ emoji) - only for caseline events
+        if (event.eventType === 'caseline' && event.caselineEmoji === '⛔') {
             stats.denials++;
         }
         
-        // Count plans (📐 emoji)
-        if (event.caselineEmoji === '📐') {
+        // Count plans (📐 emoji) - only for caseline events
+        if (event.eventType === 'caseline' && event.caselineEmoji === '📐') {
             stats.plans++;
         }
         
-        // Count continuances
-        if (event.caselineEmoji === '🐢') {
+        // Count continuances - only for caseline events
+        if (event.eventType === 'caseline' && event.caselineEmoji === '🐢') {
             stats.continued++;
         }
     });

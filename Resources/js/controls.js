@@ -1,7 +1,9 @@
 /**
- * controls-v2.js
+ * controls.js
  * Handles user controls: date filters, case dropdown, scale slider, fit-to-window
  */
+
+import { resetToDefaults, resetEmojiVisibility } from './timeline-actions.js';
 
 /**
  * Initialize date filter controls
@@ -230,69 +232,11 @@ export function initAllControls(options = {}) {
         initialFilters = {}
     } = options;
     
-    // Date filters - set initial values if provided
-    const startInput = document.getElementById('filter-start-date');
-    const endInput = document.getElementById('filter-end-date');
-    
-    // Use actual event date range if provided
-    if (eventDateRange && eventDateRange.minDate && eventDateRange.maxDate) {
-        // Check if dates are valid
-        const minDate = new Date(eventDateRange.minDate);
-        const maxDate = new Date(eventDateRange.maxDate);
-        
-        if (!isNaN(minDate.getTime()) && !isNaN(maxDate.getTime())) {
-            // Set min/max attributes based on actual data range
-            const minDateStr = minDate.toISOString().split('T')[0];
-            const maxDateStr = maxDate.toISOString().split('T')[0];
-            
-            if (startInput) {
-                startInput.min = minDateStr;
-                startInput.max = maxDateStr;
-                // Set initial value from saved filter or use min date
-                if (initialFilters.startDate) {
-                    const filterDate = new Date(initialFilters.startDate);
-                    if (!isNaN(filterDate.getTime())) {
-                        startInput.value = filterDate.toISOString().split('T')[0];
-                    } else {
-                        startInput.value = minDateStr;
-                    }
-                } else {
-                    startInput.value = minDateStr;
-                }
-            }
-            if (endInput) {
-                endInput.min = minDateStr;
-                endInput.max = maxDateStr;
-                // Set initial value from saved filter or use max date
-                if (initialFilters.endDate) {
-                    const filterDate = new Date(initialFilters.endDate);
-                    if (!isNaN(filterDate.getTime())) {
-                        endInput.value = filterDate.toISOString().split('T')[0];
-                    } else {
-                        endInput.value = maxDateStr;
-                    }
-                } else {
-                    endInput.value = maxDateStr;
-                }
-            }
-        } else {
-            console.warn('Invalid dates in eventDateRange:', eventDateRange);
-        }
-    } else if (initialFilters.startDate || initialFilters.endDate) {
-        // Fallback to saved filters only if they exist
-        if (startInput && initialFilters.startDate) {
-            const dateStr = new Date(initialFilters.startDate).toISOString().split('T')[0];
-            startInput.value = dateStr;
-        }
-        if (endInput && initialFilters.endDate) {
-            const dateStr = new Date(initialFilters.endDate).toISOString().split('T')[0];
-            endInput.value = dateStr;
-        }
-    }
+    // Date filters - just attach handlers, let updateUIFromState handle values
     
     initDateControls((dateFilter) => {
         onFilterUpdate(dateFilter);
-    }, eventDateRange);
+    });
     
     // Case filter
     if (caseNumbers.length > 0) {
@@ -315,11 +259,12 @@ export function initAllControls(options = {}) {
     // Mouse wheel scrolling
     initMouseWheelScroll();
     
-    // Reset button - use global reset function
+    // Reset button
     const resetButton = document.getElementById('reset-filters');
-    if (resetButton && window.resetToDefaults) {
+    if (resetButton) {
         resetButton.addEventListener('click', () => {
-            window.resetToDefaults();
+            resetToDefaults();
+            resetEmojiVisibility();
         });
     }
 }

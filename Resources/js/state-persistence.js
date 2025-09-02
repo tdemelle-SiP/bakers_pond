@@ -3,7 +3,7 @@
  * Handles saving and loading UI state to/from localStorage
  */
 
-const STORAGE_PREFIX = 'timeline-v2-';
+const STORAGE_PREFIX = 'timeline-';
 
 const STORAGE_KEYS = {
     START_DATE: STORAGE_PREFIX + 'start-date',
@@ -83,8 +83,9 @@ export function saveScaleState(scale, fitToWindow) {
  * @returns {Object} Saved scale state
  */
 export function loadScaleState() {
+    const savedScale = loadState(STORAGE_KEYS.SCALE);
     return {
-        scale: loadState(STORAGE_KEYS.SCALE) || 0.8,
+        scale: savedScale ? parseFloat(savedScale) : 0.8,
         fitToWindow: loadState(STORAGE_KEYS.FIT_TO_WINDOW) || false
     };
 }

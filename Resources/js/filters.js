@@ -98,18 +98,6 @@ export function getVisibleDateRange(filteredEvents) {
     };
 }
 
-/**
- * Check if filters are active
- * @param {Object} filterState - Current filter state
- * @returns {boolean} True if any filters are active
- */
-export function hasActiveFilters(filterState) {
-    return !!(
-        filterState.startDate ||
-        filterState.endDate ||
-        (filterState.selectedCases && filterState.selectedCases.length > 0)
-    );
-}
 
 /**
  * Reset all filters to default state

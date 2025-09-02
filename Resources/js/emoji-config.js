@@ -1,7 +1,7 @@
 /**
  * emoji-config.js
  * Central configuration for all emoji-related data
- * Used by both legend-v2.js and caseline-nodes.js
+ * Used by both legend.js and caseline-nodes.js
  */
 
 export const EMOJI_CONFIG = {
@@ -10,61 +10,71 @@ export const EMOJI_CONFIG = {
             legendLabel: 'Filing', 
             displayLabel: '',  // Label shown on timeline nodes
             caselineColor: '#ffd700',
-            class: 'filing'
+            class: 'filing',
+            defaultVisible: true
         },
         '✅': { 
             legendLabel: 'Approved', 
             displayLabel: 'APPROVED',
             caselineColor: '#4caf50',
-            class: 'approved'
+            class: 'approved',
+            defaultVisible: true
         },
         '⛔': { 
             legendLabel: 'Denied', 
             displayLabel: 'DENIED',
             caselineColor: '#f44336',
-            class: 'denied'
+            class: 'denied',
+            defaultVisible: true
         },
         '📐': { 
             legendLabel: 'Plan', 
             displayLabel: 'PLAN',
             caselineColor: '#ffd700',
-            class: 'plan'
+            class: 'plan',
+            defaultVisible: true
         },
         '🔍': { 
             legendLabel: 'Review', 
             displayLabel: 'REVIEW',
             caselineColor: 'inherit',
-            class: 'review'
+            class: 'review',
+            defaultVisible: true
         },
         '🐢': { 
             legendLabel: 'Continued', 
             displayLabel: '',
             caselineColor: 'inherit',  // Keep the incoming line color
-            class: 'continuance'
+            class: 'continuance',
+            defaultVisible: false  // Hidden by default
         },
         '🏛️': { 
             legendLabel: 'Hearing', 
             displayLabel: 'HEARING',
             caselineColor: 'inherit',
-            class: 'hearing'
+            class: 'hearing',
+            defaultVisible: true
         },
         '⏰': { 
             legendLabel: 'Expired', 
             displayLabel: 'EXPIRED',
             caselineColor: '#f44336',
-            class: 'expired'
+            class: 'expired',
+            defaultVisible: true
         },
         '♻️': { 
             legendLabel: 'Extended', 
             displayLabel: 'EXTENDED',
             caselineColor: '#4caf50',
-            class: 'extended'
+            class: 'extended',
+            defaultVisible: true
         },
         '📧': { 
             legendLabel: 'Email', 
             displayLabel: '',
             caselineColor: 'bypass',  // Skip this node when drawing caseline connections
-            class: 'email'
+            class: 'email',
+            defaultVisible: true
         }
     },
     timeline: {

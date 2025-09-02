@@ -57,7 +57,6 @@ export function parseEvents(tableData) {
         
         // Skip rows with empty dates
         if (!dateStr || dateStr.trim() === '') {
-            console.warn(`Skipping row with empty date: ${document}`);
             return;
         }
         
@@ -65,12 +64,6 @@ export function parseEvents(tableData) {
         const [year, month, day] = dateStr.split('-');
         const date = new Date(year, parseInt(month) - 1, day);
         
-        // Debug: Check if date is valid
-        if (isNaN(date.getTime())) {
-            console.error(`Invalid date parsed from: ${dateStr}`);
-        } else if (date.getFullYear() !== parseInt(year)) {
-            console.error(`Date parsing error: ${dateStr} became ${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`);
-        }
         
         // Parse document link - check for separate URL column first
         let title = document;

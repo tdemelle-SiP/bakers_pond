@@ -4,6 +4,8 @@
  * Shows year + name and DEP number for each visible case
  */
 
+import { isolateCase } from './timeline-actions.js';
+
 // Case information mapping
 const CASE_INFO = {
     'Historical': { year: '', name: 'Historical' },
@@ -115,9 +117,7 @@ export function renderCaseTitles(caseGroups, visibleCases = null) {
             // Add double-click handler to both labels
             [titleLabel, depLabel].forEach(label => {
                 label.addEventListener('dblclick', () => {
-                    if (window.isolateCase) {
-                        window.isolateCase(caseNumber);
-                    }
+                    isolateCase(caseNumber);
                 });
             });
         }
