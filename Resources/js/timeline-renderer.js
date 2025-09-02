@@ -80,4 +80,11 @@ export function render() {
     
     // Store caseline nodes for label refresh (simple approach from original)
     updateState({ caselineNodes: caselineData.nodes });
+    
+    // Restore scroll position after render completes
+    if (container && state.scrollPosition) {
+        requestAnimationFrame(() => {
+            container.scrollLeft = state.scrollPosition;
+        });
+    }
 }

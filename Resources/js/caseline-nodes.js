@@ -145,6 +145,17 @@ export function renderCaselineNodes(events, dateRange, pixelsPerDay) {
         
         // Store data for labels and connections
         const isBypassPositioned = emojis.length === 1 && primaryConfig.caselineColor === 'bypass';
+        
+        // Determine vertical position: 'public', 'private', or 'inline'
+        let verticalPosition;
+        if (isBypassPositioned) {
+            verticalPosition = 'inline';
+        } else if (event.isPrivate) {
+            verticalPosition = 'private';
+        } else {
+            verticalPosition = 'public';
+        }
+        
         const nodeData = {
             x: x,
             y: isBypassPositioned ? 127.5 : (event.isPrivate ? 140 : 115), // Centered for bypass, else original positions
@@ -154,7 +165,8 @@ export function renderCaselineNodes(events, dateRange, pixelsPerDay) {
             label: nodeLabel,
             caselineColor: caselineColor,  // Can be 'inherit', 'bypass', or a color value
             emojiType: primaryConfig.class || null,  // Data attribute value for filtering
-            isPrivate: isBypassPositioned ? false : event.isPrivate,  // Bypass nodes are neither public nor private
+            verticalPosition: verticalPosition,  // 'public', 'private', or 'inline'
+            isPrivate: isBypassPositioned ? false : event.isPrivate,  // Keep for backwards compatibility
             caseNumber: event.caseNumber,
             date: event.date,
             event: event
