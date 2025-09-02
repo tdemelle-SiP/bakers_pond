@@ -3,7 +3,7 @@
  * Bootstrap only - loads data, initializes state, wires up UI
  */
 
-import { loadTableData, extractTableRows } from './data-loader.js';
+import { loadTableData, extractTableRows, extractCasesTable } from './data-loader.js';
 import { parseEvents, extractCaseNumbers, getEventDateRange } from './event-parser.js';
 import { initLegend } from './legend.js';
 import { initAllControls } from './controls.js';
@@ -31,12 +31,15 @@ async function init() {
     const caseNumbers = extractCaseNumbers(events);
     const eventDateRange = getEventDateRange(events);
     
+    // Load cases metadata from markdown
+    const casesData = extractCasesTable(markdown);
+    
     // Hide loading, show content
     document.getElementById('loading').style.display = 'none';
     document.getElementById('timeline-content').style.display = 'block';
     
     // Initialize application state and do first render
-    initializeApp(events, caseNumbers);
+    initializeApp(events, caseNumbers, casesData);
     
     // Initialize UI components
     initLegend();

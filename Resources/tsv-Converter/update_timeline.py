@@ -10,8 +10,10 @@ from datetime import datetime
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
-# Google Sheet published URL
-GOOGLE_SHEET_TSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQVqVBBUKhpvPp1vcpwJ3Az3TE4n4d3PKEyKIQC91c4SUt6NHGc0jioHluCRHoGKy_yiUzP-Y-yBLns/pub?gid=752809563&single=true&output=tsv"
+# Google Sheet published URLs
+TIMELINE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQVqVBBUKhpvPp1vcpwJ3Az3TE4n4d3PKEyKIQC91c4SUt6NHGc0jioHluCRHoGKy_yiUzP-Y-yBLns/pub?gid=752809563&single=true&output=tsv"
+# Cases tab with Case_Title, Case_Year, Case_Number, Default_Visibility columns
+CASES_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQVqVBBUKhpvPp1vcpwJ3Az3TE4n4d3PKEyKIQC91c4SUt6NHGc0jioHluCRHoGKy_yiUzP-Y-yBLns/pub?gid=268010316&single=true&output=tsv"
 
 # Path to your .gsheet file to monitor
 GSHEET_FILE = r"E:\My Drive\G-media\Documents\gsheets\bakers-pond-timeline-data.gsheet"
@@ -19,7 +21,8 @@ GSHEET_FILE = r"E:\My Drive\G-media\Documents\gsheets\bakers-pond-timeline-data.
 # Local paths
 script_dir = os.path.dirname(os.path.abspath(__file__))
 inbox_path = os.path.join(script_dir, '..', 'inbox')
-tsv_file = os.path.join(inbox_path, 'bakers-pond-timeline-data - gsheet.tsv')
+timeline_tsv_file = os.path.join(inbox_path, 'bakers-pond-timeline-data - gsheet.tsv')
+cases_tsv_file = os.path.join(inbox_path, 'bakers-pond-cases-data.tsv')
 
 class TimelineUpdateHandler(FileSystemEventHandler):
     """Handler for file system events"""
@@ -40,16 +43,26 @@ class TimelineUpdateHandler(FileSystemEventHandler):
             download_and_convert()
 
 def download_and_convert():
-    """Download TSV and run conversion"""
+    """Download TSV files and run conversion"""
     try:
-        # Download latest TSV
-        print(f"📥 Downloading latest data from Google Sheets...")
-        # Use urlopen to handle redirects properly
-        with urllib.request.urlopen(GOOGLE_SHEET_TSV_URL) as response:
+        # Download timeline data
+        print(f"📥 Downloading latest timeline data from Google Sheets...")
+        with urllib.request.urlopen(TIMELINE_SHEET_URL) as response:
             tsv_content = response.read()
-        with open(tsv_file, 'wb') as f:
+        with open(timeline_tsv_file, 'wb') as f:
             f.write(tsv_content)
-        print(f"✅ Downloaded to {os.path.basename(tsv_file)}")
+        print(f"✅ Downloaded timeline to {os.path.basename(timeline_tsv_file)}")
+        
+        # Download cases data if URL is configured
+        if 'REPLACE_WITH_CASES_GID' not in CASES_SHEET_URL:
+            print(f"📥 Downloading latest cases data from Google Sheets...")
+            with urllib.request.urlopen(CASES_SHEET_URL) as response:
+                cases_content = response.read()
+            with open(cases_tsv_file, 'wb') as f:
+                f.write(cases_content)
+            print(f"✅ Downloaded cases to {os.path.basename(cases_tsv_file)}")
+        else:
+            print("⚠️  Cases sheet URL not configured (update CASES_SHEET_URL with correct gid)")
         
         # Run conversion
         print("🔄 Converting to markdown...")

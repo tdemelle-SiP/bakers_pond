@@ -3,7 +3,7 @@
  * Calculates and displays event statistics in the header
  */
 
-import { getEmojiConfig } from './emoji-config.js';
+import { getEmojiConfig, getEmojiArray } from './emoji-config.js';
 
 /**
  * Calculate statistics from events
@@ -13,12 +13,12 @@ import { getEmojiConfig } from './emoji-config.js';
  */
 export function calculateStats(events, emojiVisibility = null) {
     const stats = {
-        denials: 0,
-        plans: 0,
-        continued: 0,
         timeline: 0,
         caseline: 0
     };
+    
+    // Initialize counters for each emoji that has metricDisplay
+    const emojiStats = {};
     
     events.forEach(event => {
         // Skip if emoji visibility is hidden for this event
@@ -34,24 +34,21 @@ export function calculateStats(events, emojiVisibility = null) {
             stats.timeline++;
         } else if (event.eventType === 'caseline') {
             stats.caseline++;
-        }
-        
-        // Count denials (⛔ emoji) - only for caseline events
-        if (event.eventType === 'caseline' && event.caselineEmoji === '⛔') {
-            stats.denials++;
-        }
-        
-        // Count plans (📐 emoji) - only for caseline events
-        if (event.eventType === 'caseline' && event.caselineEmoji === '📐') {
-            stats.plans++;
-        }
-        
-        // Count continuances - only for caseline events
-        if (event.eventType === 'caseline' && event.caselineEmoji === '🐢') {
-            stats.continued++;
+            
+            // Count emoji metrics
+            if (event.caselineEmoji) {
+                const config = getEmojiConfig(event.caselineEmoji, 'caseline');
+                if (config && config.metricDisplay !== undefined) {
+                    if (!emojiStats[event.caselineEmoji]) {
+                        emojiStats[event.caselineEmoji] = 0;
+                    }
+                    emojiStats[event.caselineEmoji]++;
+                }
+            }
         }
     });
     
+    stats.emojiStats = emojiStats;
     return stats;
 }
 
@@ -86,40 +83,40 @@ export function renderStats(stats, emojiVisibility = null) {
         }
     }
     
-    // Build stats HTML, hiding stats for hidden emojis
+    // Build stats HTML from configuration
     let statsHtml = '';
     
-    // Check visibility for each stat's emoji
-    const showDenials = !emojiVisibility || emojiVisibility['denied'] !== false;
-    const showPlans = !emojiVisibility || emojiVisibility['plan'] !== false;
-    const showContinued = !emojiVisibility || emojiVisibility['continuance'] !== false;
+    // Get all emojis with metricDisplay and sort by display order
+    const metricsToDisplay = [];
+    const caselineEmojis = getEmojiArray('caseline');
     
-    if (showDenials) {
+    caselineEmojis.forEach(item => {
+        if (item.metricDisplay !== undefined) {
+            // Check visibility
+            const isVisible = !emojiVisibility || emojiVisibility[item.class] !== false;
+            if (isVisible) {
+                metricsToDisplay.push({
+                    emoji: item.emoji,
+                    order: item.metricDisplay,
+                    label: item.metricLabel || item.legendLabel,
+                    count: stats.emojiStats?.[item.emoji] || 0
+                });
+            }
+        }
+    });
+    
+    // Sort by display order
+    metricsToDisplay.sort((a, b) => a.order - b.order);
+    
+    // Generate HTML for each metric
+    metricsToDisplay.forEach(metric => {
         statsHtml += `
             <div class="stat-item">
-                <span class="stat-number">${stats.denials}</span>
-                <span class="stat-label">Denials</span>
+                <span class="stat-number">${metric.count}</span>
+                <span class="stat-label">${metric.label}</span>
             </div>
         `;
-    }
-    
-    if (showPlans) {
-        statsHtml += `
-            <div class="stat-item">
-                <span class="stat-number">${stats.plans}</span>
-                <span class="stat-label">Plans</span>
-            </div>
-        `;
-    }
-    
-    if (showContinued) {
-        statsHtml += `
-            <div class="stat-item">
-                <span class="stat-number">${stats.continued}</span>
-                <span class="stat-label">Continued</span>
-            </div>
-        `;
-    }
+    });
     
     statsContainer.innerHTML = statsHtml;
 }

@@ -55,14 +55,7 @@ export function initCaseControls(caseNumbers, onUpdate, initialSelected = null) 
     
     // Build checkbox list
     checkboxList.innerHTML = '';
-    // Use saved state or default to all selected except Historical
-    let selectedCases;
-    if (initialSelected) {
-        selectedCases = initialSelected;
-    } else {
-        // Default: exclude Historical to prevent timeline from breaking
-        selectedCases = caseNumbers.filter(caseNum => caseNum !== 'Historical');
-    }
+    let selectedCases = initialSelected || caseNumbers;
     
     caseNumbers.forEach(caseNum => {
         const label = document.createElement('label');

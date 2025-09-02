@@ -6,16 +6,37 @@
 
 import { isolateCase } from './timeline-actions.js';
 
-// Case information mapping
-const CASE_INFO = {
-    'Historical': { year: '', name: 'Historical' },
-    '338-0303': { year: '2001', name: 'Initial' },
-    '338-0594': { year: '2014', name: 'House' },
-    '338-0706': { year: '2020', name: 'House' },
-    '338-0756': { year: '2023', name: 'Dam' }
-};
+/**
+ * Get case info from casesData
+ * @param {string} caseNumber - The case number to look up
+ * @param {Array} casesData - Array of case metadata
+ * @returns {Object|null} Case info object with year and name
+ */
+function getCaseInfo(caseNumber, casesData) {
+    // Build info from provided casesData
+    casesData = casesData || [];
+    
+    // Find matching case data
+    const caseData = casesData.find(c => {
+        // Handle Historical special case
+        if (caseNumber === 'Historical' && (c.caseNumber === '-' || c.title.toLowerCase() === 'historical')) {
+            return true;
+        }
+        return c.caseNumber === caseNumber;
+    });
+    
+    if (caseData) {
+        // Return appropriate info based on case type
+        if (caseData.caseNumber === '-' || caseData.title.toLowerCase() === 'historical') {
+            return { year: '', name: 'Historical' };
+        }
+        return { year: caseData.year, name: caseData.title };
+    }
+    
+    return null;
+}
 
-// Case colors (matching original)
+// Case colors (temporary until palette solution)
 const CASE_COLORS = {
     'Historical': '#999999',
     '338-0303': '#2196f3',
@@ -52,8 +73,9 @@ function getCaseTitlesContainer() {
  * Render case titles for visible cases
  * @param {Object} caseGroups - Groups of caseline nodes by case number
  * @param {string[]} visibleCases - Array of currently visible case numbers
+ * @param {Array} casesData - Array of case metadata from state
  */
-export function renderCaseTitles(caseGroups, visibleCases = null) {
+export function renderCaseTitles(caseGroups, visibleCases = null, casesData = []) {
     const container = getCaseTitlesContainer();
     
     // Clear existing titles
@@ -77,7 +99,7 @@ export function renderCaseTitles(caseGroups, visibleCases = null) {
         , nodes[0]);
         
         // Get case info
-        const info = CASE_INFO[caseNumber];
+        const info = getCaseInfo(caseNumber, casesData);
         const color = CASE_COLORS[caseNumber] || '#666666';
         
         if (info) {

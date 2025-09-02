@@ -18,21 +18,27 @@ export const EMOJI_CONFIG = {
             displayLabel: 'APPROVED',
             caselineColor: '#4caf50',
             class: 'approved',
-            defaultVisible: true
+            defaultVisible: true,
+            metricDisplay: 4,  // Display order in header metrics
+            metricLabel: 'Approvals'  // Label for the metric
         },
         '⛔': { 
             legendLabel: 'Denied', 
             displayLabel: 'DENIED',
             caselineColor: '#f44336',
             class: 'denied',
-            defaultVisible: true
+            defaultVisible: true,
+            metricDisplay: 3,
+            metricLabel: 'Denials'
         },
         '📐': { 
             legendLabel: 'Plan', 
             displayLabel: 'PLAN',
             caselineColor: '#ffd700',
             class: 'plan',
-            defaultVisible: true
+            defaultVisible: true,
+            metricDisplay: 1,
+            metricLabel: 'Plan Submissions'
         },
         '🔍': { 
             legendLabel: 'Review', 
@@ -46,7 +52,9 @@ export const EMOJI_CONFIG = {
             displayLabel: '',
             caselineColor: 'inherit',  // Keep the incoming line color
             class: 'continuance',
-            defaultVisible: false  // Hidden by default
+            defaultVisible: false,  // Hidden by default
+            metricDisplay: 2,
+            metricLabel: 'Continuances'
         },
         '🏛️': { 
             legendLabel: 'Hearing', 

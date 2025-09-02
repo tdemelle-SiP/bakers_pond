@@ -15,9 +15,6 @@ import { setIsolationMode, getIsolationMode, clearIsolationMode, isIsolating, lo
 import { calculateStats, renderStats } from './stats.js';
 import { createLabelsWithCollisionDetection } from './label-layout.js';
 
-// Store for managing caseline nodes
-let allCaselineNodes = [];
-
 /**
  * Initialize render function to avoid circular dependency
  */
@@ -26,25 +23,17 @@ export function initRender(renderFunc) {
 }
 
 /**
- * Store caseline nodes for label refresh
- */
-export function storeCaselineNodes(nodes) {
-    allCaselineNodes = nodes;
-    // Store in state so renderer can access
-    updateState({ caselineNodes: nodes });
-}
-
-/**
  * Refresh labels when emoji visibility changes
  */
 export function refreshCaselineLabels() {
-    if (!allCaselineNodes || allCaselineNodes.length === 0) return;
+    // Get nodes from state (stored by renderer)
+    if (!state.caselineNodes || state.caselineNodes.length === 0) return;
     
     const caselineContainer = document.getElementById('caseline-container');
     if (!caselineContainer) return;
     
     // Filter to only visible nodes
-    const visibleNodes = allCaselineNodes.filter(node => {
+    const visibleNodes = state.caselineNodes.filter(node => {
         if (!node.emojiType) return true;
         const nodeElement = node.node;
         return nodeElement && nodeElement.style.display !== 'none';
@@ -139,18 +128,19 @@ export {
  * Initialize application with loaded data
  * This is the ONLY place initial state is set up
  */
-export function initializeApp(events, caseNumbers) {
+export function initializeApp(events, caseNumbers, casesData = []) {
     // Set up all initial state
     updateState({ 
         allEvents: events,
-        caseNumbers: caseNumbers
+        caseNumbers: caseNumbers,
+        casesData: casesData
     });
     
-    // Set default case selection if needed (all except Historical)
+    // Set default case selection if needed (use getDefaultCases which now checks casesData)
     if (!state.filters.selectedCases || state.filters.selectedCases.length === 0) {
         updateState({
             filters: {
-                selectedCases: caseNumbers.filter(c => c !== 'Historical')
+                selectedCases: getDefaultCases()
             }
         });
     }
@@ -400,17 +390,31 @@ export function updateUIFromState() {
     if (startInput && endInput) {
         // Format dates for input fields
         if (state.filters.startDate) {
-            startInput.value = state.filters.startDate instanceof Date 
-                ? state.filters.startDate.toISOString().split('T')[0]
-                : state.filters.startDate;
+            const startDate = state.filters.startDate;
+            if (startDate instanceof Date) {
+                startInput.value = startDate.toISOString().split('T')[0];
+            } else if (typeof startDate === 'string') {
+                // Remove quotes if present and extract date part
+                const cleanDate = startDate.replace(/"/g, '').split('T')[0];
+                startInput.value = cleanDate;
+            } else {
+                startInput.value = '';
+            }
         } else {
             startInput.value = '';
         }
         
         if (state.filters.endDate) {
-            endInput.value = state.filters.endDate instanceof Date
-                ? state.filters.endDate.toISOString().split('T')[0]
-                : state.filters.endDate;
+            const endDate = state.filters.endDate;
+            if (endDate instanceof Date) {
+                endInput.value = endDate.toISOString().split('T')[0];
+            } else if (typeof endDate === 'string') {
+                // Remove quotes if present and extract date part
+                const cleanDate = endDate.replace(/"/g, '').split('T')[0];
+                endInput.value = cleanDate;
+            } else {
+                endInput.value = '';
+            }
         } else {
             endInput.value = '';
         }

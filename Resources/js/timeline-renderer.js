@@ -4,7 +4,7 @@
  * No state modifications, only visualization
  */
 
-import { state } from './state-manager.js';
+import { state, updateState } from './state-manager.js';
 import { renderTimelineNodes } from './timeline-nodes.js';
 import { renderCaselineNodes } from './caseline-nodes.js';
 import { drawTimelineConnections, drawCaselineConnections } from './connections.js';
@@ -51,16 +51,13 @@ export function render() {
     const nodePositions = renderTimelineNodes(state.filteredEvents, dateRange, pixelsPerDay);
     const caselineData = renderCaselineNodes(state.filteredEvents, dateRange, pixelsPerDay);
     
-    // Get caseline nodes from state if we need to refresh labels
-    const caselineNodes = state.caselineNodes || caselineData.nodes;
-    
-    // Render labels with collision detection  
-    createLabelsWithCollisionDetection(caselineNodes, caselineContainer);
+    // Render labels with collision detection using the freshly rendered nodes
+    createLabelsWithCollisionDetection(caselineData.nodes, caselineContainer);
     
     // Render case titles
     const visibleCases = state.filters.selectedCases && state.filters.selectedCases.length > 0 ?
         state.filters.selectedCases : state.caseNumbers;
-    renderCaseTitles(caselineData.caseGroups, visibleCases);
+    renderCaseTitles(caselineData.caseGroups, visibleCases, state.casesData);
     
     // Draw connections
     drawTimelineConnections(nodePositions, connectionsContainer);
@@ -80,4 +77,7 @@ export function render() {
             });
         });
     }
+    
+    // Store caseline nodes for label refresh (simple approach from original)
+    updateState({ caselineNodes: caselineData.nodes });
 }

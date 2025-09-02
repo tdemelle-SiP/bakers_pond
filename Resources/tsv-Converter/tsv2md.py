@@ -158,3 +158,36 @@ with open(md_path, 'w', encoding='utf-8') as f:
     f.writelines(output)
 
 print(f"\nUpdated !!42_Mill_St_Timeline_Overview.md with {len(rows)-1} rows from Google Sheets TSV")
+
+# Process cases data if it exists
+cases_tsv_path = os.path.join(inbox_path, 'bakers-pond-cases-data.tsv')
+if os.path.exists(cases_tsv_path):
+    print("\nProcessing cases data...")
+    
+    # Read cases TSV
+    with open(cases_tsv_path, 'r', encoding='utf-8') as f:
+        reader = csv.reader(f, delimiter='\t')
+        case_rows = list(reader)
+    
+    if len(case_rows) > 1:  # Has header and data
+        # Append cases section to markdown
+        output.append('\n## Cases\n\n')
+        output.append('| Case Number | Year | Title | Default Visible |\n')
+        output.append('|-------------|------|-------|------------------|\n')
+        
+        # Process each case row (skip header)
+        for row in case_rows[1:]:
+            if len(row) >= 4:  # Case_Title, Case_Year, Case_Number, Default_Visibility
+                case_title = row[0]
+                case_year = row[1]
+                case_number = row[2]
+                default_visible = row[3]
+                output.append(f'| {case_number} | {case_year} | {case_title} | {default_visible} |\n')
+        
+        # Write updated markdown with cases
+        with open(md_path, 'w', encoding='utf-8') as f:
+            f.writelines(output)
+        
+        print(f"Added {len(case_rows)-1} cases to markdown file")
+else:
+    print("\nNo cases data file found (this is normal on first run)")

@@ -82,3 +82,68 @@ export function extractTableRows(markdownText) {
 export function getColumnNames() {
     return ['Date', 'Document', 'Case #', 'Mrkr', 'Procedural', 'Legal', 'Environmental'];
 }
+
+/**
+ * Extracts cases table from markdown text
+ * @param {string} markdownText - Raw markdown content
+ * @returns {Array<Object>} Array of case objects with caseNumber, year, title, defaultVisible
+ */
+export function extractCasesTable(markdownText) {
+    const lines = markdownText.split('\n');
+    
+    // Find the ## Cases section
+    const casesIndex = lines.findIndex(line => 
+        line.trim() === '## Cases'
+    );
+    
+    if (casesIndex === -1) {
+        console.warn('No cases section found in markdown');
+        return [];
+    }
+    
+    // Find the cases table header (should be a couple lines after ## Cases)
+    let headerIndex = -1;
+    for (let i = casesIndex + 1; i < lines.length && i < casesIndex + 5; i++) {
+        if (lines[i].includes('| Case Number |')) {
+            headerIndex = i;
+            break;
+        }
+    }
+    
+    if (headerIndex === -1) {
+        console.warn('No cases table header found');
+        return [];
+    }
+    
+    const cases = [];
+    
+    // Start after header and divider line
+    for (let i = headerIndex + 2; i < lines.length; i++) {
+        const line = lines[i].trim();
+        
+        // Stop at first non-table line
+        if (!line || !line.startsWith('|')) break;
+        
+        // Parse the row: | Case Number | Year | Title | Default Visible |
+        const parts = line
+            .split('|')
+            .slice(1, -1)
+            .map(p => p.trim());
+        
+        if (parts.length === 4) {
+            const caseNumber = parts[0];
+            const year = parts[1];
+            const title = parts[2];
+            const defaultVisible = parts[3].toUpperCase() !== 'FALSE';
+            
+            cases.push({
+                caseNumber,
+                year,
+                title,
+                defaultVisible
+            });
+        }
+    }
+    
+    return cases;
+}

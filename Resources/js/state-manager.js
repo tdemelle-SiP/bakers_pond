@@ -16,6 +16,7 @@ export const state = {
     allEvents: [],
     filteredEvents: [],
     caseNumbers: [],
+    casesData: [],  // Metadata about cases from markdown
     caselineNodes: [],
     scale: savedState.scale || DEFAULT_SCALE,
     fitToWindow: savedState.fitToWindow || false,
@@ -49,6 +50,7 @@ export function updateState(updates) {
     if (updates.allEvents) state.allEvents = updates.allEvents;
     if (updates.filteredEvents) state.filteredEvents = updates.filteredEvents;
     if (updates.caseNumbers) state.caseNumbers = updates.caseNumbers;
+    if (updates.casesData) state.casesData = updates.casesData;
     if (updates.caselineNodes) state.caselineNodes = updates.caselineNodes;
     if (updates.emojiVisibility) state.emojiVisibility = updates.emojiVisibility;
 }
@@ -62,9 +64,26 @@ export function getState() {
 }
 
 /**
- * Get default cases (all except Historical)
+ * Get default cases based on defaultVisible from cases data
  * @returns {string[]} Default case selection
  */
 export function getDefaultCases() {
-    return state.caseNumbers.filter(c => c !== 'Historical');
+    const casesData = state.casesData || [];
+    
+    // Build a map of case visibility
+    const visibilityMap = {};
+    casesData.forEach(caseData => {
+        // Handle Historical special case
+        if (caseData.caseNumber === '-' || caseData.title.toLowerCase() === 'historical') {
+            visibilityMap['Historical'] = caseData.defaultVisible;
+        } else {
+            visibilityMap[caseData.caseNumber] = caseData.defaultVisible;
+        }
+    });
+    
+    // Filter case numbers to only those with defaultVisible = true
+    return state.caseNumbers.filter(caseNum => {
+        // If we have visibility data, use it; otherwise default to true
+        return visibilityMap.hasOwnProperty(caseNum) ? visibilityMap[caseNum] : true;
+    });
 }

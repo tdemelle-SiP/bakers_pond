@@ -255,7 +255,8 @@ graph TD
 
 #### `main.js`
 **Purpose**: Application bootstrap
-- Loads and parses data
+- Loads and parses timeline data
+- Loads and parses cases metadata
 - Initializes application state via actions
 - Wires up UI components
 - Triggers initial render
@@ -264,11 +265,12 @@ graph TD
 **Purpose**: Centralized state management
 - Single source of truth for application state
 - State persistence integration
+- Default case selection from cases metadata
 - **Exports**:
   - `state` - Application state object
   - `updateState()` - Update state and persist
   - `getState()` - Get current state (read-only)
-  - `getDefaultCases()` - Get default case selection
+  - `getDefaultCases()` - Get default case selection based on defaultVisible
 
 #### `timeline-actions.js`
 **Purpose**: Business logic and state mutations
@@ -277,7 +279,7 @@ graph TD
 - UI synchronization
 - Emoji visibility management
 - **Key Functions**:
-  - `initializeApp()` - Set up initial state and render
+  - `initializeApp(events, caseNumbers, casesData)` - Set up initial state and render
   - `handleFilterUpdate()` - Central filter handler with date auto-computation
   - `handleScaleUpdate()` - Scale change handler
   - `isolateCase()` - Case isolation with state save/restore
@@ -288,24 +290,27 @@ graph TD
   - `applyEmojiVisibility()` - Apply emoji visibility state
   - `resetEmojiVisibility()` - Reset emoji visibility to default values from config
   - `toggleEmojiVisibility()` - Toggle specific emoji type
-  - `refreshCaselineLabels()` - Refresh labels after visibility change
-  - `storeCaselineNodes()` - Store nodes for label refresh
+  - `refreshCaselineLabels()` - Refresh labels after visibility change (uses stored nodes)
 
 #### `timeline-renderer.js`
 **Purpose**: Pure rendering orchestration
 - Coordinates all rendering modules
-- No state mutations
+- Stores caseline nodes in state for label refresh
 - Manages render pipeline
 - **Key Functions**:
-  - `render()` - Complete re-render from current state
+  - `render()` - Complete re-render from current state, stores nodes for refresh
 
 ### Data Processing
 
 #### `data-loader.js`
 **Purpose**: Fetch and extract markdown data
 - Cache-busting for fresh data
-- Table extraction from markdown
-- **Returns**: `{headers: string[], rows: string[][]}`
+- Timeline table extraction from markdown
+- Cases table extraction from markdown
+- **Functions**:
+  - `loadTableData()` - Fetches markdown file
+  - `extractTableRows()` - Extracts timeline table
+  - `extractCasesTable()` - Extracts cases metadata table
 
 #### `event-parser.js`
 **Purpose**: Parse table data into event objects
@@ -354,10 +359,14 @@ graph TD
 
 #### `case-titles.js`
 **Purpose**: Case headers above caseline
-- Year and case name display
+- Receives case metadata via parameters
+- Year and case name display from cases table
 - Color coding by case
 - Double-click for case isolation
 - Dynamic positioning
+- **Functions**:
+  - `getCaseInfo(caseNumber, casesData)` - Looks up case metadata
+  - `renderCaseTitles(caseGroups, visibleCases, casesData)` - Renders case title elements
 
 #### `label-layout.js`
 **Purpose**: Label collision avoidance
@@ -368,10 +377,11 @@ graph TD
 
 #### `stats.js`
 **Purpose**: Event statistics display
-- Count calculations (only caseline events for emoji stats)
+- Configuration-driven metrics from emoji config
+- Dynamic metric ordering via metricDisplay property
 - Emoji-aware statistics (respects visibility)
 - Real-time updates on filter changes
-- Shows/hides stats based on emoji visibility
+- Only displays metrics for emojis with metricDisplay property
 
 ### User Interface
 
@@ -398,7 +408,8 @@ graph TD
 - Legend labels and display text
 - Colors for caseline connections
 - CSS classes for visibility control
-- Default visibility settings (defaultVisible property)
+- Default visibility settings (`defaultVisible` property)
+- Metric display configuration (`metricDisplay` order, `metricLabel` text)
 - Special handling (bypass, inherit)
 
 #### `state-persistence.js`
@@ -420,6 +431,7 @@ state = {
     allEvents: Event[],           // All parsed events
     filteredEvents: Event[],      // Currently visible events
     caseNumbers: string[],        // All unique case numbers
+    casesData: CaseData[],        // Case metadata from markdown
     caselineNodes: Array,         // Stored caseline nodes for label refresh
     scale: number,                // Zoom level (0.2 - 3.0)
     fitToWindow: boolean,         // Auto-scale to viewport
@@ -433,8 +445,9 @@ state = {
 }
 ```
 
-## Event Object Structure
+## Data Object Structures
 
+### Event Object
 ```javascript
 {
     date: Date,                    // Parsed date object
@@ -453,6 +466,16 @@ state = {
 }
 ```
 
+### CaseData Object
+```javascript
+{
+    caseNumber: "338-0594",       // Case number (or "-" for Historical)
+    year: "2014",                 // Year of case
+    title: "House",               // Case title/name
+    defaultVisible: boolean       // Whether case is visible by default
+}
+```
+
 ## Key Features
 
 ### Hybrid Date Filtering
@@ -465,6 +488,13 @@ if (casesChanged && !state.filters.manualDateOverride) {
     state.filters.endDate = computedDates.endDate;
 }
 ```
+
+### Data-Driven Case Configuration
+Case metadata loaded from markdown:
+- Case titles, years, and numbers from Google Sheets
+- Default visibility configured per case
+- No hardcoded case information
+- Dynamic case discovery from events
 
 ### Case Isolation Mode
 Double-click case titles to focus on a single case:
@@ -481,6 +511,14 @@ Individual emoji types can be toggled:
 - Stats update to reflect visible emojis only
 - Connection lines remain visible
 - Double-click legend emoji for isolation mode
+
+### Configuration-Driven Metrics
+Header statistics are fully configuration-driven:
+- `metricDisplay` property controls display order (1, 2, 3...)
+- Absence of `metricDisplay` excludes emoji from metrics
+- `metricLabel` provides custom metric labels
+- Automatically respects emoji visibility settings
+- No hardcoded metric calculations
 
 ### Dynamic Column Mapping
 Handles multiple column name variations:
@@ -521,7 +559,8 @@ const findColumn = (names) => {
 └── state-persistence.js (LocalStorage)
 
 /Resources/tsv-Converter/
-└── tsv2md.py           (Python converter - header-based)
+├── tsv2md.py            (Converts TSV to markdown - timeline and cases tables)
+└── update_timeline.py   (Monitors Google Sheets, downloads TSV files)
 
 /Resources/
 ├── timeline.html        (HTML structure)

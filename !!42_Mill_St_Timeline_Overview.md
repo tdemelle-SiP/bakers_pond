@@ -178,3 +178,13 @@
 |  | message from Abby McCabe |  | 📧 |  |  |  |
 |  | acceptance of service |  |  |  |  |  |
 |  | Delapa Plan |  |  |  |  |  |
+
+## Cases
+
+| Case Number | Year | Title | Default Visible |
+|-------------|------|-------|------------------|
+| 338-0303 | 2001 | Initial | FALSE |
+| 338-0594 | 2014 | House | TRUE |
+| 338-0706 | 2020 | House | TRUE |
+| 338-0756 | 2023 | Dam | TRUE |
+| - | - | Historical | FALSE |
