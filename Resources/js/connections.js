@@ -150,16 +150,29 @@ export function drawCaselineConnections(caseGroups, container) {
             
             const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             line.setAttribute('x1', current.x);
-            // Calculate Y positions for connection lines to pass through exact center
+            // Calculate Y positions based on verticalPosition
             // Public nodes: TOP at 50% + 15px (50% - 20px + 35px)
             // Private nodes: TOP at 50% + 55px (50% + 20px + 35px)
+            // Inline nodes: TOP at 50% + 35px (centered on timeline)
             // Emoji visual center is further down due to line-height and glyph rendering
-            const y1 = current.isPrivate ? 
-                (sectionHeight * 0.5 + 55 + 12) : // Private center: TOP + 12px to visual center
-                (sectionHeight * 0.5 + 15 + 12);  // Public center: TOP + 12px to visual center
-            const y2 = next.isPrivate ? 
-                (sectionHeight * 0.5 + 55 + 12) : // Private center: TOP + 12px to visual center
-                (sectionHeight * 0.5 + 15 + 12);  // Public center: TOP + 12px to visual center
+            let y1;
+            if (current.verticalPosition === 'inline') {
+                y1 = sectionHeight * 0.5 + 35 + 12; // Inline center: TOP + 12px to visual center
+            } else if (current.verticalPosition === 'private') {
+                y1 = sectionHeight * 0.5 + 55 + 12; // Private center: TOP + 12px to visual center
+            } else {
+                y1 = sectionHeight * 0.5 + 15 + 12; // Public center: TOP + 12px to visual center
+            }
+            
+            let y2;
+            if (next.verticalPosition === 'inline') {
+                y2 = sectionHeight * 0.5 + 35 + 12; // Inline center: TOP + 12px to visual center
+            } else if (next.verticalPosition === 'private') {
+                y2 = sectionHeight * 0.5 + 55 + 12; // Private center: TOP + 12px to visual center
+            } else {
+                y2 = sectionHeight * 0.5 + 15 + 12; // Public center: TOP + 12px to visual center
+            }
+            
             line.setAttribute('y1', y1);
             line.setAttribute('x2', next.x);
             line.setAttribute('y2', y2);

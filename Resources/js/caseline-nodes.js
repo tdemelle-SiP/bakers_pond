@@ -166,7 +166,6 @@ export function renderCaselineNodes(events, dateRange, pixelsPerDay) {
             caselineColor: caselineColor,  // Can be 'inherit', 'bypass', or a color value
             emojiType: primaryConfig.class || null,  // Data attribute value for filtering
             verticalPosition: verticalPosition,  // 'public', 'private', or 'inline'
-            isPrivate: isBypassPositioned ? false : event.isPrivate,  // Keep for backwards compatibility
             caseNumber: event.caseNumber,
             date: event.date,
             event: event

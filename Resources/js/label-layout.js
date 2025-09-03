@@ -26,9 +26,9 @@ export function splitLabel(text) {
  * @param {boolean} isPrivate - Whether this is a private event
  * @returns {Object} {width, height} in pixels
  */
-export function measureLabel(text, isPrivate) {
+export function measureLabel(text, verticalPosition) {
     const el = document.createElement('div');
-    el.className = `node-label ${isPrivate ? 'node-label-below' : 'node-label-above'}`;
+    el.className = `node-label ${verticalPosition === 'private' ? 'node-label-below' : 'node-label-above'}`;
     el.style.position = 'absolute';
     el.style.visibility = 'hidden';
     el.style.transform = 'none';
@@ -137,7 +137,7 @@ export function createLabelsWithCollisionDetection(nodeData, container) {
         const labelText = splitLabel(node.label);
         
         // Measure the label
-        const { width, height } = measureLabel(labelText, node.isPrivate);
+        const { width, height } = measureLabel(labelText, node.verticalPosition);
         
         // Calculate base positions
         const baseX = node.x - width / 2;
@@ -148,11 +148,11 @@ export function createLabelsWithCollisionDetection(nodeData, container) {
         const sectionHeight = caselineSection ? caselineSection.offsetHeight : 300;
         
         // Calculate node Y positions (matching the CSS with title offset)
-        const nodeY = node.isPrivate ? 
+        const nodeY = node.verticalPosition === 'private' ? 
             (sectionHeight * 0.5 + 35 + 20) :  // Private: center + title offset + 20px
-            (sectionHeight * 0.5 + 35 - 20);   // Public: center + title offset - 20px
+            (sectionHeight * 0.5 + 35 - 20);   // Public/inline: center + title offset - 20px
         
-        if (node.isPrivate) {
+        if (node.verticalPosition === 'private') {
             // Labels below: top edge at fixed distance (30px) from node
             baseY = nodeY + 30;
         } else {
@@ -172,7 +172,7 @@ export function createLabelsWithCollisionDetection(nodeData, container) {
             x: baseX, // Will be adjusted by collision detection
             y: baseY,
             nodeX: node.x,
-            isPrivate: node.isPrivate
+            isPrivate: node.verticalPosition === 'private'
         });
     });
     
@@ -247,10 +247,15 @@ function drawLeaderLine(container, node, labelData) {
     const sectionHeight = caselineSection ? caselineSection.offsetHeight : 300;
     
     // Node position matches CSS: calc(50% ± 20px + 35px)
-    // Public nodes work fine, private nodes need more offset to reach center
-    const nodeCenterY = labelData.isPrivate ? 
-        (sectionHeight * 0.5 + 55 + 16) : // Private: needs more offset to reach emoji center
-        (sectionHeight * 0.5 + 15 + 8); // Public: working correctly as-is
+    // Calculate based on actual vertical position
+    let nodeCenterY;
+    if (node.verticalPosition === 'inline') {
+        nodeCenterY = sectionHeight * 0.5 + 35 + 8; // Inline: exactly at center
+    } else if (node.verticalPosition === 'private') {
+        nodeCenterY = sectionHeight * 0.5 + 55 + 16; // Private: below center
+    } else {
+        nodeCenterY = sectionHeight * 0.5 + 15 + 8; // Public: above center
+    }
     
     const labelEdgeY = labelData.isPrivate ? 
         labelData.y : // Top edge for labels below

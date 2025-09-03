@@ -82,7 +82,7 @@ export const EMOJI_CONFIG = {
             displayLabel: '',
             caselineColor: 'bypass',  // Skip this node when drawing caseline connections
             class: 'email',
-            defaultVisible: false
+            defaultVisible: true
         },
         '✏️': { 
             legendLabel: 'Prep', 
@@ -108,9 +108,9 @@ export const EMOJI_CONFIG = {
         '📄': { 
             legendLabel: 'Govt Form', 
             displayLabel: '',
-            caselineColor: 'inherit',
+            caselineColor: 'bypass',
             class: 'govt-form',
-            defaultVisible: false
+            defaultVisible: true
         }   
     },
 

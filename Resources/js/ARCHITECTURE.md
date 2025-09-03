@@ -469,6 +469,7 @@ state = {
     proceduralLabel: "APPROVED",  // Bold text override
     displayDetail: "Additional",  // Additional details
     markers: "🟢⭐",              // All markers from column
+    verticalPosition: "public" | "private" | "inline", // Position for caseline nodes
 }
 ```
 

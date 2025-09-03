@@ -262,6 +262,11 @@ export function initAllControls(options = {}) {
                 handleScrollUpdate(timelineContainer.scrollLeft);
             }, 100);
         });
+        
+        // Save scroll position immediately on page unload (for data refresh)
+        window.addEventListener('beforeunload', () => {
+            handleScrollUpdate(timelineContainer.scrollLeft);
+        });
     }
     
     // Reset button
