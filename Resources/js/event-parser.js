@@ -89,13 +89,27 @@ export function parseEvents(tableData) {
         
         // Check for label override in procedural column
         let proceduralLabel = null;
-        const labelMatch = procedural.match(/\*\*([^*]+)\*\*/);
-        if (labelMatch) {
-            proceduralLabel = labelMatch[1];
+        let labelEmphasis = null;  // Only set if high emphasis
+        
+        // Check for high emphasis first (!**text**!)
+        const highEmphasisMatch = procedural.match(/!\*\*([^*]+)\*\*!/);
+        if (highEmphasisMatch) {
+            proceduralLabel = highEmphasisMatch[1];
+            labelEmphasis = 'high';
+        } else {
+            // Check for regular emphasis (**text**)
+            const labelMatch = procedural.match(/\*\*([^*]+)\*\*/);
+            if (labelMatch) {
+                proceduralLabel = labelMatch[1];
+            }
         }
         
-        // Extract display detail (remove bold markers)
-        const displayDetail = procedural.replace(/\*\*/g, '').trim().substring(0, 100);
+        // Extract display detail (remove both types of markers)
+        const displayDetail = procedural
+            .replace(/!\*\*[^*]+\*\*!/g, '')  // Remove high emphasis
+            .replace(/\*\*[^*]+\*\*/g, '')    // Remove regular emphasis
+            .trim()
+            .substring(0, 100);
         
         // Basic flags
         const isPrivate = markers.includes('🔒');
@@ -117,6 +131,7 @@ export function parseEvents(tableData) {
             markers,
             procedural,
             proceduralLabel,
+            labelEmphasis,  // Add emphasis level
             displayDetail,
             isPrivate,
             hasMissingDoc,

@@ -477,3 +477,23 @@ export function checkActiveFilters() {
         resetButton.classList.toggle('active-filters', hasActiveFilters);
     }
 }
+
+/**
+ * Refresh timeline with new data while preserving current view settings
+ * @param {Array} newEvents - Fresh event data
+ * @param {Array} newCaseNumbers - Updated case numbers
+ * @param {Array} newCasesData - Updated cases metadata
+ */
+export function refreshTimelineData(newEvents, newCaseNumbers, newCasesData) {
+    // Update state (all state changes happen here, not in main.js)
+    state.allEvents = newEvents;
+    state.caseNumbers = newCaseNumbers;
+    state.casesData = newCasesData;
+    
+    // Re-apply current filters and render
+    handleFilterUpdate(
+        state.filters.selectedCases,
+        state.filters.startDate,
+        state.filters.endDate
+    );
+}

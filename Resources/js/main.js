@@ -13,7 +13,8 @@ import {
     handleFilterUpdate, 
     handleScaleUpdate, 
     calculateFitToWindowScale,
-    initRender
+    initRender,
+    refreshTimelineData
 } from './timeline-actions.js';
 import { render } from './timeline-renderer.js';
 
@@ -54,6 +55,41 @@ async function init() {
         onScaleUpdate: handleScaleUpdate,
         calculateFitScale: calculateFitToWindowScale
     });
+    
+    // Add refresh button handler
+    const refreshButton = document.getElementById('refresh-timeline');
+    if (refreshButton) {
+        refreshButton.addEventListener('click', async () => {
+            refreshButton.disabled = true;
+            refreshButton.textContent = '⟳';  // Show spinning icon
+            
+            try {
+                // Reload data and re-render
+                const newMarkdown = await loadTableData();
+                const newTableData = extractTableRows(newMarkdown);
+                const newEvents = parseEvents(newTableData);
+                const newCaseNumbers = extractCaseNumbers(newEvents);
+                const newCasesData = extractCasesTable(newMarkdown);
+                
+                // Delegate state updates to actions layer (maintains architecture)
+                refreshTimelineData(newEvents, newCaseNumbers, newCasesData);
+                
+                // Flash success feedback
+                refreshButton.textContent = '✓';
+                setTimeout(() => {
+                    refreshButton.textContent = '↻';
+                }, 1000);
+            } catch (error) {
+                console.error('Refresh failed:', error);
+                refreshButton.textContent = '✗';
+                setTimeout(() => {
+                    refreshButton.textContent = '↻';
+                }, 2000);
+            } finally {
+                refreshButton.disabled = false;
+            }
+        });
+    }
 }
 
 // Start when DOM is ready

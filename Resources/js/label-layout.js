@@ -184,6 +184,11 @@ export function createLabelsWithCollisionDetection(nodeData, container) {
         const label = document.createElement('div');
         label.className = `node-label ${ld.isPrivate ? 'node-label-below' : 'node-label-above'}`;
         
+        // Add high emphasis class if needed
+        if (ld.node.labelEmphasis === 'high') {
+            label.classList.add('node-label-high');
+        }
+        
         // Add emoji data attribute for filtering
         if (ld.node.emojiType) {
             label.dataset.emojiType = ld.node.emojiType;

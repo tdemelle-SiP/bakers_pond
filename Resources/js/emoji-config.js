@@ -108,7 +108,7 @@ export const EMOJI_CONFIG = {
         '📄': { 
             legendLabel: 'Govt Form', 
             displayLabel: '',
-            caselineColor: 'bypass',
+            caselineColor: 'inherit',
             class: 'govt-form',
             defaultVisible: true
         }   

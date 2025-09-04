@@ -99,6 +99,35 @@ body {
     color: white;
     font-size: 18px;
     font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.refresh-button {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 18px;
+    cursor: pointer;
+    color: white;
+    transition: all 0.2s;
+    line-height: 1;
+}
+
+.refresh-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.refresh-button:active {
+    transform: scale(0.95);
+}
+
+.refresh-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 /* ========== 3. TIMELINE CONTAINER & SECTIONS ========== */
@@ -382,6 +411,14 @@ body {
 
 .node-label-below {
     /* Will be positioned dynamically by JS - top edge 30px below node */
+}
+
+/* High emphasis labels */
+.node-label-high {
+    font-weight: bold;
+    color: #ff0000;
+    font-size: 11px;
+    text-shadow: 0 0 2px rgba(255, 0, 0, 0.3);
 }
 
 /* Status colors for labels - text only, no backgrounds */

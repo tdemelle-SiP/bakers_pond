@@ -260,6 +260,7 @@ graph TD
 - Initializes application state via actions
 - Wires up UI components
 - Triggers initial render
+- Initializes refresh button (delegates to actions)
 
 #### `state-manager.js`
 **Purpose**: Centralized state management
@@ -292,6 +293,7 @@ graph TD
   - `resetEmojiVisibility()` - Reset emoji visibility to default values from config
   - `toggleEmojiVisibility()` - Toggle specific emoji type
   - `refreshCaselineLabels()` - Refresh labels after visibility change (uses stored nodes)
+  - `refreshTimelineData()` - Refresh data while preserving view settings
 
 #### `timeline-renderer.js`
 **Purpose**: Pure rendering orchestration
@@ -467,6 +469,7 @@ state = {
     hasMissingDoc: boolean,       // Has ❌ marker
     caselineEmojis: ["🏛️", "⛔"], // Array of emojis for caseline (supports multiple)
     proceduralLabel: "APPROVED",  // Bold text override
+    labelEmphasis: "high" | null,  // High emphasis (!**text**!) or null for normal
     displayDetail: "Additional",  // Additional details
     markers: "🟢⭐",              // All markers from column
     verticalPosition: "public" | "private" | "inline", // Position for caseline nodes

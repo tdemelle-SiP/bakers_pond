@@ -163,6 +163,7 @@ export function renderCaselineNodes(events, dateRange, pixelsPerDay) {
             emojis: emojis,
             displayEmoji: emojis.join(''),
             label: nodeLabel,
+            labelEmphasis: event.labelEmphasis,  // Pass emphasis level through (null or 'high')
             caselineColor: caselineColor,  // Can be 'inherit', 'bypass', or a color value
             emojiType: primaryConfig.class || null,  // Data attribute value for filtering
             verticalPosition: verticalPosition,  // 'public', 'private', or 'inline'
