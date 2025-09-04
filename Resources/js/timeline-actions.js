@@ -11,7 +11,7 @@ import { calculateDateRange } from './date-scale.js';
 import { getEmojiArray } from './emoji-config.js';
 // Import render dynamically to avoid circular dependency
 let render;
-import { setIsolationMode, getIsolationMode, clearIsolationMode, isIsolating, loadEmojiVisibility, saveEmojiVisibility, saveScrollPosition } from './state-persistence.js';
+import { setIsolationMode, getIsolationMode, clearIsolationMode, isIsolating, loadEmojiVisibility, saveEmojiVisibility } from './state-persistence.js';
 import { calculateStats, renderStats } from './stats.js';
 import { createLabelsWithCollisionDetection } from './label-layout.js';
 
@@ -20,14 +20,6 @@ import { createLabelsWithCollisionDetection } from './label-layout.js';
  */
 export function initRender(renderFunc) {
     render = renderFunc;
-}
-
-/**
- * Handle scroll position update
- */
-export function handleScrollUpdate(scrollPosition) {
-    updateState({ scrollPosition });
-    saveScrollPosition(scrollPosition);
 }
 
 /**

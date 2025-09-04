@@ -283,7 +283,6 @@ graph TD
   - `initializeApp(events, caseNumbers, casesData)` - Set up initial state and render
   - `handleFilterUpdate()` - Central filter handler with date auto-computation
   - `handleScaleUpdate()` - Scale change handler
-  - `handleScrollUpdate()` - Save scroll position to state and localStorage
   - `isolateCase()` - Case isolation with state save/restore
   - `resetToDefaults()` - Reset all filters
   - `updateUIFromState()` - Sync all UI to state
@@ -300,9 +299,8 @@ graph TD
 - Coordinates all rendering modules
 - Stores caseline nodes in state for label refresh
 - Manages render pipeline
-- Restores scroll position after render
 - **Key Functions**:
-  - `render()` - Complete re-render from current state, stores nodes for refresh, restores scroll
+  - `render()` - Complete re-render from current state, stores nodes for refresh
 
 ### Data Processing
 
@@ -396,7 +394,6 @@ graph TD
 - Scale slider
 - Fit-to-window toggle
 - Mouse wheel horizontal scrolling
-- Scroll position tracking
 - Delegates all actions to timeline-actions
 
 #### `legend.js`
@@ -422,13 +419,11 @@ graph TD
 - Filter state persistence
 - Scale/zoom persistence
 - Emoji visibility persistence
-- Scroll position persistence
 - Isolation mode tracking
 - **Storage Keys**:
   - `timeline-filters`
   - `timeline-scale`
   - `timeline-emoji-visibility`
-  - `timeline-scroll-position`
   - `timeline-isolation-mode`
 
 ## State Structure
@@ -443,7 +438,6 @@ state = {
     scale: number,                // Zoom level (0.2 - 3.0)
     fitToWindow: boolean,         // Auto-scale to viewport
     emojiVisibility: Object,      // Emoji type visibility states
-    scrollPosition: number,       // Horizontal scroll position
     filters: {
         startDate: Date | null,   // Filter start
         endDate: Date | null,     // Filter end

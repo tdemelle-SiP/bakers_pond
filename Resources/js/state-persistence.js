@@ -11,8 +11,7 @@ const STORAGE_KEYS = {
     SELECTED_CASES: STORAGE_PREFIX + 'selected-cases',
     SCALE: STORAGE_PREFIX + 'scale',
     FIT_TO_WINDOW: STORAGE_PREFIX + 'fit-to-window',
-    EMOJI_VISIBILITY: STORAGE_PREFIX + 'emoji-visibility',
-    SCROLL_POSITION: STORAGE_PREFIX + 'scroll-position'
+    EMOJI_VISIBILITY: STORAGE_PREFIX + 'emoji-visibility'
 };
 
 /**
@@ -161,23 +160,6 @@ export function isIsolating(type, target) {
 }
 
 /**
- * Save scroll position
- * @param {number} scrollPosition - Horizontal scroll position
- */
-export function saveScrollPosition(scrollPosition) {
-    saveState(STORAGE_KEYS.SCROLL_POSITION, scrollPosition);
-}
-
-/**
- * Load scroll position
- * @returns {number} Saved scroll position or 0
- */
-export function loadScrollPosition() {
-    const saved = loadState(STORAGE_KEYS.SCROLL_POSITION);
-    return saved ? parseFloat(saved) : 0;
-}
-
-/**
  * Initialize state from localStorage on page load
  * @returns {Object} Complete saved state
  */
@@ -185,12 +167,10 @@ export function initializeState() {
     const filters = loadFilterState();
     const scale = loadScaleState();
     const emojiVisibility = loadEmojiVisibility();
-    const scrollPosition = loadScrollPosition();
     
     return {
         filters,
         ...scale,
-        emojiVisibility,
-        scrollPosition
+        emojiVisibility
     };
 }
