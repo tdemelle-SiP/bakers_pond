@@ -106,10 +106,10 @@ export const EMOJI_CONFIG = {
             defaultVisible: true
         },
         '📄': { 
-            legendLabel: 'Govt Form', 
+            legendLabel: 'Document', 
             displayLabel: '',
-            caselineColor: 'inherit',
-            class: 'govt-form',
+            caselineColor: 'bypass',
+            class: 'document',
             defaultVisible: true
         }   
     },
