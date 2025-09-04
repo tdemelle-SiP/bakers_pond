@@ -82,9 +82,10 @@ export function render() {
     updateState({ caselineNodes: caselineData.nodes });
     
     // Restore scroll position after render completes
-    if (container && state.scrollPosition) {
+    const scrollContainer = document.querySelector('.main-content');
+    if (scrollContainer && state.scrollPosition) {
         requestAnimationFrame(() => {
-            container.scrollLeft = state.scrollPosition;
+            scrollContainer.scrollLeft = state.scrollPosition;
         });
     }
 }
