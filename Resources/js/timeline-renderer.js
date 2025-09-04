@@ -11,7 +11,7 @@ import { drawTimelineConnections, drawCaselineConnections } from './connections.
 import { createLabelsWithCollisionDetection } from './label-layout.js';
 import { renderCaseTitles } from './case-titles.js';
 import { calculateStats, renderStats } from './stats.js';
-import { calculateDateRange, drawYearMarkers, calculateTimelineWidth, setContainerWidth } from './date-scale.js';
+import { calculateDateRange, drawYearMarkers, calculateTimelineWidth, setContainerWidth, getXPosition } from './date-scale.js';
 
 /**
  * Re-render the timeline with current state
@@ -80,4 +80,14 @@ export function render() {
     
     // Store caseline nodes for label refresh (simple approach from original)
     updateState({ caselineNodes: caselineData.nodes });
+    
+    // Restore focus date position if exists
+    const scrollContainer = document.querySelector('.main-content');
+    if (scrollContainer && state.focusDate) {
+        const focusX = getXPosition(state.focusDate, dateRange.startDate, pixelsPerDay);
+        const scrollPosition = focusX - (scrollContainer.clientWidth / 2);
+        requestAnimationFrame(() => {
+            scrollContainer.scrollLeft = scrollPosition;
+        });
+    }
 }

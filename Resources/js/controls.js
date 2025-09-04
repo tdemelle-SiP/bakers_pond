@@ -3,7 +3,7 @@
  * Handles user controls: date filters, case dropdown, scale slider, fit-to-window
  */
 
-import { resetToDefaults, resetEmojiVisibility } from './timeline-actions.js';
+import { resetToDefaults, resetEmojiVisibility, handleScrollForFocus } from './timeline-actions.js';
 
 /**
  * Initialize date filter controls
@@ -252,6 +252,19 @@ export function initAllControls(options = {}) {
     // Mouse wheel scrolling
     initMouseWheelScroll();
     
+    // Track focus date when scrolling
+    const scrollContainer = document.querySelector('.main-content');
+    if (scrollContainer) {
+        let scrollTimeout;
+        scrollContainer.addEventListener('scroll', () => {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                const scrollLeft = scrollContainer.scrollLeft;
+                const viewportWidth = scrollContainer.clientWidth;
+                handleScrollForFocus(scrollLeft, viewportWidth);
+            }, 100);
+        });
+    }
     
     // Reset button
     const resetButton = document.getElementById('reset-filters');

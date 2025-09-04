@@ -7,11 +7,11 @@
 import { state, updateState, getDefaultCases } from './state-manager.js';
 import { applyFilters } from './filters.js';
 import { getEventDateRange } from './event-parser.js';
-import { calculateDateRange } from './date-scale.js';
+import { calculateDateRange, getDateFromPosition } from './date-scale.js';
 import { getEmojiArray } from './emoji-config.js';
 // Import render dynamically to avoid circular dependency
 let render;
-import { setIsolationMode, getIsolationMode, clearIsolationMode, isIsolating, loadEmojiVisibility, saveEmojiVisibility } from './state-persistence.js';
+import { setIsolationMode, getIsolationMode, clearIsolationMode, isIsolating, loadEmojiVisibility, saveEmojiVisibility, saveFocusDate } from './state-persistence.js';
 import { calculateStats, renderStats } from './stats.js';
 import { createLabelsWithCollisionDetection } from './label-layout.js';
 
@@ -20,6 +20,19 @@ import { createLabelsWithCollisionDetection } from './label-layout.js';
  */
 export function initRender(renderFunc) {
     render = renderFunc;
+}
+
+/**
+ * Handle scroll event to update focus date
+ * @param {number} scrollLeft - Current scroll position
+ * @param {number} viewportWidth - Width of viewport
+ */
+export function handleScrollForFocus(scrollLeft, viewportWidth) {
+    const viewportCenter = scrollLeft + (viewportWidth / 2);
+    const dateRange = calculateDateRange(state.filteredEvents);
+    const focusDate = getDateFromPosition(viewportCenter, dateRange.startDate, state.scale);
+    updateState({ focusDate });
+    saveFocusDate(focusDate);
 }
 
 /**

@@ -293,14 +293,16 @@ graph TD
   - `toggleEmojiVisibility()` - Toggle specific emoji type
   - `refreshCaselineLabels()` - Refresh labels after visibility change (uses stored nodes)
   - `refreshTimelineData()` - Refresh data while preserving view settings
+  - `handleScrollForFocus()` - Calculate and save focus date from scroll position
 
 #### `timeline-renderer.js`
 **Purpose**: Pure rendering orchestration
 - Coordinates all rendering modules
 - Stores caseline nodes in state for label refresh
 - Manages render pipeline
+- Restores focus date position after render
 - **Key Functions**:
-  - `render()` - Complete re-render from current state, stores nodes for refresh
+  - `render()` - Complete re-render from current state, stores nodes for refresh, restores focus
 
 ### Data Processing
 
@@ -334,6 +336,7 @@ graph TD
 #### `date-scale.js`
 **Purpose**: Date positioning and scaling
 - Date to pixel conversion
+- Pixel to date conversion
 - Timeline width calculations
 - Year marker generation
 - Container sizing
@@ -419,11 +422,13 @@ graph TD
 - Filter state persistence
 - Scale/zoom persistence
 - Emoji visibility persistence
+- Focus date persistence
 - Isolation mode tracking
 - **Storage Keys**:
   - `timeline-filters`
   - `timeline-scale`
   - `timeline-emoji-visibility`
+  - `timeline-focus-date`
   - `timeline-isolation-mode`
 
 ## State Structure
@@ -438,6 +443,7 @@ state = {
     scale: number,                // Zoom level (0.2 - 3.0)
     fitToWindow: boolean,         // Auto-scale to viewport
     emojiVisibility: Object,      // Emoji type visibility states
+    focusDate: Date | null,       // Date at center of viewport
     filters: {
         startDate: Date | null,   // Filter start
         endDate: Date | null,     // Filter end

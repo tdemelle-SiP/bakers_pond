@@ -11,7 +11,8 @@ const STORAGE_KEYS = {
     SELECTED_CASES: STORAGE_PREFIX + 'selected-cases',
     SCALE: STORAGE_PREFIX + 'scale',
     FIT_TO_WINDOW: STORAGE_PREFIX + 'fit-to-window',
-    EMOJI_VISIBILITY: STORAGE_PREFIX + 'emoji-visibility'
+    EMOJI_VISIBILITY: STORAGE_PREFIX + 'emoji-visibility',
+    FOCUS_DATE: STORAGE_PREFIX + 'focus-date'
 };
 
 /**
@@ -160,6 +161,23 @@ export function isIsolating(type, target) {
 }
 
 /**
+ * Save focus date
+ * @param {Date} focusDate - Date at center of viewport
+ */
+export function saveFocusDate(focusDate) {
+    saveState(STORAGE_KEYS.FOCUS_DATE, focusDate.toISOString());
+}
+
+/**
+ * Load focus date
+ * @returns {Date|null} Saved focus date or null
+ */
+export function loadFocusDate() {
+    const saved = loadState(STORAGE_KEYS.FOCUS_DATE);
+    return saved ? new Date(saved) : null;
+}
+
+/**
  * Initialize state from localStorage on page load
  * @returns {Object} Complete saved state
  */
@@ -167,10 +185,12 @@ export function initializeState() {
     const filters = loadFilterState();
     const scale = loadScaleState();
     const emojiVisibility = loadEmojiVisibility();
+    const focusDate = loadFocusDate();
     
     return {
         filters,
         ...scale,
-        emojiVisibility
+        emojiVisibility,
+        focusDate
     };
 }

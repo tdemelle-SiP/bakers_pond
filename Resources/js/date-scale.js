@@ -46,6 +46,21 @@ export function getXPosition(date, startDate, pixelsPerDay) {
 }
 
 /**
+ * Convert X coordinate to date
+ * @param {number} xPosition - X coordinate
+ * @param {Date} startDate - Timeline start date
+ * @param {number} pixelsPerDay - Scale factor
+ * @returns {Date} Date at position
+ */
+export function getDateFromPosition(xPosition, startDate, pixelsPerDay) {
+    const pixelsFromStart = xPosition - TIMELINE_LEFT_OFFSET;
+    const daysFromStart = pixelsFromStart / pixelsPerDay;
+    const date = new Date(startDate);
+    date.setDate(date.getDate() + daysFromStart);
+    return date;
+}
+
+/**
  * Calculate timeline width
  * @param {number} totalDays - Total days in range
  * @param {number} pixelsPerDay - Scale factor
