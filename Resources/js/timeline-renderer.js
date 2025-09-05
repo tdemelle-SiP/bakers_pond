@@ -51,8 +51,24 @@ export function render() {
     const nodePositions = renderTimelineNodes(state.filteredEvents, dateRange, pixelsPerDay);
     const caselineData = renderCaselineNodes(state.filteredEvents, dateRange, pixelsPerDay);
     
-    // Render labels with collision detection using the freshly rendered nodes
-    createLabelsWithCollisionDetection(caselineData.nodes, caselineContainer);
+    // Apply emoji visibility BEFORE creating labels
+    if (state.emojiVisibility) {
+        Object.entries(state.emojiVisibility).forEach(([emojiClass, isVisible]) => {
+            const elements = document.querySelectorAll(`[data-emoji-type="${emojiClass}"]`);
+            elements.forEach(element => {
+                element.style.display = isVisible === false ? 'none' : '';
+            });
+        });
+    }
+    
+    // Filter to only visible nodes for label creation
+    const visibleNodes = caselineData.nodes.filter(node => {
+        if (!node.node) return false;
+        return node.node.style.display !== 'none';
+    });
+    
+    // Render labels with collision detection using only visible nodes
+    createLabelsWithCollisionDetection(visibleNodes, caselineContainer);
     
     // Render case titles
     const visibleCases = state.filters.selectedCases && state.filters.selectedCases.length > 0 ?
@@ -67,16 +83,6 @@ export function render() {
     const emojiVisibility = state.emojiVisibility || {};
     const stats = calculateStats(state.filteredEvents, emojiVisibility);
     renderStats(stats, emojiVisibility);
-    
-    // Apply emoji visibility from state
-    if (state.emojiVisibility) {
-        Object.entries(state.emojiVisibility).forEach(([emojiClass, isVisible]) => {
-            const elements = document.querySelectorAll(`[data-emoji-type="${emojiClass}"]`);
-            elements.forEach(element => {
-                element.style.display = isVisible === false ? 'none' : '';
-            });
-        });
-    }
     
     // Store caseline nodes for label refresh (simple approach from original)
     updateState({ caselineNodes: caselineData.nodes });
