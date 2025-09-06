@@ -1,0 +1,278 @@
+// main.js
+// - Creates DOM structure
+// - Sets up event listeners
+// - Calls state.js on load
+// - Calls state.js on user input
+
+// state.js
+// - Loads TSV data
+// - Loads saved preferences
+// - Updates state
+// - Calls render.js
+
+// render.js
+// - Updates controls to reflect state
+// - Updates timeline to reflect state
+
+import { render } from './render.js';
+
+// Import existing parsing and persistence functions
+import { loadTableData, extractTableRows, extractCasesTable } from '../js/data-loader.js';
+import { parseEvents } from '../js/event-parser.js';
+import { applyFilters } from '../js/filters.js';
+import { 
+    loadFilterState, 
+    saveFilterState,
+    loadScaleState,
+    saveScaleState,
+    loadEmojiVisibility,
+    saveEmojiVisibility,
+    loadScrollPosition,
+    saveScrollPosition,
+    setIsolationMode,
+    getIsolationMode,
+    clearIsolationMode,
+    isIsolating
+} from '../js/state-persistence.js';
+
+// Helper function to clear containers before refresh
+function clearContainers() {
+    const containers = [
+        'legend-container',
+        'case-checkboxes',
+        'stats-container',
+        'caseline-container',
+        'year-markers-container',
+        'connections-container'
+    ];
+    
+    containers.forEach(id => {
+        const container = document.getElementById(id);
+        if (container) {
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+        }
+    });
+    
+    // Show loading state
+    const loading = document.getElementById('loading');
+    if (loading) loading.style.display = 'block';
+    
+    const content = document.getElementById('timeline-content');
+    if (content) content.style.display = 'none';
+}
+
+// State object - structure from existing state-manager.js
+const state = {
+    allEvents: [],
+    filteredEvents: [],
+    caseNumbers: [],
+    casesData: [],  // Metadata about cases from markdown
+    scale: 0.8,
+    fitToWindow: false,
+    emojiVisibility: {},
+    filters: {
+        startDate: null,
+        endDate: null,
+        selectedCases: [],
+        manualDateOverride: false
+    },
+    scrollPosition: 0
+};
+
+// Load data and saved preferences
+export async function loadData() {
+    try {
+        // Load markdown file using existing data-loader
+        const markdownText = await loadTableData();
+        
+        // Extract timeline table and parse events
+        const tableData = extractTableRows(markdownText);
+        state.allEvents = parseEvents(tableData);
+        
+        // Extract cases metadata
+        state.casesData = extractCasesTable(markdownText);
+        
+        // Get unique case numbers from events
+        const caseNumbersSet = new Set();
+        state.allEvents.forEach(event => {
+            if (event.caseNumber) {
+                caseNumbersSet.add(event.caseNumber);
+            }
+        });
+        state.caseNumbers = Array.from(caseNumbersSet).sort();
+        
+        // Load saved preferences using existing persistence functions
+        const savedFilters = loadFilterState();
+        const savedScale = loadScaleState();
+        const savedEmojiVisibility = loadEmojiVisibility();
+        const savedScrollPosition = loadScrollPosition();
+        
+        // Apply saved preferences
+        if (savedFilters.selectedCases) {
+            state.filters.selectedCases = savedFilters.selectedCases;
+        } else {
+            // Default to cases marked as defaultVisible
+            state.filters.selectedCases = getDefaultCases();
+        }
+        
+        if (savedFilters.startDate) state.filters.startDate = savedFilters.startDate;
+        if (savedFilters.endDate) state.filters.endDate = savedFilters.endDate;
+        
+        state.scale = savedScale.scale || 0.8;
+        state.fitToWindow = savedScale.fitToWindow || false;
+        state.emojiVisibility = savedEmojiVisibility;
+        state.scrollPosition = savedScrollPosition;
+        
+        // Apply filters to get filteredEvents
+        state.filteredEvents = applyFilters(state.allEvents, state.filters);
+        
+        // Call render with state
+        render(state);
+        
+    } catch (error) {
+        console.error('Failed to load data:', error);
+        throw error;
+    }
+}
+
+// Get default cases based on defaultVisible from cases data
+function getDefaultCases() {
+    // Build a map of case visibility
+    const visibilityMap = {};
+    state.casesData.forEach(caseData => {
+        // Handle Historical special case
+        if (caseData.caseNumber === '-' || caseData.title.toLowerCase() === 'historical') {
+            visibilityMap['Historical'] = caseData.defaultVisible;
+        } else {
+            visibilityMap[caseData.caseNumber] = caseData.defaultVisible;
+        }
+    });
+    
+    // Filter case numbers to only those with defaultVisible = true
+    return state.caseNumbers.filter(caseNum => {
+        return visibilityMap.hasOwnProperty(caseNum) ? visibilityMap[caseNum] : true;
+    });
+}
+
+// Update state based on user input
+export function update(type, data) {
+    switch(type) {
+        case 'dateFilter':
+            state.filters.startDate = data.startDate || null;
+            state.filters.endDate = data.endDate || null;
+            state.filters.manualDateOverride = true; // User manually set dates
+            saveFilterState(state.filters);
+            break;
+            
+        case 'scale':
+            state.scale = data.scale;
+            state.fitToWindow = false;
+            saveScaleState(state.scale, state.fitToWindow);
+            break;
+            
+        case 'fit':
+            state.fitToWindow = data.fitToWindow;
+            if (data.fitToWindow) {
+                // Calculate scale to fit window
+                const width = window.innerWidth - 200;
+                // Calculate based on actual date range
+                if (state.filteredEvents.length > 0) {
+                    const dates = state.filteredEvents.map(e => new Date(e.date));
+                    const minDate = new Date(Math.min(...dates));
+                    const maxDate = new Date(Math.max(...dates));
+                    const days = Math.ceil((maxDate - minDate) / (1000 * 60 * 60 * 24));
+                    state.scale = Math.min(3, Math.max(0.2, width / days));
+                }
+            }
+            saveScaleState(state.scale, state.fitToWindow);
+            break;
+            
+        case 'reset':
+            state.filters.selectedCases = getDefaultCases();
+            state.filters.startDate = null;
+            state.filters.endDate = null;
+            state.filters.manualDateOverride = false;
+            state.emojiVisibility = {};
+            state.scale = 0.8;
+            state.fitToWindow = false;
+            
+            saveFilterState(state.filters);
+            saveEmojiVisibility(state.emojiVisibility);
+            saveScaleState(state.scale, state.fitToWindow);
+            break;
+            
+        case 'refresh':
+            clearContainers();
+            loadData();
+            return; // loadData will call render
+            
+        case 'caseToggle':
+            state.filters.selectedCases = data.selectedCases || [];
+            saveFilterState(state.filters);
+            break;
+            
+        case 'emojiToggle':
+            state.emojiVisibility[data.emoji] = data.visible;
+            saveEmojiVisibility(state.emojiVisibility);
+            break;
+            
+        case 'scroll':
+            state.scrollPosition = data.scrollPosition || 0;
+            saveScrollPosition(state.scrollPosition);
+            break;
+            
+        case 'isolate':
+            // Save current state before isolation
+            const previousState = {
+                selectedCases: [...state.filters.selectedCases],
+                emojiVisibility: {...state.emojiVisibility}
+            };
+            
+            if (data.type === 'case') {
+                state.filters.selectedCases = [data.target];
+                setIsolationMode('case', data.target, previousState);
+            } else if (data.type === 'emoji') {
+                // Hide all emojis except the target
+                Object.keys(state.emojiVisibility).forEach(emoji => {
+                    state.emojiVisibility[emoji] = emoji === data.target;
+                });
+                setIsolationMode('emoji', data.target, previousState);
+            }
+            
+            saveFilterState(state.filters);
+            saveEmojiVisibility(state.emojiVisibility);
+            break;
+            
+        case 'exitIsolation':
+            const isolation = getIsolationMode();
+            if (isolation.previousState) {
+                state.filters.selectedCases = isolation.previousState.selectedCases;
+                state.emojiVisibility = isolation.previousState.emojiVisibility;
+                
+                saveFilterState(state.filters);
+                saveEmojiVisibility(state.emojiVisibility);
+                clearIsolationMode();
+            }
+            break;
+    }
+    
+    // Re-apply filters if needed
+    if (['dateFilter', 'caseToggle', 'reset', 'isolate', 'exitIsolation'].includes(type)) {
+        state.filteredEvents = applyFilters(state.allEvents, state.filters);
+    }
+    
+    // Call render with state
+    render(state);
+}
+
+// Export helper to check isolation state
+export function checkIsolation(type, target) {
+    return isIsolating(type, target);
+}
+
+// Export helper to get current state (read-only)
+export function getState() {
+    return { ...state };
+}

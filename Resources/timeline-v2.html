@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>42 Mill Street Timeline v3</title>
+    <link rel="stylesheet" href="timeline.css">
+    
+    <!-- Additional styles -->
+    <style>
+        /* Continuance toggle functionality */
+        .hide-continuances .continuance { 
+            display: none !important; 
+        }
+        
+        /* Clear module boundaries */
+        #timeline-container {
+            position: relative;
+        }
+        
+        .caseline-node {
+            position: absolute;
+            z-index: 10;
+        }
+        
+        .label {
+            position: absolute;
+            z-index: 20;
+        }
+        
+        .connection {
+            position: absolute;
+            z-index: 5;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sticky Navigation Header -->
+    <nav class="sticky-nav">
+        <!-- Top Row: Title and Stats -->
+        <div class="nav-top-row">
+            <a href="https://github.com/tdemelle-SiP/bakers_pond/blob/master/README.md" class="nav-link">← Back to README</a>
+            <div class="nav-title">
+                42 Mill Street Timeline v3
+                <button id="refresh-timeline" class="refresh-button" title="Refresh timeline data">
+                    ↻
+                </button>
+            </div>
+            <div id="stats-container" class="stats-container"></div>
+        </div>
+        
+        <!-- Middle Row: Legend -->
+        <div class="nav-bottom-row">
+            <div id="legend-container" class="legend"></div>
+        </div>
+        
+        <!-- Bottom Row: Filters and Controls -->
+        <div class="nav-filter-row">
+            <!-- Date Range Filter -->
+            <div class="date-filter-group">
+                <div class="filter-group">
+                    <label class="filter-label">From:</label>
+                    <input type="date" id="filter-start-date" class="filter-input">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">To:</label>
+                    <input type="date" id="filter-end-date" class="filter-input">
+                </div>
+                <button id="apply-date-filter" class="filter-button">Apply Date Range</button>
+            </div>
+            
+            <!-- Case Filter -->
+            <div class="filter-group">
+                <label class="filter-label">Case:</label>
+                <div class="case-filter-container">
+                    <button id="case-filter-button" class="case-filter-button">
+                        <span id="case-filter-text">All Cases</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div id="case-filter-dropdown" class="case-filter-dropdown" style="display: none;">
+                        <div class="case-filter-controls">
+                            <button id="select-all-cases" class="select-all-btn">Select All</button>
+                            <button id="clear-all-cases" class="clear-all-btn">Clear All</button>
+                        </div>
+                        <div id="case-checkboxes" class="case-checkbox-list"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="reset-filters" class="filter-button">Reset</button>
+            
+            <!-- Scale Controls -->
+            <div class="filter-group" style="margin-left: 20px;">
+                <label class="filter-label">Scale:</label>
+                <input type="range" id="scale-slider" class="filter-input" min="0.2" max="3" step="0.1" value="0.8" style="width: 100px;">
+                <span id="scale-value" class="filter-label">0.8</span>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">
+                    <input type="checkbox" id="fit-to-window">
+                    Fit to window
+                </label>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Timeline Content -->
+    <div class="main-content">
+        <div class="container">
+            <div id="loading" class="loading">Loading timeline data...</div>
+            
+            <div id="timeline-content" style="display: none;">
+                <!-- Main timeline container with caseline only -->
+                <div id="timeline-container" class="timeline-container">
+                    
+                    <!-- Caseline Section (full vertical space) -->
+                    <div id="caseline-section" class="timeline-section caseline-section">
+                        <div class="section-label caseline-label">CASELINE</div>
+                        <!-- Center line for caseline section -->
+                        <div class="caseline-center-line"></div>
+                        <!-- All caseline nodes (public and private) go in this container -->
+                        <div class="section-content" id="caseline-container">
+                            <!-- Caseline nodes positioned absolutely with public/private Y positions -->
+                        </div>
+                    </div>
+                    
+                    <!-- Year markers overlay -->
+                    <div id="year-markers-container" class="year-markers-overlay">
+                        <!-- Year lines and labels go here -->
+                    </div>
+                    
+                    <!-- Connections overlay -->
+                    <div id="connections-container" class="connections-overlay">
+                        <!-- SVG connection lines go here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Load the v2 modular timeline system -->
+    <script type="module" src="js-v2/main.js"></script>
+</body>
+</html>
