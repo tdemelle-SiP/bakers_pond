@@ -341,6 +341,17 @@ export function handleScaleUpdate(scaleUpdate) {
     checkActiveFilters();
 }
 
+
+/**
+ * Handle window resize
+ */
+export function handleWindowResize() {
+    if (!state.fitToWindow) return;
+    
+    const fitScale = calculateFitToWindowScale();
+    handleScaleUpdate({ scale: fitScale, fitToWindow: true });
+}
+
 /**
  * Calculate scale to fit visible events in window
  */

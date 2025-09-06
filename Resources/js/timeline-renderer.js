@@ -78,13 +78,14 @@ export function render() {
         });
     }
     
-    // Store caseline nodes for label refresh (simple approach from original)
+    // Store caseline nodes for label refresh
     updateState({ caselineNodes: caselineData.nodes });
     
     // Restore scroll position after render completes
-    if (container && state.scrollPosition) {
+    const mainContent = document.querySelector('.main-content');
+    if (mainContent && state.scrollPosition) {
         requestAnimationFrame(() => {
-            container.scrollLeft = state.scrollPosition;
+            mainContent.scrollLeft = state.scrollPosition;
         });
     }
 }
