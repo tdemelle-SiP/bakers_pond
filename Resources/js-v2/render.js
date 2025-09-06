@@ -10,8 +10,6 @@ import { createLabelsWithCollisionDetection } from '../js/label-layout.js';
 import { renderCaseTitles } from '../js/case-titles.js';
 import { calculateStats, renderStats } from '../js/stats.js';
 import { calculateDateRange, drawYearMarkers, calculateTimelineWidth, setContainerWidth } from '../js/date-scale.js';
-import { initCaseControls } from '../js/controls.js';
-import { handleInput } from './main.js';
 
 /**
  * Main render function - updates entire UI to reflect state
@@ -40,11 +38,14 @@ function updateControls(state) {
     const startInput = document.getElementById('filter-start-date');
     const endInput = document.getElementById('filter-end-date');
     
-    if (startInput && state.filters.startDate) {
-        startInput.value = state.filters.startDate;
+    if (startInput) {
+        startInput.value = state.filters.startDate ? 
+            state.filters.startDate.replace(/"/g, '').split('T')[0] : '';
     }
-    if (endInput && state.filters.endDate) {
-        endInput.value = state.filters.endDate;
+    
+    if (endInput) {
+        endInput.value = state.filters.endDate ? 
+            state.filters.endDate.replace(/"/g, '').split('T')[0] : '';
     }
     
     // Update scale slider
@@ -53,7 +54,7 @@ function updateControls(state) {
     if (scaleSlider) {
         scaleSlider.value = state.scale;
         if (scaleValue) {
-            scaleValue.textContent = state.scale.toFixed(1) + 'x';
+            scaleValue.textContent = state.scale.toFixed(1);
         }
     }
     
@@ -63,28 +64,48 @@ function updateControls(state) {
         fitCheckbox.checked = state.fitToWindow;
     }
     
-    // Update case checkboxes if they exist
+    // Create case checkboxes if container is empty
     const checkboxContainer = document.getElementById('case-checkboxes');
     if (checkboxContainer && checkboxContainer.children.length === 0 && state.caseNumbers.length > 0) {
-        // Initialize case controls if not already done
-        initCaseControls(state.caseNumbers, (caseFilter) => {
-            handleInput('caseToggle', { selectedCases: caseFilter.selectedCases });
-        }, state.filters.selectedCases);
-    } else {
-        // Update existing checkboxes
-        const checkboxes = document.querySelectorAll('.case-checkbox');
-        checkboxes.forEach(cb => {
-            cb.checked = state.filters.selectedCases.includes(cb.value);
+        // Just create the checkbox elements - no event handlers
+        state.caseNumbers.forEach(caseNum => {
+            const label = document.createElement('label');
+            label.className = 'case-checkbox-label';
+            
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'case-checkbox';
+            checkbox.value = caseNum;
+            checkbox.checked = state.filters.selectedCases.includes(caseNum);
+            
+            label.appendChild(checkbox);
+            label.appendChild(document.createTextNode(caseNum));
+            checkboxContainer.appendChild(label);
         });
-        
-        // Update case filter button text
-        const filterText = document.getElementById('case-filter-text');
-        if (filterText) {
-            const selectedCount = state.filters.selectedCases.length;
-            const totalCount = state.caseNumbers.length;
-            filterText.textContent = `${selectedCount} / ${totalCount} cases`;
-        }
     }
+    
+    // Update existing checkboxes
+    const checkboxes = document.querySelectorAll('.case-checkbox');
+    checkboxes.forEach(cb => {
+        cb.checked = state.filters.selectedCases.includes(cb.value);
+    });
+    
+    // Update case filter button text
+    const filterText = document.getElementById('case-filter-text');
+    if (filterText) {
+        const selectedCount = state.filters.selectedCases.length;
+        const totalCount = state.caseNumbers.length;
+        filterText.textContent = `${selectedCount} / ${totalCount} cases`;
+    }
+    
+    // Update emoji checkbox states
+    const emojiCheckboxes = document.querySelectorAll('.emoji-toggle');
+    emojiCheckboxes.forEach(checkbox => {
+        const emojiClass = checkbox.dataset.emojiClass;
+        // If emojiVisibility doesn't have this emoji, default to checked (visible)
+        const isVisible = state.emojiVisibility[emojiClass] !== false;
+        checkbox.checked = isVisible;
+    });
 }
 
 /**

@@ -35,34 +35,6 @@ import {
     isIsolating
 } from '../js/state-persistence.js';
 
-// Helper function to clear containers before refresh
-function clearContainers() {
-    const containers = [
-        'legend-container',
-        'case-checkboxes',
-        'stats-container',
-        'caseline-container',
-        'year-markers-container',
-        'connections-container'
-    ];
-    
-    containers.forEach(id => {
-        const container = document.getElementById(id);
-        if (container) {
-            while (container.firstChild) {
-                container.removeChild(container.firstChild);
-            }
-        }
-    });
-    
-    // Show loading state
-    const loading = document.getElementById('loading');
-    if (loading) loading.style.display = 'block';
-    
-    const content = document.getElementById('timeline-content');
-    if (content) content.style.display = 'none';
-}
-
 // State object - structure from existing state-manager.js
 const state = {
     allEvents: [],
@@ -203,11 +175,6 @@ export function update(type, data) {
             saveScaleState(state.scale, state.fitToWindow);
             break;
             
-        case 'refresh':
-            clearContainers();
-            loadData();
-            return; // loadData will call render
-            
         case 'caseToggle':
             state.filters.selectedCases = data.selectedCases || [];
             saveFilterState(state.filters);
@@ -270,9 +237,4 @@ export function update(type, data) {
 // Export helper to check isolation state
 export function checkIsolation(type, target) {
     return isIsolating(type, target);
-}
-
-// Export helper to get current state (read-only)
-export function getState() {
-    return { ...state };
 }
