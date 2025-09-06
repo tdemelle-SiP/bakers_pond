@@ -99,11 +99,20 @@ export function renderCaselineNodes(events, dateRange, pixelsPerDay) {
             node.classList.add('case-procedural-above');
         }
         
-        // Set emoji content
+        // Add emoji-specific data attributes
         if (emojis.length > 1) {
             node.classList.add('multi-emoji');
-            // Use innerHTML to create superscript inline
-            node.innerHTML = emojis[0] + '<sup>' + emojis.slice(1).join('') + '</sup>';
+            // For multi-emoji, create HTML structure with superscript
+            const primaryEmoji = document.createElement('span');
+            primaryEmoji.className = 'primary-emoji';
+            primaryEmoji.textContent = emojis[0];
+            
+            const secondaryEmoji = document.createElement('span');
+            secondaryEmoji.className = 'secondary-emoji';
+            secondaryEmoji.textContent = emojis.slice(1).join('');
+            
+            node.appendChild(primaryEmoji);
+            node.appendChild(secondaryEmoji);
         } else {
             // Single emoji - just set text content
             node.textContent = emojis[0] || '';

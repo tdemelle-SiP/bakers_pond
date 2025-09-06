@@ -191,3 +191,12 @@ if os.path.exists(cases_tsv_path):
         print(f"Added {len(case_rows)-1} cases to markdown file")
 else:
     print("\nNo cases data file found (this is normal on first run)")
+
+# Clean up temporary TSV files
+print("\n🧹 Cleaning up TSV files...")
+if os.path.exists(tsv_path):
+    os.remove(tsv_path)
+    print(f"  ✓ Removed {os.path.basename(tsv_path)}")
+if os.path.exists(cases_tsv_path):
+    os.remove(cases_tsv_path)
+    print(f"  ✓ Removed {os.path.basename(cases_tsv_path)}")

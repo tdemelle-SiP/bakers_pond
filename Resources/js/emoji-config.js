@@ -58,7 +58,7 @@ export const EMOJI_CONFIG = {
         },
         '🏛️': { 
             legendLabel: 'Hearing', 
-            displayLabel: '',
+            displayLabel: 'HEARING',
             caselineColor: 'inherit',
             class: 'hearing',
             defaultVisible: true
@@ -82,7 +82,7 @@ export const EMOJI_CONFIG = {
             displayLabel: '',
             caselineColor: 'bypass',  // Skip this node when drawing caseline connections
             class: 'email',
-            defaultVisible: false
+            defaultVisible: true
         },
         '✏️': { 
             legendLabel: 'Prep', 
@@ -106,10 +106,10 @@ export const EMOJI_CONFIG = {
             defaultVisible: true
         },
         '📄': { 
-            legendLabel: 'Govt Form', 
+            legendLabel: 'Document', 
             displayLabel: '',
-            caselineColor: 'inherit',
-            class: 'govt-form',
+            caselineColor: 'bypass',
+            class: 'document',
             defaultVisible: true
         }   
     },

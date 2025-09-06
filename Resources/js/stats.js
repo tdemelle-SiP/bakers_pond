@@ -22,8 +22,8 @@ export function calculateStats(events, emojiVisibility = null) {
     
     events.forEach(event => {
         // Skip if emoji visibility is hidden for this event
-        if (emojiVisibility && event.eventType === 'caseline' && event.caselineEmojis && event.caselineEmojis[0]) {
-            const config = getEmojiConfig(event.caselineEmojis[0], 'caseline');
+        if (emojiVisibility && event.eventType === 'caseline' && event.caselineEmoji) {
+            const config = getEmojiConfig(event.caselineEmoji, 'caseline');
             if (config && config.class && emojiVisibility[config.class] === false) {
                 return; // Skip this event in counting
             }
@@ -36,13 +36,13 @@ export function calculateStats(events, emojiVisibility = null) {
             stats.caseline++;
             
             // Count emoji metrics
-            if (event.caselineEmojis && event.caselineEmojis[0]) {
-                const config = getEmojiConfig(event.caselineEmojis[0], 'caseline');
+            if (event.caselineEmoji) {
+                const config = getEmojiConfig(event.caselineEmoji, 'caseline');
                 if (config && config.metricDisplay !== undefined) {
-                    if (!emojiStats[event.caselineEmojis[0]]) {
-                        emojiStats[event.caselineEmojis[0]] = 0;
+                    if (!emojiStats[event.caselineEmoji]) {
+                        emojiStats[event.caselineEmoji] = 0;
                     }
-                    emojiStats[event.caselineEmojis[0]]++;
+                    emojiStats[event.caselineEmoji]++;
                 }
             }
         }

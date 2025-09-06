@@ -7,11 +7,11 @@
 import { state, updateState, getDefaultCases } from './state-manager.js';
 import { applyFilters } from './filters.js';
 import { getEventDateRange } from './event-parser.js';
-import { calculateDateRange, getDateFromPosition } from './date-scale.js';
+import { calculateDateRange } from './date-scale.js';
 import { getEmojiArray } from './emoji-config.js';
 // Import render dynamically to avoid circular dependency
 let render;
-import { setIsolationMode, getIsolationMode, clearIsolationMode, isIsolating, loadEmojiVisibility, saveEmojiVisibility, saveFocusDate } from './state-persistence.js';
+import { setIsolationMode, getIsolationMode, clearIsolationMode, isIsolating, loadEmojiVisibility, saveEmojiVisibility, saveScrollPosition } from './state-persistence.js';
 import { calculateStats, renderStats } from './stats.js';
 import { createLabelsWithCollisionDetection } from './label-layout.js';
 
@@ -23,16 +23,11 @@ export function initRender(renderFunc) {
 }
 
 /**
- * Handle scroll event to update focus date
- * @param {number} scrollLeft - Current scroll position
- * @param {number} viewportWidth - Width of viewport
+ * Handle scroll position update
  */
-export function handleScrollForFocus(scrollLeft, viewportWidth) {
-    const viewportCenter = scrollLeft + (viewportWidth / 2);
-    const dateRange = calculateDateRange(state.filteredEvents);
-    const focusDate = getDateFromPosition(viewportCenter, dateRange.startDate, state.scale);
-    updateState({ focusDate });
-    saveFocusDate(focusDate);
+export function handleScrollUpdate(scrollPosition) {
+    updateState({ scrollPosition });
+    saveScrollPosition(scrollPosition);
 }
 
 /**
@@ -344,6 +339,17 @@ export function handleScaleUpdate(scaleUpdate) {
     
     // Update visual indicators for active filters
     checkActiveFilters();
+}
+
+
+/**
+ * Handle window resize
+ */
+export function handleWindowResize() {
+    if (!state.fitToWindow) return;
+    
+    const fitScale = calculateFitToWindowScale();
+    handleScaleUpdate({ scale: fitScale, fitToWindow: true });
 }
 
 /**

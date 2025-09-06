@@ -5,7 +5,7 @@
 
 | Date | Document | Case # | Mrkr | Procedural Step | Environmental/Strategic Analysis | Notes |
 |------|----------|--------|------|-----------------|----------------------------------|-------|
-| 1966-06-28 | [1355 mill st plan](https://github.com/tdemelle-SiP/bakers_pond/blob/master/Dated%20Documents/1966_06_28_1355%20mill%20st%20plan.PDF) | Historical | 🟢 |  | Historical property plan from 1966 |  |
+| 1966-06-28 | [1355 mill st plan](https://github.com/tdemelle-SiP/bakers_pond/blob/master/Dated%20Documents/1966_06_28_1355%20mill%20st%20plan.PDF) | Historical | 🟢 |  | Historical property plan from 1966 | lot lines |
 | 1969-02-05 | [Full_D0Z6](https://github.com/tdemelle-SiP/bakers_pond/blob/master/Dated%20Documents/1969_02_05_Full_D0Z6.pdf) | Historical | 🟢 |  | Historical property document |  |
 | 2000-07-27 | [Quitclaim Deed Lot 2 Sold to Vinci for $10k](https://github.com/tdemelle-SiP/bakers_pond/blob/master/Dated%20Documents/2000_07_27-DEP-0706-QuitClaim_Deed.pdf) | Historical | 🟢 |  |  | Delapa Transfers property to Vinci who pays $10k |
 | 2001-04-23 | [338-0303 Review Lot 2B Mill St](https://github.com/tdemelle-SiP/bakers_pond/blob/master/Dated%20Documents/2001_04_23%20338-0303%20Review%20Lot%202B%20Mill%20St.pdf) | 338-0303 | 🟢📄 |  | DEP Review under file #338-0303 | Substantive, regulation savvy review. This level of scrutiny should be referenced and applied today. |

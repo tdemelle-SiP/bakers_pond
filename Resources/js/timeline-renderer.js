@@ -11,7 +11,7 @@ import { drawTimelineConnections, drawCaselineConnections } from './connections.
 import { createLabelsWithCollisionDetection } from './label-layout.js';
 import { renderCaseTitles } from './case-titles.js';
 import { calculateStats, renderStats } from './stats.js';
-import { calculateDateRange, drawYearMarkers, calculateTimelineWidth, setContainerWidth, getXPosition } from './date-scale.js';
+import { calculateDateRange, drawYearMarkers, calculateTimelineWidth, setContainerWidth } from './date-scale.js';
 
 /**
  * Re-render the timeline with current state
@@ -51,24 +51,8 @@ export function render() {
     const nodePositions = renderTimelineNodes(state.filteredEvents, dateRange, pixelsPerDay);
     const caselineData = renderCaselineNodes(state.filteredEvents, dateRange, pixelsPerDay);
     
-    // Apply emoji visibility BEFORE creating labels
-    if (state.emojiVisibility) {
-        Object.entries(state.emojiVisibility).forEach(([emojiClass, isVisible]) => {
-            const elements = document.querySelectorAll(`[data-emoji-type="${emojiClass}"]`);
-            elements.forEach(element => {
-                element.style.display = isVisible === false ? 'none' : '';
-            });
-        });
-    }
-    
-    // Filter to only visible nodes for label creation
-    const visibleNodes = caselineData.nodes.filter(node => {
-        if (!node.node) return false;
-        return node.node.style.display !== 'none';
-    });
-    
-    // Render labels with collision detection using only visible nodes
-    createLabelsWithCollisionDetection(visibleNodes, caselineContainer);
+    // Render labels with collision detection using the freshly rendered nodes
+    createLabelsWithCollisionDetection(caselineData.nodes, caselineContainer);
     
     // Render case titles
     const visibleCases = state.filters.selectedCases && state.filters.selectedCases.length > 0 ?
@@ -84,16 +68,24 @@ export function render() {
     const stats = calculateStats(state.filteredEvents, emojiVisibility);
     renderStats(stats, emojiVisibility);
     
-    // Store caseline nodes for label refresh (simple approach from original)
+    // Apply emoji visibility from state
+    if (state.emojiVisibility) {
+        Object.entries(state.emojiVisibility).forEach(([emojiClass, isVisible]) => {
+            const elements = document.querySelectorAll(`[data-emoji-type="${emojiClass}"]`);
+            elements.forEach(element => {
+                element.style.display = isVisible === false ? 'none' : '';
+            });
+        });
+    }
+    
+    // Store caseline nodes for label refresh
     updateState({ caselineNodes: caselineData.nodes });
     
-    // Restore focus date position if exists
-    const scrollContainer = document.querySelector('.main-content');
-    if (scrollContainer && state.focusDate) {
-        const focusX = getXPosition(state.focusDate, dateRange.startDate, pixelsPerDay);
-        const scrollPosition = focusX - (scrollContainer.clientWidth / 2);
+    // Restore scroll position after render completes
+    const mainContent = document.querySelector('.main-content');
+    if (mainContent && state.scrollPosition) {
         requestAnimationFrame(() => {
-            scrollContainer.scrollLeft = scrollPosition;
+            mainContent.scrollLeft = state.scrollPosition;
         });
     }
 }

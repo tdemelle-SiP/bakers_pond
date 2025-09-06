@@ -12,7 +12,7 @@ const STORAGE_KEYS = {
     SCALE: STORAGE_PREFIX + 'scale',
     FIT_TO_WINDOW: STORAGE_PREFIX + 'fit-to-window',
     EMOJI_VISIBILITY: STORAGE_PREFIX + 'emoji-visibility',
-    FOCUS_DATE: STORAGE_PREFIX + 'focus-date'
+    SCROLL_POSITION: STORAGE_PREFIX + 'scroll-position'
 };
 
 /**
@@ -161,20 +161,20 @@ export function isIsolating(type, target) {
 }
 
 /**
- * Save focus date
- * @param {Date} focusDate - Date at center of viewport
+ * Save scroll position
+ * @param {number} scrollPosition - Horizontal scroll position
  */
-export function saveFocusDate(focusDate) {
-    saveState(STORAGE_KEYS.FOCUS_DATE, focusDate.toISOString());
+export function saveScrollPosition(scrollPosition) {
+    saveState(STORAGE_KEYS.SCROLL_POSITION, scrollPosition);
 }
 
 /**
- * Load focus date
- * @returns {Date|null} Saved focus date or null
+ * Load scroll position
+ * @returns {number} Saved scroll position or 0
  */
-export function loadFocusDate() {
-    const saved = loadState(STORAGE_KEYS.FOCUS_DATE);
-    return saved ? new Date(saved) : null;
+export function loadScrollPosition() {
+    const saved = loadState(STORAGE_KEYS.SCROLL_POSITION);
+    return saved ? parseFloat(saved) : 0;
 }
 
 /**
@@ -185,12 +185,12 @@ export function initializeState() {
     const filters = loadFilterState();
     const scale = loadScaleState();
     const emojiVisibility = loadEmojiVisibility();
-    const focusDate = loadFocusDate();
+    const scrollPosition = loadScrollPosition();
     
     return {
         filters,
         ...scale,
         emojiVisibility,
-        focusDate
+        scrollPosition
     };
 }

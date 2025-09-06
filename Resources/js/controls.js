@@ -3,7 +3,7 @@
  * Handles user controls: date filters, case dropdown, scale slider, fit-to-window
  */
 
-import { resetToDefaults, resetEmojiVisibility, handleScrollForFocus } from './timeline-actions.js';
+import { resetToDefaults, resetEmojiVisibility, handleScrollUpdate, handleWindowResize } from './timeline-actions.js';
 
 /**
  * Initialize date filter controls
@@ -30,8 +30,6 @@ export function initDateControls(onUpdate, eventDateRange = null) {
             endDate
         });
     });
-    
-    // Reset button is handled globally - don't add handler here
 }
 
 /**
@@ -122,7 +120,6 @@ export function initCaseControls(caseNumbers, onUpdate, initialSelected = null) 
         onUpdate({ selectedCases: selected });
     }
     
-    // Initial state
     updateCaseFilter();
 }
 
@@ -140,11 +137,8 @@ export function initScaleControls(onUpdate, initialScale = 0.8) {
         return;
     }
     
-    // Ensure initialScale is a number
-    const scaleValue = typeof initialScale === 'number' ? initialScale : parseFloat(initialScale) || 0.8;
-    
-    slider.value = scaleValue;
-    valueDisplay.textContent = scaleValue.toFixed(1);
+    slider.value = initialScale;
+    valueDisplay.textContent = initialScale.toFixed(1);
     
     slider.addEventListener('input', (e) => {
         const scale = parseFloat(e.target.value);
@@ -225,7 +219,6 @@ export function initAllControls(options = {}) {
         initialFilters = {}
     } = options;
     
-    // Date filters - just attach handlers, let updateUIFromState handle values
     
     initDateControls((dateFilter) => {
         onFilterUpdate(dateFilter);
@@ -252,17 +245,27 @@ export function initAllControls(options = {}) {
     // Mouse wheel scrolling
     initMouseWheelScroll();
     
-    // Track focus date when scrolling
-    const scrollContainer = document.querySelector('.main-content');
-    if (scrollContainer) {
+    // Window resize handling
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(handleWindowResize, 250);
+    });
+    
+    // Track scroll position for persistence
+    const mainContent = document.querySelector('.main-content');
+    if (mainContent) {
         let scrollTimeout;
-        scrollContainer.addEventListener('scroll', () => {
+        mainContent.addEventListener('scroll', () => {
             clearTimeout(scrollTimeout);
             scrollTimeout = setTimeout(() => {
-                const scrollLeft = scrollContainer.scrollLeft;
-                const viewportWidth = scrollContainer.clientWidth;
-                handleScrollForFocus(scrollLeft, viewportWidth);
+                handleScrollUpdate(mainContent.scrollLeft);
             }, 100);
+        });
+        
+        // Save scroll position immediately on page unload (for data refresh)
+        window.addEventListener('beforeunload', () => {
+            handleScrollUpdate(mainContent.scrollLeft);
         });
     }
     

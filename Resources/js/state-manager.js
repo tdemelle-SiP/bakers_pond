@@ -22,7 +22,7 @@ export const state = {
     fitToWindow: savedState.fitToWindow || false,
     emojiVisibility: savedState.emojiVisibility || {},
     filters: { ...getDefaultFilterState(), ...savedState.filters },
-    focusDate: savedState.focusDate || null
+    scrollPosition: savedState.scrollPosition || 0  // Horizontal scroll position
 };
 
 /**
@@ -54,7 +54,7 @@ export function updateState(updates) {
     if (updates.casesData) state.casesData = updates.casesData;
     if (updates.caselineNodes) state.caselineNodes = updates.caselineNodes;
     if (updates.emojiVisibility) state.emojiVisibility = updates.emojiVisibility;
-    if (updates.focusDate !== undefined) state.focusDate = updates.focusDate;
+    if (updates.scrollPosition !== undefined) state.scrollPosition = updates.scrollPosition;
 }
 
 /**

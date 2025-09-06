@@ -351,13 +351,28 @@ body {
     z-index: 100; /* Bring hovered node and its tooltip above everything */
 }
 
-/* Multi-emoji nodes - simple superscript */
-.caseline-node.multi-emoji sup {
-    font-size: 10px;
+/* Multi-emoji nodes - superscript style for secondary emoji */
+.caseline-node.multi-emoji {
     position: relative;
-    vertical-align: baseline;
-    top: -6px;
-    left: -12px;
+    display: inline-block;
+}
+
+.caseline-node.multi-emoji .primary-emoji {
+    font-size: 16px; /* Keep primary at full size */
+}
+
+.caseline-node.multi-emoji .secondary-emoji {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    font-size: 13px; /* 13x13 as requested */
+    width: 13px;
+    height: 13px;
+    line-height: 13px;
+    text-align: center;
+    background: #1a252f; /* Dark background to match timeline background */
+    border-radius: 50%;
+    z-index: 1;
 }
 
 /* Caseline public events - above the center (with offset for title space) */
