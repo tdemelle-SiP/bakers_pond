@@ -112,9 +112,6 @@ function updateControls(state) {
  * Render the timeline visualization
  */
 function renderTimeline(state) {
-    // Clear existing content
-    clearTimelineContainers();
-    
     // Get containers
     const caselineContainer = document.getElementById('caseline-container');
     const yearMarkersContainer = document.getElementById('year-markers-container');
@@ -156,9 +153,15 @@ function renderTimeline(state) {
         });
     }
     
+    // Filter nodes to only include visible ones for label collision detection
+    const visibleNodes = caselineData.nodes.filter(node => {
+        if (!node.emojiType) return true;
+        return state.emojiVisibility?.[node.emojiType] !== false;
+    });
+    
     // Render labels with collision detection (now accounts for hidden emojis)
     console.log('Label recalculation triggered - emoji visibility applied, running collision detection');
-    createLabelsWithCollisionDetection(caselineData.nodes, caselineContainer);
+    createLabelsWithCollisionDetection(visibleNodes, caselineContainer);
     
     // Render case titles
     const visibleCases = state.filters.selectedCases && state.filters.selectedCases.length > 0 ?
@@ -182,33 +185,3 @@ function renderTimeline(state) {
     }
 }
 
-/**
- * Clear timeline containers without using innerHTML
- */
-function clearTimelineContainers() {
-    const containers = [
-        'caseline-container', 
-        'year-markers-container',
-        'connections-container'
-    ];
-    
-    containers.forEach(id => {
-        const container = document.getElementById(id);
-        if (container) {
-            // Preserve case titles container if it exists
-            if (id === 'caseline-container') {
-                const titlesContainer = document.getElementById('case-titles-container');
-                while (container.firstChild) {
-                    container.removeChild(container.firstChild);
-                }
-                if (titlesContainer) {
-                    container.appendChild(titlesContainer);
-                }
-            } else {
-                while (container.firstChild) {
-                    container.removeChild(container.firstChild);
-                }
-            }
-        }
-    });
-}

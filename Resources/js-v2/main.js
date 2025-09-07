@@ -113,114 +113,122 @@ function clearContainers() {
     if (content) content.style.display = 'none';
 }
 
+function clearTimelineContainers() {
+    const containers = [
+        'caseline-container', 
+        'year-markers-container',
+        'connections-container'
+    ];
+    
+    containers.forEach(id => {
+        const container = document.getElementById(id);
+        if (container) {
+            // Preserve case titles container if it exists
+            if (id === 'caseline-container') {
+                const titlesContainer = document.getElementById('case-titles-container');
+                while (container.firstChild) {
+                    container.removeChild(container.firstChild);
+                }
+                if (titlesContainer) {
+                    container.appendChild(titlesContainer);
+                }
+            } else {
+                while (container.firstChild) {
+                    container.removeChild(container.firstChild);
+                }
+            }
+        }
+    });
+}
+
 function setupListeners() {
-    // Helper to remove old listeners by cloning element
-    function replaceElement(id) {
-        const el = document.getElementById(id);
-        if (el) {
-            const newEl = el.cloneNode(true);
-            el.parentNode.replaceChild(newEl, el);
-            return newEl;
-        }
-        return null;
-    }
-    
-    // Date filter
-    const applyDateBtn = replaceElement('apply-date-filter');
-    if (applyDateBtn) {
-        applyDateBtn.addEventListener('click', () => handleInput('dateFilter'));
-    }
-    
-    // Reset button
-    const resetBtn = replaceElement('reset-filters');
-    if (resetBtn) {
-        resetBtn.addEventListener('click', () => handleInput('reset'));
-    }
-    
-    // Scale slider
-    const scaleSlider = replaceElement('scale-slider');
-    if (scaleSlider) {
-        scaleSlider.addEventListener('input', () => handleInput('scale'));
-    }
-    
-    // Fit to window
-    const fitCheckbox = replaceElement('fit-to-window');
-    if (fitCheckbox) {
-        fitCheckbox.addEventListener('change', () => handleInput('fit'));
-    }
-    
-    // Refresh button
-    const refreshBtn = replaceElement('refresh-timeline');
-    if (refreshBtn) {
-        refreshBtn.addEventListener('click', () => init());
-    }
-    
-    // Case dropdown toggle
-    const caseBtn = replaceElement('case-filter-button');
-    const caseDropdown = replaceElement('case-filter-dropdown');
-    if (caseBtn && caseDropdown) {
-        caseBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            caseDropdown.style.display = caseDropdown.style.display === 'none' ? 'block' : 'none';
-        });
-        
-        // Remove old document listener by using a named function stored on the element
-        if (window.caseDropdownClickHandler) {
-            document.removeEventListener('click', window.caseDropdownClickHandler);
-        }
-        window.caseDropdownClickHandler = () => {
-            caseDropdown.style.display = 'none';
-        };
-        document.addEventListener('click', window.caseDropdownClickHandler);
-        
-        caseDropdown.addEventListener('click', (e) => {
-            e.stopPropagation();
-        });
-    }
-    
-    // Case checkbox event delegation
-    const caseCheckboxContainer = replaceElement('case-checkboxes');
-    if (caseCheckboxContainer) {
-        caseCheckboxContainer.addEventListener('change', (e) => {
-            if (e.target.classList.contains('case-checkbox')) {
+    // Single event listener on the nav for all controls
+    const nav = document.querySelector('.sticky-nav');
+    if (nav) {
+        // Click handler for buttons
+        nav.addEventListener('click', (e) => {
+            const target = e.target;
+            
+            // Apply Date Filter button
+            if (target.id === 'apply-date-filter') {
+                handleInput('dateFilter');
+            }
+            // Reset button
+            else if (target.id === 'reset-filters') {
+                handleInput('reset');
+            }
+            // Refresh button
+            else if (target.id === 'refresh-timeline') {
+                init();
+            }
+            // Case filter dropdown toggle
+            else if (target.id === 'case-filter-button' || target.closest('#case-filter-button')) {
+                e.stopPropagation();
+                const dropdown = document.getElementById('case-filter-dropdown');
+                if (dropdown) {
+                    dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+                }
+            }
+            // Select All Cases
+            else if (target.id === 'select-all-cases') {
+                document.querySelectorAll('.case-checkbox').forEach(cb => cb.checked = true);
                 const checkboxes = document.querySelectorAll('.case-checkbox:checked');
                 const selectedCases = Array.from(checkboxes).map(cb => cb.value);
                 handleInput('caseToggle', { selectedCases });
             }
+            // Clear All Cases
+            else if (target.id === 'clear-all-cases') {
+                document.querySelectorAll('.case-checkbox').forEach(cb => cb.checked = false);
+                handleInput('caseToggle', { selectedCases: [] });
+            }
+            // Stop propagation for dropdown content
+            else if (target.closest('#case-filter-dropdown')) {
+                e.stopPropagation();
+            }
         });
-    }
-    
-    // Select/Clear all buttons
-    const selectAllBtn = replaceElement('select-all-cases');
-    const clearAllBtn = replaceElement('clear-all-cases');
-    
-    if (selectAllBtn) {
-        selectAllBtn.addEventListener('click', () => {
-            document.querySelectorAll('.case-checkbox').forEach(cb => cb.checked = true);
-            const checkboxes = document.querySelectorAll('.case-checkbox:checked');
-            const selectedCases = Array.from(checkboxes).map(cb => cb.value);
-            handleInput('caseToggle', { selectedCases });
-        });
-    }
-    
-    if (clearAllBtn) {
-        clearAllBtn.addEventListener('click', () => {
-            document.querySelectorAll('.case-checkbox').forEach(cb => cb.checked = false);
-            handleInput('caseToggle', { selectedCases: [] });
-        });
-    }
-    
-    // Emoji checkbox event listeners
-    const legendContainer = replaceElement('legend-container');
-    if (legendContainer) {
-        legendContainer.addEventListener('change', (e) => {
-            if (e.target.classList.contains('emoji-toggle')) {
-                const emojiClass = e.target.dataset.emojiClass;
-                const isVisible = e.target.checked;
+        
+        // Change handler for inputs and checkboxes
+        nav.addEventListener('change', (e) => {
+            const target = e.target;
+            
+            // Scale slider
+            if (target.id === 'scale-slider') {
+                handleInput('scale');
+            }
+            // Fit to window checkbox
+            else if (target.id === 'fit-to-window') {
+                handleInput('fit');
+            }
+            // Case checkboxes
+            else if (target.classList.contains('case-checkbox')) {
+                const checkboxes = document.querySelectorAll('.case-checkbox:checked');
+                const selectedCases = Array.from(checkboxes).map(cb => cb.value);
+                handleInput('caseToggle', { selectedCases });
+            }
+            // Emoji toggles
+            else if (target.classList.contains('emoji-toggle')) {
+                console.log('Emoji toggle clicked:', target);
+                const emojiClass = target.dataset.emojiClass;
+                const isVisible = target.checked;
                 handleInput('emojiToggle', { emoji: emojiClass, visible: isVisible });
             }
         });
+        
+        // Input handler for slider
+        nav.addEventListener('input', (e) => {
+            if (e.target.id === 'scale-slider') {
+                handleInput('scale');
+            }
+        });
     }
+    
+    // Document click to close dropdown
+    document.addEventListener('click', () => {
+        const dropdown = document.getElementById('case-filter-dropdown');
+        if (dropdown) {
+            dropdown.style.display = 'none';
+        }
+    });
 }
 
 function handleInput(type, providedData = null) {
@@ -231,6 +239,7 @@ function handleInput(type, providedData = null) {
             case 'dateFilter':
                 data.startDate = document.getElementById('filter-start-date').value;
                 data.endDate = document.getElementById('filter-end-date').value;
+                clearTimelineContainers();
                 break;
             case 'scale':
                 data.scale = parseFloat(document.getElementById('scale-slider').value);
@@ -240,6 +249,17 @@ function handleInput(type, providedData = null) {
                 break;
             case 'reset':
                 data.reset = true;
+                clearTimelineContainers();
+                break;
+        }
+    } else {
+        // For provided data, check if we need to clear
+        switch(type) {
+            case 'caseToggle':
+            case 'isolate':
+            case 'exitIsolation':
+            case 'emojiToggle':
+                clearTimelineContainers();
                 break;
         }
     }

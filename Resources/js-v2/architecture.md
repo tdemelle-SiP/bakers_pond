@@ -28,7 +28,6 @@ graph TD
         clearContainers["clearContainers()"]
         setupListeners["setupListeners()"]:::setupStyle
         handleInput["handleInput(type, providedData)"]:::handleInputStyle
-        dropdownToggle["dropdown toggle (inline)"]
     end
     
     subgraph "state.js"
@@ -58,7 +57,7 @@ graph TD
     ResetBtn --> handleInput
     ScaleSlider --> handleInput
     FitCheckbox --> handleInput
-    CaseDropdownBtn --> dropdownToggle
+    CaseDropdownBtn --> handleInput
     CaseCheckbox --> handleInput
     SelectAllBtn --> handleInput
     ClearAllBtn --> handleInput
