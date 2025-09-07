@@ -26,8 +26,8 @@ if (document.readyState === 'loading') {
 
 async function init() {
     clearContainers();
-    buildLegend();
     setupListeners();
+    buildLegend();
     await loadData();
 }
 

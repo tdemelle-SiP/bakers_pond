@@ -1,9 +1,6 @@
-<!-- 
-The mermaid chart should show:
-- containers representing files
-- nodes within those containers representing the functions in those files - all functions in the code should be in the chart
-- connections between functions
--->
+## Combined Chart (Main + Detail)
+
+This chart combines the main architecture with all user input details in a single view.
 
 ```mermaid
 graph TD
@@ -105,3 +102,21 @@ graph TD
     classDef updateControlsStyle fill:#f4a460,stroke:#333,stroke-width:2px
     classDef renderTimelineStyle fill:#ffa07a,stroke:#333,stroke-width:2px
 ```
+
+## Complexity Assessment
+
+The combined chart shows:
+- **10 user input buttons** at the top
+- **All functions** from the three files
+- **All switch cases** in the update function
+- **All connections** between components
+
+While more complex than the separated charts, it's still readable because:
+1. Color coding helps distinguish user inputs (blue) from functions
+2. File boundaries (subgraphs) maintain organizational clarity  
+3. The flow pattern is still clear: inputs → handleInput → update → render
+
+However, the **separated two-chart approach** is likely better for documentation because:
+- The main chart shows the overall architecture cleanly
+- The detail chart focuses specifically on user input handling
+- Readers can choose their level of detail

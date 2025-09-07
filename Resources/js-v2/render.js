@@ -146,7 +146,18 @@ function renderTimeline(state) {
     // Render caseline nodes only
     const caselineData = renderCaselineNodes(state.filteredEvents, dateRange, pixelsPerDay);
     
-    // Render labels with collision detection
+    // Apply emoji visibility BEFORE label collision detection
+    if (state.emojiVisibility) {
+        Object.entries(state.emojiVisibility).forEach(([emojiClass, isVisible]) => {
+            const elements = document.querySelectorAll(`[data-emoji-type="${emojiClass}"]`);
+            elements.forEach(element => {
+                element.style.display = isVisible === false ? 'none' : '';
+            });
+        });
+    }
+    
+    // Render labels with collision detection (now accounts for hidden emojis)
+    console.log('Label recalculation triggered - emoji visibility applied, running collision detection');
     createLabelsWithCollisionDetection(caselineData.nodes, caselineContainer);
     
     // Render case titles
@@ -161,16 +172,6 @@ function renderTimeline(state) {
     const emojiVisibility = state.emojiVisibility || {};
     const stats = calculateStats(state.filteredEvents, emojiVisibility);
     renderStats(stats, emojiVisibility);
-    
-    // Apply emoji visibility
-    if (state.emojiVisibility) {
-        Object.entries(state.emojiVisibility).forEach(([emojiClass, isVisible]) => {
-            const elements = document.querySelectorAll(`[data-emoji-type="${emojiClass}"]`);
-            elements.forEach(element => {
-                element.style.display = isVisible === false ? 'none' : '';
-            });
-        });
-    }
     
     // Restore scroll position
     const mainContent = document.querySelector('.main-content');
