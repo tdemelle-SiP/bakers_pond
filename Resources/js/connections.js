@@ -95,18 +95,18 @@ export function drawTimelineConnections(positions, container) {
  * @param {HTMLElement} container - Timeline container
  */
 export function drawCaselineConnections(caseGroups, container) {
-    // Get caseline section for positioning
-    const caselineSection = document.getElementById('caseline-section');
-    if (!caselineSection) return;
+    // Get caseline container for positioning
+    const caselineContainer = document.getElementById('caseline-container');
+    if (!caselineContainer) return;
     
-    const sectionHeight = caselineSection.offsetHeight;
-    const sectionTop = caselineSection.offsetTop;
+    const sectionHeight = caselineContainer.offsetHeight;
+    const sectionTop = caselineContainer.offsetTop;
     
     // Create SVG for caseline connections
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.style.position = 'absolute';
     svg.style.left = '0';
-    svg.style.top = sectionTop + 'px';
+    svg.style.top = '0';  // Changed from sectionTop since container is now relative
     svg.style.width = '100%';
     svg.style.height = sectionHeight + 'px';
     svg.style.pointerEvents = 'none';

@@ -16,18 +16,18 @@ import { calculateDateRange, drawYearMarkers, calculateTimelineWidth, setContain
  * @param {Object} state - Complete application state
  */
 export function render(state) {
+    // Hide loading, show caseline container FIRST
+    const loading = document.getElementById('loading');
+    if (loading) loading.style.display = 'none';
+    
+    const caselineContainer = document.getElementById('caseline-container');
+    if (caselineContainer) caselineContainer.style.display = 'block';
+    
     // Update controls to reflect state
     updateControls(state);
     
     // Clear and render timeline
     renderTimeline(state);
-    
-    // Hide loading, show content
-    const loading = document.getElementById('loading');
-    if (loading) loading.style.display = 'none';
-    
-    const content = document.getElementById('timeline-content');
-    if (content) content.style.display = 'block';
 }
 
 /**
@@ -113,17 +113,17 @@ function updateControls(state) {
  */
 function renderTimeline(state) {
     // Get containers
-    const caselineContainer = document.getElementById('caseline-container');
+    const nodesContainer = document.getElementById('nodes-container');
     const yearMarkersContainer = document.getElementById('year-markers-container');
     const connectionsContainer = document.getElementById('connections-container');
     
     if (!state.filteredEvents || state.filteredEvents.length === 0) {
         // Show empty state
-        if (caselineContainer) {
+        if (nodesContainer) {
             const emptyDiv = document.createElement('div');
             emptyDiv.className = 'empty-state';
             emptyDiv.textContent = 'No events to display';
-            caselineContainer.appendChild(emptyDiv);
+            nodesContainer.appendChild(emptyDiv);
         }
         return;
     }
@@ -133,7 +133,7 @@ function renderTimeline(state) {
     const pixelsPerDay = state.scale;
     
     // Update container width
-    const container = document.getElementById('timeline-container');
+    const container = document.getElementById('caseline-container');
     const timelineWidth = calculateTimelineWidth(dateRange.totalDays, pixelsPerDay);
     setContainerWidth(container, timelineWidth);
     
@@ -159,9 +159,8 @@ function renderTimeline(state) {
         return state.emojiVisibility?.[node.emojiType] !== false;
     });
     
-    // Render labels with collision detection (now accounts for hidden emojis)
-    console.log('Label recalculation triggered - emoji visibility applied, running collision detection');
-    createLabelsWithCollisionDetection(visibleNodes, caselineContainer);
+    // Render labels with collision detection
+    createLabelsWithCollisionDetection(visibleNodes, nodesContainer);
     
     // Render case titles
     const visibleCases = state.filters.selectedCases && state.filters.selectedCases.length > 0 ?

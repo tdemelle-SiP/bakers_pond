@@ -91,7 +91,7 @@ function clearContainers() {
         'legend-container',
         'case-checkboxes',
         'stats-container',
-        'caseline-container',
+        'nodes-container',
         'year-markers-container',
         'connections-container'
     ];
@@ -109,13 +109,13 @@ function clearContainers() {
     const loading = document.getElementById('loading');
     if (loading) loading.style.display = 'block';
     
-    const content = document.getElementById('timeline-content');
-    if (content) content.style.display = 'none';
+    const caselineContainer = document.getElementById('caseline-container');
+    if (caselineContainer) caselineContainer.style.display = 'none';
 }
 
 function clearTimelineContainers() {
     const containers = [
-        'caseline-container', 
+        'nodes-container', 
         'year-markers-container',
         'connections-container'
     ];
@@ -124,7 +124,7 @@ function clearTimelineContainers() {
         const container = document.getElementById(id);
         if (container) {
             // Preserve case titles container if it exists
-            if (id === 'caseline-container') {
+            if (id === 'nodes-container') {
                 const titlesContainer = document.getElementById('case-titles-container');
                 while (container.firstChild) {
                     container.removeChild(container.firstChild);
@@ -207,7 +207,6 @@ function setupListeners() {
             }
             // Emoji toggles
             else if (target.classList.contains('emoji-toggle')) {
-                console.log('Emoji toggle clicked:', target);
                 const emojiClass = target.dataset.emojiClass;
                 const isVisible = target.checked;
                 handleInput('emojiToggle', { emoji: emojiClass, visible: isVisible });

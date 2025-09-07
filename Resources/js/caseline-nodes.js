@@ -60,8 +60,8 @@ export function renderCaselineNodes(events, dateRange, pixelsPerDay) {
     const caselineData = [];
     const caseGroups = {};
     
-    // Use the caseline container
-    const container = document.getElementById('caseline-container');
+    // Use the nodes container
+    const container = document.getElementById('nodes-container');
     
     // Filter to caseline events only
     const caselineEvents = events.filter(e => e.eventType === 'caseline');

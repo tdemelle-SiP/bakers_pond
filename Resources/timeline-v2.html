@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>42 Mill Street Timeline v3</title>
     <link rel="stylesheet" href="timeline.css">
+    <link rel="stylesheet" href="timeline-v2.css">
     
     <!-- Additional styles -->
     <style>
@@ -110,30 +111,26 @@
         <div class="container">
             <div id="loading" class="loading">Loading timeline data...</div>
             
-            <div id="timeline-content" style="display: none;">
-                <!-- Main timeline container with caseline only -->
-                <div id="timeline-container" class="timeline-container">
-                    
-                    <!-- Caseline Section (full vertical space) -->
-                    <div id="caseline-section" class="timeline-section caseline-section">
-                        <div class="section-label caseline-label">CASELINE</div>
-                        <!-- Center line for caseline section -->
-                        <div class="caseline-center-line"></div>
-                        <!-- All caseline nodes (public and private) go in this container -->
-                        <div class="section-content" id="caseline-container">
-                            <!-- Caseline nodes positioned absolutely with public/private Y positions -->
-                        </div>
-                    </div>
-                    
-                    <!-- Year markers overlay -->
-                    <div id="year-markers-container" class="year-markers-overlay">
-                        <!-- Year lines and labels go here -->
-                    </div>
-                    
-                    <!-- Connections overlay -->
-                    <div id="connections-container" class="connections-overlay">
-                        <!-- SVG connection lines go here -->
-                    </div>
+            <!-- Main caseline container holding all elements -->
+            <div id="caseline-container" class="caseline-container" style="display: none;">
+                <div class="section-label caseline-label">CASELINE</div>
+                
+                <!-- Center line -->
+                <div class="caseline-center-line"></div>
+                
+                <!-- Year markers overlay -->
+                <div id="year-markers-container" class="year-markers-overlay">
+                    <!-- Year lines and labels go here -->
+                </div>
+                
+                <!-- Connections overlay -->
+                <div id="connections-container" class="connections-overlay">
+                    <!-- SVG connection lines go here -->
+                </div>
+                
+                <!-- Nodes container -->
+                <div id="nodes-container" class="nodes-container">
+                    <!-- Caseline nodes positioned absolutely with public/private Y positions -->
                 </div>
             </div>
         </div>

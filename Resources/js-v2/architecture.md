@@ -22,11 +22,12 @@ graph TD
     end
     
     subgraph "main.js"
-        init["init()"]:::initStyle
-        buildLegend["buildLegend()"]
-        createEmojiCell["createEmojiCell() (inside buildLegend)"]
-        clearContainers["clearContainers()"]
-        setupListeners["setupListeners()"]:::setupStyle
+        subgraph "init()"
+            clearContainers["clearContainers()"]
+            setupListeners["setupListeners()"]:::setupStyle
+            buildLegend["buildLegend()"]
+        end
+        clearTimelineContainers["clearTimelineContainers()"]
         handleInput["handleInput(type, providedData)"]:::handleInputStyle
     end
     
@@ -47,12 +48,11 @@ graph TD
         render["render(state)"]:::renderStyle
         updateControls["updateControls(state)"]:::updateControlsStyle
         renderTimeline["renderTimeline(state)"]:::renderTimelineStyle
-        clearTimelineContainers["clearTimelineContainers()"]
     end
     
     %% Input connections
-    DOM --> init
-    RefreshBtn --> init
+    DOM --> clearContainers
+    RefreshBtn --> clearContainers
     DateFilterBtn --> handleInput
     ResetBtn --> handleInput
     ScaleSlider --> handleInput
@@ -63,13 +63,14 @@ graph TD
     ClearAllBtn --> handleInput
     EmojiCheckbox --> handleInput
     
-    %% Main.js connections
-    init --> clearContainers
-    clearContainers --> buildLegend
-    buildLegend --> createEmojiCell
-    buildLegend --> setupListeners
-    setupListeners --> loadData
-    handleInput --> update
+    %% Main.js init() sequence
+    clearContainers --> setupListeners
+    setupListeners --> buildLegend
+    buildLegend --> loadData
+    
+    %% handleInput sequence (for some input types)
+    handleInput --> clearTimelineContainers
+    clearTimelineContainers --> update
     
     %% State.js connections
     loadData --> getDefaultCases
@@ -93,7 +94,6 @@ graph TD
     %% Render.js connections
     render --> updateControls
     render --> renderTimeline
-    renderTimeline --> clearTimelineContainers
     
     classDef userInput fill:#87ceeb,stroke:#333,stroke-width:3px
     classDef initStyle fill:#ffd700,stroke:#333,stroke-width:2px

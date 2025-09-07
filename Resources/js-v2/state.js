@@ -82,12 +82,10 @@ export async function loadData() {
         const savedScrollPosition = loadScrollPosition();
         
         // Apply saved preferences
-        if (savedFilters.selectedCases) {
-            state.filters.selectedCases = savedFilters.selectedCases;
-        } else {
-            // Default to cases marked as defaultVisible
-            state.filters.selectedCases = getDefaultCases();
-        }
+        // Use saved cases only if the array exists and has items; otherwise fall back to defaults.
+        // This prevents an empty saved array from hiding everything on first load.
+        const hasSavedCases = Array.isArray(savedFilters?.selectedCases) && savedFilters.selectedCases.length > 0;
+        state.filters.selectedCases = hasSavedCases ? [...savedFilters.selectedCases] : getDefaultCases();
         
         if (savedFilters.startDate) state.filters.startDate = savedFilters.startDate;
         if (savedFilters.endDate) state.filters.endDate = savedFilters.endDate;
