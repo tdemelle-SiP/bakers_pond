@@ -35,15 +35,14 @@ function buildLegend() {
     const legendContainer = document.getElementById('legend-container');
     if (!legendContainer) return;
     
-    // Get emoji configurations
+    // Get emoji configurations - only caseline for v2
     const caselineEmojis = getEmojiArray('caseline');
-    const timelineEmojis = getEmojiArray('timeline');
     
     // Build legend HTML matching original two-row table format
     let html = '<div style="display: flex; gap: 20px; align-items: center;">';
     
     // Caseline legend (two-row table)
-    html += '<div style="padding-right: 20px; border-right: 2px solid #546e7a;">';
+    html += '<div>';
     html += '<table style="border-collapse: collapse; color: white; font-size: 12px;">';
     
     // Split caseline emojis into two rows (balanced)
@@ -78,25 +77,6 @@ function buildLegend() {
     html += '<tr>';
     secondRowEmojis.forEach(item => {
         html += createEmojiCell(item);
-    });
-    html += '</tr>';
-    html += '</table>';
-    html += '</div>';
-    
-    // Timeline legend (single row, no checkboxes)
-    html += '<div>';
-    html += '<table style="border-collapse: collapse; color: white; font-size: 12px;">';
-    html += '<tr>';
-    html += '<td style="padding: 2px 10px 2px 0; font-weight: bold; white-space: nowrap;">Timeline:</td>';
-    timelineEmojis.forEach(item => {
-        if (item.emoji === '❌') {
-            // Missing document uses emoji
-            html += `<td style="padding: 2px 12px;">${item.emoji} ${item.legendLabel}</td>`;
-        } else {
-            // Public/Private use colored squares
-            const borderColor = item.borderColor || item.color;
-            html += `<td style="padding: 2px 12px;"><span style="display: inline-block; width: 10px; height: 10px; background: ${item.color}; border: 1px solid ${borderColor}; margin-right: 5px;"></span>${item.legendLabel}</td>`;
-        }
     });
     html += '</tr>';
     html += '</table>';
