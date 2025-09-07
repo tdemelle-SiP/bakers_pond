@@ -63,4 +63,5 @@ package-lock.json
 
 # Auto-generated files from Google Sheets (source of truth is Google Sheets)
 Resources/inbox/*.tsv
-!!42_Mill_St_Timeline_Overview.md
+\!\!42_Mill_St_Timeline_Overview.md
+\!42_Mill_St_Procedural_Dependencies.md
