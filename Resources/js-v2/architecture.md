@@ -30,13 +30,15 @@ graph TD
         SelectAllBtn["Select<br/>All"]:::userInput
         ClearAllBtn["Clear<br/>All"]:::userInput
         EmojiCheckbox["Emoji<br/>Toggle"]:::userInput
+        CaseTitleDblClick["Case Title<br/>Double Click"]:::userInput
+        EmojiLegendDblClick["Emoji Legend<br/>Double Click"]:::userInput
     end
     
     subgraph "main.js"
         subgraph "init()"
             clearContainers["clearContainers()"]
-            setupListeners["setupListeners()<br/>(includes scroll tracking<br/>& window resize)"]:::setupStyle
-            buildLegend["buildLegend()"]
+            setupListeners["setupListeners()<br/>(includes scroll tracking,<br/>window resize, double-clicks)"]:::setupStyle
+            buildLegend["buildLegend()<br/>(with count spans)"]
         end
         clearTimelineContainers["clearTimelineContainers()"]
         saveFocusDate["saveFocusDate()"]
@@ -48,24 +50,28 @@ graph TD
         getDefaultCases["getDefaultCases()"]
         update["update(type, data)"]:::updateStyle
         checkIsolation["checkIsolation(type, target)"]
+        hasActiveFilters["hasActiveFilters(state)"]
+        arraysEqual["arraysEqual(a, b)"]
         updateDateFilter["case 'dateFilter'"]
         updateScale["case 'scale'"]
         updateFit["case 'fit'"]
         updateReset["case 'reset'"]
         updateCaseToggle["case 'caseToggle'"]
         updateEmojiToggle["case 'emojiToggle'"]
+        updateIsolate["case 'isolate'"]
+        updateExitIsolation["case 'exitIsolation'"]
     end
     
     subgraph "render.js"
         render["render(state)"]:::renderStyle
-        updateControls["updateControls(state)"]:::updateControlsStyle
-        renderTimeline["renderTimeline(state)<br/>(includes emoji visibility<br/>with OR logic for multi-emoji)"]:::renderTimelineStyle
+        updateControls["updateControls(state)<br/>(includes smart button text,<br/>active filter indicator)"]:::updateControlsStyle
+        renderTimeline["renderTimeline(state)<br/>(includes emoji visibility<br/>with OR logic for multi-emoji,<br/>legend count updates)"]:::renderTimelineStyle
     end
     
     subgraph "label-layout.js"
         createLabelsWithCollisionDetection["createLabelsWithCollisionDetection(nodeData, container)"]
         splitLabel["splitLabel(text)"]
-        measureLabel["measureLabel(text, verticalPosition)"]
+        measureLabel["measureLabel(text, verticalPosition, emphasis)"]
         getYPosition["getYPosition(node, labelHeight)"]
         getNodeY["getNodeY(node)"]
         resolveCollisions["resolveCollisions(labelData)"]
@@ -85,6 +91,8 @@ graph TD
     SelectAllBtn --> handleInput
     ClearAllBtn --> handleInput
     EmojiCheckbox --> handleInput
+    CaseTitleDblClick --> handleInput
+    EmojiLegendDblClick --> handleInput
     
     %% Main.js init() sequence
     clearContainers --> setupListeners
@@ -105,6 +113,12 @@ graph TD
     update --> updateReset
     update --> updateCaseToggle
     update --> updateEmojiToggle
+    update --> updateIsolate
+    update --> updateExitIsolation
+    
+    %% Isolation checks
+    updateIsolate --> checkIsolation
+    updateExitIsolation --> checkIsolation
     
     %% Switch cases to render
     updateDateFilter --> render
@@ -113,11 +127,19 @@ graph TD
     updateReset --> render
     updateCaseToggle --> render
     updateEmojiToggle --> render
+    updateIsolate --> render
+    updateExitIsolation --> render
     
     %% Render.js connections
     render --> updateControls
     render --> renderTimeline
     renderTimeline --> createLabelsWithCollisionDetection
+    
+    %% State.js internal calls before render
+    update --> hasActiveFilters
+    loadData --> hasActiveFilters
+    hasActiveFilters --> arraysEqual
+    hasActiveFilters --> getDefaultCases
     
     %% label-layout.js internal connections
     createLabelsWithCollisionDetection --> splitLabel

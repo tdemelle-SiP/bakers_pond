@@ -90,12 +90,25 @@ function updateControls(state) {
         cb.checked = state.filters.selectedCases.includes(cb.value);
     });
     
-    // Update case filter button text
+    // Update case filter button text with smart text
     const filterText = document.getElementById('case-filter-text');
     if (filterText) {
         const selectedCount = state.filters.selectedCases.length;
         const totalCount = state.caseNumbers.length;
-        filterText.textContent = `${selectedCount} / ${totalCount} cases`;
+        
+        if (selectedCount === totalCount) {
+            filterText.textContent = 'All Cases';
+        } else if (selectedCount === 1) {
+            filterText.textContent = '1 Case';
+        } else {
+            filterText.textContent = `${selectedCount} of ${totalCount} Cases`;
+        }
+    }
+    
+    // Update active filter indicator
+    const resetButton = document.getElementById('reset-filters');
+    if (resetButton) {
+        resetButton.classList.toggle('active-filters', state.hasActiveFilters);
     }
     
     // Update emoji checkbox states
@@ -190,6 +203,14 @@ function renderTimeline(state) {
     const emojiVisibility = state.emojiVisibility || {};
     const stats = calculateStats(state.filteredEvents, emojiVisibility);
     renderStats(stats, emojiVisibility);
+    
+    // Update legend counts dynamically
+    const emojiCounts = document.querySelectorAll('.emoji-count');
+    emojiCounts.forEach(countSpan => {
+        const emojiClass = countSpan.dataset.emojiClass;
+        const count = stats.emojiStats?.[emojiClass] || 0;
+        countSpan.textContent = count > 0 ? `(${count})` : '';
+    });
     
     // Restore focus date (center the previously centered date)
     const mainContent = document.querySelector('.main-content');

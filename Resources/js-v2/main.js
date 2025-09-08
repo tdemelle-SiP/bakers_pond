@@ -14,7 +14,7 @@
 // - Updates controls to reflect state
 // - Updates timeline to reflect state
 
-import { loadData, update, state } from './state.js';
+import { loadData, update, state, checkIsolation } from './state.js';
 import { getEmojiArray } from '../js/emoji-config.js';
 import { getDateFromX, calculateDateRange } from '../js/date-scale.js';
 
@@ -54,7 +54,7 @@ function buildLegend() {
     // Helper function to create emoji cell with checkbox
     const createEmojiCell = (item) => {
         const checked = item.defaultVisible !== false ? 'checked' : '';
-        return `<td style="padding: 2px 12px;">
+        return `<td class="legend-cell" style="padding: 2px 12px;">
             <label style="cursor: pointer;">
                 <input type="checkbox" 
                        class="emoji-toggle" 
@@ -62,6 +62,7 @@ function buildLegend() {
                        style="margin-right: 4px; cursor: pointer;" 
                        ${checked}>
                 ${item.emoji} ${item.legendLabel}
+                <span class="emoji-count" data-emoji-class="${item.class}" style="opacity: 0.7; margin-left: 4px;"></span>
             </label>
         </td>`;
     };
@@ -231,6 +232,27 @@ function setupListeners() {
             }
         });
         
+        // Double-click handler for isolation
+        nav.addEventListener('dblclick', (e) => {
+            const target = e.target;
+            
+            // Emoji legend double-click for isolation
+            if (target.closest('.legend-cell')) {
+                const checkbox = target.closest('.legend-cell').querySelector('.emoji-toggle');
+                if (checkbox) {
+                    const emojiClass = checkbox.dataset.emojiClass;
+                    if (emojiClass) {
+                        // Check if already isolating this emoji
+                        if (checkIsolation('emoji', emojiClass)) {
+                            handleInput('exitIsolation');
+                        } else {
+                            handleInput('isolate', { type: 'emoji', target: emojiClass });
+                        }
+                    }
+                }
+            }
+        });
+        
         // Change handler for inputs and checkboxes
         nav.addEventListener('change', (e) => {
             const target = e.target;
@@ -272,6 +294,26 @@ function setupListeners() {
             dropdown.style.display = 'none';
         }
     });
+    
+    // Double-click handler for case titles (on main content area)
+    if (mainContent) {
+        mainContent.addEventListener('dblclick', (e) => {
+            const target = e.target;
+            
+            // Case title double-click for isolation
+            if (target.classList.contains('case-title') || target.classList.contains('case-dep')) {
+                const caseNumber = target.dataset.caseNumber;
+                if (caseNumber) {
+                    // Check if already isolating this case
+                    if (checkIsolation('case', caseNumber)) {
+                        handleInput('exitIsolation');
+                    } else {
+                        handleInput('isolate', { type: 'case', target: caseNumber });
+                    }
+                }
+            }
+        });
+    }
     
     // Window resize handler for fit-to-window
     let resizeTimeout;

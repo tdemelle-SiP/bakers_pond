@@ -23,11 +23,18 @@ function splitLabel(text) {
  * Measure actual rendered dimensions of a label
  * @param {string} text - Label text (may include newlines)
  * @param {string} verticalPosition - 'private', 'public', or 'inline'
+ * @param {string} emphasis - 'high' or undefined
  * @returns {Object} {width, height} in pixels
  */
-function measureLabel(text, verticalPosition) {
+function measureLabel(text, verticalPosition, emphasis) {
     const el = document.createElement('div');
     el.className = `node-label ${verticalPosition === 'private' ? 'node-label-below' : 'node-label-above'}`;
+    
+    // Add high emphasis class if needed for accurate measurement
+    if (emphasis === 'high') {
+        el.classList.add('node-label-high');
+    }
+    
     el.style.position = 'absolute';
     el.style.visibility = 'hidden';
     el.style.transform = 'none';
@@ -60,7 +67,7 @@ export function createLabelsWithCollisionDetection(nodeData, container) {
         const labelText = splitLabel(node.label);
         
         // Measure the label properly
-        const { width, height } = measureLabel(labelText, node.verticalPosition);
+        const { width, height } = measureLabel(labelText, node.verticalPosition, node.labelEmphasis);
         
         // Create label element
         const labelEl = document.createElement('div');
@@ -105,7 +112,8 @@ export function createLabelsWithCollisionDetection(nodeData, container) {
         // Store label info for collision detection
         labels.push({
             element: labelEl,
-            x: x,
+            baseX: x,  // Store initial position
+            x: x,      // Will be adjusted by collision detection
             y: y,
             width: width,
             height: height,
@@ -143,12 +151,11 @@ function getYPosition(node, labelHeight) {
     if (node.verticalPosition === 'private') {
         // Labels below: top edge at fixed distance (30px) from node
         return nodeY + 30;
-    } else if (node.verticalPosition === 'inline') {
-        // Inline (bypass) nodes: center label vertically on node
-        return nodeY - labelHeight / 2;
     } else {
-        // Labels above: bottom edge at fixed distance from node
-        return nodeY - 30 - labelHeight;
+        // Labels above: center the label vertically around a fixed point
+        const singleLineHeight = 20; // Approximate height of single line label
+        const centerPoint = nodeY - 25 - (singleLineHeight / 2);
+        return centerPoint - (labelHeight / 2);
     }
 }
 
@@ -161,9 +168,8 @@ function getNodeY(node) {
     
     if (node.verticalPosition === 'private') {
         return centerY + 35 + 20;
-    } else if (node.verticalPosition === 'inline') {
-        return centerY + 35;
     } else {
+        // Public and inline both positioned above the line
         return centerY + 35 - 20;
     }
 }
@@ -175,21 +181,26 @@ function getNodeY(node) {
 function resolveCollisions(labelData) {
     const minGap = 3; // horizontal breathing room between labels
     
-    // Process each band (public/private/inline) separately
-    ['public', 'private', 'inline'].forEach(position => {
+    // Process each band (public/private) separately - inline goes with public
+    [false, true].forEach(isPrivate => {
         // Get labels for this band, sorted by node position
         const bandLabels = labelData
-            .filter(ld => ld.node.verticalPosition === position)
+            .filter(ld => (ld.node.verticalPosition === 'private') === isPrivate)
             .sort((a, b) => a.nodeX - b.nodeX);
         
         if (bandLabels.length === 0) return;
+        
+        // Start all labels at their ideal positions
+        bandLabels.forEach(label => {
+            label.x = label.baseX;
+        });
         
         // Find and resolve overlaps
         let hasOverlap = true;
         let iterations = 0;
         const minLeftBound = 0; // No left boundary constraint
         
-        while (hasOverlap && iterations < 30) {
+        while (hasOverlap && iterations < 100) {
             hasOverlap = false;
             
             for (let i = 1; i < bandLabels.length; i++) {
@@ -224,6 +235,8 @@ function resolveCollisions(labelData) {
             
             iterations++;
         }
+        
+        // Don't warn about hitting iteration limit - some overlap is acceptable in dense areas
     });
     
     return labelData;

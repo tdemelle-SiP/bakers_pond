@@ -94,6 +94,9 @@ export async function loadData() {
         // Apply filters to get filteredEvents
         state.filteredEvents = applyFilters(state.allEvents, state.filters);
         
+        // Calculate whether filters are active
+        state.hasActiveFilters = hasActiveFilters(state);
+        
         // Call render with state
         render(state);
         
@@ -217,7 +220,21 @@ export function update(type, data) {
     // Re-apply filters if needed
     if (['dateFilter', 'caseToggle', 'reset', 'isolate', 'exitIsolation'].includes(type)) {
         state.filteredEvents = applyFilters(state.allEvents, state.filters);
+        
+        // Recalculate fit-to-window scale if enabled
+        if (state.fitToWindow && state.filteredEvents.length > 0) {
+            const width = window.innerWidth - 200;
+            const dates = state.filteredEvents.map(e => new Date(e.date));
+            const minDate = new Date(Math.min(...dates));
+            const maxDate = new Date(Math.max(...dates));
+            const days = Math.ceil((maxDate - minDate) / (1000 * 60 * 60 * 24));
+            state.scale = Math.min(3, Math.max(0.2, width / days));
+            saveScaleState(state.scale, state.fitToWindow);
+        }
     }
+    
+    // Calculate whether filters are active and add to state
+    state.hasActiveFilters = hasActiveFilters(state);
     
     // Call render with state
     render(state);
@@ -226,6 +243,32 @@ export function update(type, data) {
 // Export helper to check isolation state
 export function checkIsolation(type, target) {
     return isIsolating(type, target);
+}
+
+// Helper function to check if arrays are equal
+function arraysEqual(a, b) {
+    if (a.length !== b.length) return false;
+    return a.every(val => b.includes(val)) && b.every(val => a.includes(val));
+}
+
+// Check if any filters are active (non-default)
+export function hasActiveFilters(state) {
+    const defaults = {
+        scale: 0.8,
+        fitToWindow: false,
+        startDate: null,
+        endDate: null,
+        cases: getDefaultCases()
+    };
+    
+    return (
+        state.scale !== defaults.scale ||
+        state.fitToWindow !== defaults.fitToWindow ||
+        state.filters.startDate !== defaults.startDate ||
+        state.filters.endDate !== defaults.endDate ||
+        !arraysEqual(state.filters.selectedCases, defaults.cases) ||
+        Object.values(state.emojiVisibility).some(v => v === false)
+    );
 }
 
 // Export state for focus date calculation
