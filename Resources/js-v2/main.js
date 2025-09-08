@@ -1,23 +1,11 @@
 // main.js
-// - Creates DOM structure
+// - Initializes application
 // - Sets up event listeners
-// - Calls state.js on load
-// - Calls state.js on user input
+// - Manages focus date
+// - Handles user input
 
-// state.js
-// - Loads TSV data
-// - Loads saved preferences
-// - Updates state
-// - Calls render.js
-
-// render.js
-// - Updates controls to reflect state
-// - Updates timeline to reflect state
-
-import { loadData, update, state, checkIsolation } from './state.js';
+import { loadData, update, checkIsolation, saveFocus } from './state.js';
 import { getEmojiArray } from '../js/emoji-config.js';
-import { getDateFromX, calculateDateRange } from '../js/date-scale.js';
-import { saveFocusDate as persistFocusDate } from '../js/state-persistence.js';
 
 // Wait for DOM ready
 if (document.readyState === 'loading') {
@@ -182,23 +170,10 @@ async function handleRefresh() {
 
 function saveFocusDate() {
     const mainContent = document.querySelector('.main-content');
-    if (!mainContent || !state.filteredEvents || state.filteredEvents.length === 0) {
-        return;
-    }
+    if (!mainContent) return;
     
-    // Calculate center position of viewport
-    const centerX = mainContent.scrollLeft + (mainContent.clientWidth / 2);
-    
-    // Get date range and scale from current state
-    const dateRange = calculateDateRange(state.filteredEvents);
-    const pixelsPerDay = state.scale;
-    
-    // Calculate what date is at center
-    const focusDate = getDateFromX(centerX, dateRange.startDate, pixelsPerDay);
-    state.focusDate = focusDate;
-    
-    // Persist to localStorage
-    persistFocusDate(focusDate);
+    // Call state.js to save focus based on scroll position
+    saveFocus(mainContent.scrollLeft, mainContent.clientWidth);
 }
 
 function setupListeners() {
@@ -368,6 +343,12 @@ function setupListeners() {
 function handleInput(type, providedData = null) {
     const data = providedData || {};
     
+    // Save focus date before any operation that will clear containers
+    const needsClear = ['dateFilter', 'scale', 'fit', 'reset', 'caseToggle', 'isolate', 'exitIsolation', 'emojiToggle'].includes(type);
+    if (needsClear) {
+        saveFocusDate();
+    }
+    
     if (!providedData) {
         switch(type) {
             case 'dateFilter':
@@ -402,6 +383,3 @@ function handleInput(type, providedData = null) {
     
     update(type, data);
 }
-
-// Export for dynamic event handlers added by render
-export { handleInput };

@@ -198,6 +198,13 @@ export function loadFocusDate() {
 }
 
 /**
+ * Clear focus date from storage
+ */
+export function clearFocusDate() {
+    localStorage.removeItem(STORAGE_KEYS.FOCUS_DATE);
+}
+
+/**
  * Initialize state from localStorage on page load
  * @returns {Object} Complete saved state
  */

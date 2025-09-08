@@ -1,15 +1,261 @@
 // render.js
-// - Updates controls to reflect state
-// - Updates timeline to reflect state
-// Pure rendering - receives state, updates DOM
+// - All rendering logic consolidated here
+// - Uses coordinate system from state
+// - Creates all DOM elements for timeline
 
 // Import existing rendering functions
-import { renderCaselineNodes } from '../js/caseline-nodes.js';
 import { drawCaselineConnections } from '../js/connections.js';
 import { createLabelsWithCollisionDetection } from './label-layout.js';
 import { renderCaseTitles } from './case-titles.js';
 import { calculateStats } from '../js/stats.js';
-import { calculateDateRange, calculateYearMarkers, calculateTimelineWidth, setContainerWidth, getXPosition } from '../js/date-scale.js';
+import { getEmojiConfig } from '../js/emoji-config.js';
+
+/**
+ * Set container dimensions
+ * @param {HTMLElement} container - Timeline container
+ * @param {number} width - Width in pixels
+ */
+function setContainerWidth(container, width) {
+    container.style.width = width + 'px';
+    if (container.parentElement) {
+        container.parentElement.style.width = (width + 80) + 'px';
+    }
+}
+
+/**
+ * Calculate year marker positions - returns data only, no DOM manipulation
+ * @param {Object} coordinateSystem - Coordinate system from state
+ * @returns {Array} Array of year marker data objects
+ */
+function calculateYearMarkers(coordinateSystem) {
+    if (!coordinateSystem || !coordinateSystem.dateRange) return [];
+    
+    const { dateRange, pixelsPerDay, timelineWidth, getXPosition } = coordinateSystem;
+    const { startDate, minDate, maxDate } = dateRange;
+    const markers = [];
+    
+    const firstEventYear = minDate.getFullYear();
+    const lastEventYear = maxDate.getFullYear();
+    
+    // Determine if we should show decade markers instead of yearly markers
+    const useDecadeMarkers = pixelsPerDay < 0.2;
+    
+    for (let year = startDate.getFullYear(); year <= lastEventYear; year++) {
+        const yearStart = new Date(year, 0, 1);
+        const yearStartX = getXPosition(yearStart);
+        
+        // Only process years that are at least partially visible
+        if (yearStartX >= 0 && yearStartX <= timelineWidth) {
+            const isDecadeYear = year % 10 === 0;
+            
+            if (useDecadeMarkers && !isDecadeYear) {
+                // In decade mode, only show small ticks for non-decade years
+                markers.push({
+                    type: 'tick',
+                    x: yearStartX,
+                    year: year,
+                    label: null
+                });
+            } else {
+                // Show full line and label for all years in normal mode, or decades in decade mode
+                markers.push({
+                    type: 'line',
+                    x: yearStartX,
+                    year: year,
+                    label: year.toString()
+                });
+            }
+        }
+    }
+    
+    return markers;
+}
+
+/**
+ * Determine the caseline color based on multiple emojis
+ * For multi-emoji nodes, uses the superscript (second) emoji's color
+ */
+function determineCaselineColor(emojis) {
+    if (!emojis || emojis.length === 0) return '#999999';
+    
+    // For multi-emoji, use the superscript (second) emoji's color
+    if (emojis.length > 1) {
+        const superscriptConfig = getEmojiConfig(emojis[1], 'caseline');
+        if (superscriptConfig && superscriptConfig.caselineColor) {
+            return superscriptConfig.caselineColor;
+        }
+    }
+    
+    // For single emoji, use its color
+    const config = getEmojiConfig(emojis[0], 'caseline');
+    if (!config) return '#999999';
+    
+    return config.caselineColor || '#999999';
+}
+
+/**
+ * Render caseline nodes (emoji markers)
+ * @param {Object[]} events - Caseline events only (eventType === 'caseline')
+ * @param {Object} coordinateSystem - Contains dateRange, pixelsPerDay, and getXPosition function
+ * @returns {Object[]} Array of caseline node data for connections and labels
+ */
+function renderCaselineNodes(events, coordinateSystem) {
+    const caselineData = [];
+    const caseGroups = {};
+    
+    // Use the nodes container
+    const container = document.getElementById('nodes-container');
+    
+    // Get container height once for all nodes
+    const caselineContainer = document.getElementById('caseline-container');
+    const containerHeight = caselineContainer ? caselineContainer.offsetHeight : 500;
+    const containerCenter = 60 + (containerHeight - 60) / 2; // Match CSS calculation
+    
+    // Filter to caseline events only
+    const caselineEvents = events.filter(e => e.eventType === 'caseline');
+    
+    caselineEvents.forEach(event => {
+        const x = coordinateSystem.getXPosition(event.date);
+        
+        // Handle multiple emojis
+        const emojis = event.caselineEmojis || [];
+        if (emojis.length === 0) return; // Skip if no emojis
+        
+        // Get first emoji config for label and positioning
+        const primaryConfig = getEmojiConfig(emojis[0], 'caseline') || {};
+        const caselineColor = determineCaselineColor(emojis);
+        
+        // Get label - prefer bold override from procedural column
+        const nodeLabel = event.proceduralLabel || primaryConfig.displayLabel || '';
+        
+        // Create node element
+        const node = document.createElement('div');
+        node.className = 'caseline-node';
+        
+        // Add positioning classes based on emoji type and privacy
+        const allBypass = emojis.length > 1 ? 
+            emojis.every(emoji => {
+                const config = getEmojiConfig(emoji, 'caseline');
+                return config && config.caselineColor === 'bypass';
+            }) :
+            primaryConfig.caselineColor === 'bypass';
+            
+        if (allBypass) {
+            // Bypass nodes are centered
+            node.classList.add('centered');
+        } else if (event.isPrivate) {
+            // Private nodes below the line
+            node.classList.add('private');
+            node.classList.add('case-procedural-below');
+        } else {
+            // Public nodes above the line
+            node.classList.add('public');
+            node.classList.add('case-procedural-above');
+        }
+        
+        // Add emoji-specific data attributes
+        if (emojis.length > 1) {
+            node.classList.add('multi-emoji');
+            // Multi-emoji structure
+            const primaryEmoji = document.createElement('span');
+            primaryEmoji.className = 'primary-emoji';
+            primaryEmoji.textContent = emojis[0];
+            
+            const secondaryEmoji = document.createElement('span');
+            secondaryEmoji.className = 'secondary-emoji';
+            secondaryEmoji.textContent = emojis.slice(1).join('');
+            
+            node.appendChild(primaryEmoji);
+            node.appendChild(secondaryEmoji);
+        } else {
+            // Single emoji - just set text content
+            node.textContent = emojis[0] || '';
+        }
+        
+        // For multi-emoji, store both emoji types for visibility filtering
+        if (emojis.length > 1) {
+            const secondaryConfig = getEmojiConfig(emojis[1], 'caseline');
+            node.dataset.emojiType = primaryConfig.class || '';
+            node.dataset.emojiType2 = secondaryConfig?.class || '';
+        } else if (primaryConfig.class) {
+            node.dataset.emojiType = primaryConfig.class;
+        }
+        
+        node.style.left = x + 'px'; // Absolute positioning
+        
+        // Create tooltip
+        const tooltip = document.createElement('div');
+        tooltip.className = 'event-tooltip';
+        tooltip.innerHTML = `
+            <div class="event-date">${event.caseNumber || 'No Case'}</div>
+            <div class="event-title">${event.title}</div>
+            <div class="event-detail">${event.dateStr}</div>
+        `;
+        node.appendChild(tooltip);
+        
+        // Make clickable if has URL
+        if (event.documentUrl) {
+            node.style.cursor = 'pointer';
+            node.onclick = () => window.open(event.documentUrl, '_blank');
+        }
+        
+        container.appendChild(node);
+        
+        // Store data for labels and connections
+        
+        // Determine vertical position: 'public', 'private', or 'inline'
+        let verticalPosition;
+        if (allBypass) {
+            verticalPosition = 'inline';
+        } else if (event.isPrivate) {
+            verticalPosition = 'private';
+        } else {
+            verticalPosition = 'public';
+        }
+        
+        // Get secondary emoji type for multi-emoji nodes
+        const secondaryConfig = emojis.length > 1 ? getEmojiConfig(emojis[1], 'caseline') : null;
+        
+        // Y position for label positioning
+        let yPosition;
+        if (allBypass) {
+            yPosition = containerCenter;
+        } else if (event.isPrivate) {
+            yPosition = containerCenter + 25; // Private nodes 25px below center
+        } else {
+            yPosition = containerCenter - 25; // Public nodes 25px above center
+        }
+        
+        const nodeData = {
+            x: x,
+            y: yPosition,
+            node: node,
+            emojis: emojis,
+            displayEmoji: emojis.join(''),
+            label: nodeLabel,
+            labelEmphasis: event.labelEmphasis,
+            caselineColor: caselineColor,
+            emojiType: primaryConfig.class || null,
+            emojiType2: secondaryConfig?.class || null,
+            verticalPosition: verticalPosition,
+            caseNumber: event.caseNumber,
+            date: event.date,
+            event: event
+        };
+        
+        caselineData.push(nodeData);
+        
+        // Group by case for connection lines
+        if (event.caseNumber) {
+            if (!caseGroups[event.caseNumber]) {
+                caseGroups[event.caseNumber] = [];
+            }
+            caseGroups[event.caseNumber].push(nodeData);
+        }
+    });
+    
+    return { nodes: caselineData, caseGroups: caseGroups };
+}
 
 /**
  * Main render function - updates entire UI to reflect state
@@ -138,7 +384,7 @@ function renderTimeline(state) {
     const yearMarkersContainer = document.getElementById('year-markers-container');
     const connectionsContainer = document.getElementById('connections-container');
     
-    if (!state.filteredEvents || state.filteredEvents.length === 0) {
+    if (!state.filteredEvents || state.filteredEvents.length === 0 || !state.coordinateSystem) {
         // Show empty state
         if (nodesContainer) {
             const emptyDiv = document.createElement('div');
@@ -149,20 +395,18 @@ function renderTimeline(state) {
         return;
     }
     
-    // Calculate date range and scale
-    const dateRange = calculateDateRange(state.filteredEvents);
-    const pixelsPerDay = state.scale;
+    // Get coordinate system from state
+    const coordinateSystem = state.coordinateSystem;
     
     // Update container width
     const container = document.getElementById('caseline-container');
-    const timelineWidth = calculateTimelineWidth(dateRange.totalDays, pixelsPerDay);
-    setContainerWidth(container, timelineWidth);
+    setContainerWidth(container, coordinateSystem.timelineWidth);
     
     // Render year markers
-    renderYearMarkers(yearMarkersContainer, dateRange, pixelsPerDay);
+    renderYearMarkers(yearMarkersContainer, coordinateSystem);
     
     // Render caseline nodes only
-    const caselineData = renderCaselineNodes(state.filteredEvents, dateRange, pixelsPerDay);
+    const caselineData = renderCaselineNodes(state.filteredEvents, coordinateSystem);
     
     // Apply emoji visibility BEFORE label collision detection
     if (state.emojiVisibility) {
@@ -224,13 +468,12 @@ function renderTimeline(state) {
     const mainContent = document.querySelector('.main-content');
     if (mainContent && state.focusDate) {
         requestAnimationFrame(() => {
-            // Calculate where the focus date is now
-            const focusX = getXPosition(state.focusDate, dateRange.startDate, pixelsPerDay);
+            // Calculate where the focus date is now using the coordinate system
+            const focusX = coordinateSystem.getXPosition(state.focusDate);
             // Calculate scroll position to center it
             const scrollLeft = focusX - (mainContent.clientWidth / 2);
             mainContent.scrollLeft = Math.max(0, scrollLeft);
-            // Clear focus date after using it
-            state.focusDate = null;
+            // Note: Focus date is one-time use, will be cleared by state on next update
         });
     }
 }
@@ -238,17 +481,16 @@ function renderTimeline(state) {
 /**
  * Render year markers on the timeline
  * @param {HTMLElement} container - Year markers container
- * @param {Object} dateRange - Date range from calculateDateRange
- * @param {number} pixelsPerDay - Scale factor
+ * @param {Object} coordinateSystem - Coordinate system from state
  */
-function renderYearMarkers(container, dateRange, pixelsPerDay) {
-    if (!container) return;
+function renderYearMarkers(container, coordinateSystem) {
+    if (!container || !coordinateSystem) return;
     
     // Clear existing markers
     container.innerHTML = '';
     
     // Get year marker data from date-scale
-    const markers = calculateYearMarkers(dateRange, pixelsPerDay);
+    const markers = calculateYearMarkers(coordinateSystem);
     
     // Get container height for dynamic positioning
     const caselineContainer = document.getElementById('caseline-container');

@@ -1,41 +1,19 @@
-// main.js
-// - Creates DOM structure
-// - Sets up event listeners
-// - Calls state.js on load
-// - Calls state.js on user input
-
-// state.js
-// - Loads TSV data
-// - Loads saved preferences
-// - Updates state
-// - Calls render.js
-
-// render.js
-// - Updates controls to reflect state
-// - Updates timeline to reflect state
+// state.js  
+// - Loads and parses data
+// - Manages application state
+// - Handles filter updates
+// - Triggers rendering
+// 
+// NOTE: This file now contains all state-related functionality consolidated from v1
+// for refactoring. The only external dependency is emoji-config (shared configuration).
 
 import { render } from './render.js';
-
-// Import existing parsing and persistence functions
-import { loadTableData, extractTableRows, extractCasesTable } from '../js/data-loader.js';
-import { parseEvents } from '../js/event-parser.js';
-import { applyFilters } from '../js/filters.js';
-import { DEFAULT_SCALE } from '../js/date-scale.js';
 import { getEmojiArray } from '../js/emoji-config.js';
-import { 
-    loadFilterState, 
-    saveFilterState,
-    loadScaleState,
-    saveScaleState,
-    loadEmojiVisibility,
-    saveEmojiVisibility,
-    setIsolationMode,
-    getIsolationMode,
-    clearIsolationMode,
-    isIsolating,
-    saveFocusDate,
-    loadFocusDate
-} from '../js/state-persistence.js';
+
+// Default scale constant
+const DEFAULT_SCALE = 0.8;
+const TIMELINE_LEFT_OFFSET = 0;
+const TIMELINE_RIGHT_PADDING = 50;
 
 // State object - structure from existing state-manager.js
 const state = {
@@ -52,55 +30,43 @@ const state = {
         selectedCases: [],
         manualDateOverride: false
     },
-    focusDate: null  // Date that should be centered after refresh
+    focusDate: null,  // Date that should be centered after refresh
+    // Coordinate system - derived from filteredEvents and scale
+    coordinateSystem: null
 };
 
 // Load data and saved preferences
 export async function loadData() {
     try {
-        // Load markdown file using existing data-loader
+        // COHORT 1: timelineData - Load and parse markdown in one pass
         const markdownText = await loadTableData();
+        const parsedData = parseMarkdown(markdownText);
         
-        // Extract timeline table and parse events
-        const tableData = extractTableRows(markdownText);
-        state.allEvents = parseEvents(tableData);
+        // Store parsed data in state
+        state.allEvents = parsedData.events;
+        state.casesData = parsedData.casesData;
+        state.caseNumbers = parsedData.caseNumbers;
         
-        // Extract cases metadata
-        state.casesData = extractCasesTable(markdownText);
-        
-        // Get unique case numbers from events
-        const caseNumbersSet = new Set();
-        state.allEvents.forEach(event => {
-            if (event.caseNumber) {
-                caseNumbersSet.add(event.caseNumber);
-            }
-        });
-        state.caseNumbers = Array.from(caseNumbersSet).sort();
-        
-        // Load saved preferences using existing persistence functions
-        const savedFilters = loadFilterState();
-        const savedScale = loadScaleState();
-        const savedEmojiVisibility = loadEmojiVisibility();
+        // COHORT 2: uiData - Load all UI state in one localStorage access
+        const uiState = loadAllUIState();
         const savedFocusDate = loadFocusDate();
         
         // Apply saved preferences
         // Use saved cases only if the array exists and has items; otherwise fall back to defaults.
-        // This prevents an empty saved array from hiding everything on first load.
-        const hasSavedCases = Array.isArray(savedFilters?.selectedCases) && savedFilters.selectedCases.length > 0;
-        state.filters.selectedCases = hasSavedCases ? [...savedFilters.selectedCases] : getDefaultCases();
+        const hasSavedCases = Array.isArray(uiState.filters?.selectedCases) && uiState.filters.selectedCases.length > 0;
+        state.filters.selectedCases = hasSavedCases ? [...uiState.filters.selectedCases] : getDefaultCases();
         
-        if (savedFilters.startDate) state.filters.startDate = savedFilters.startDate;
-        if (savedFilters.endDate) state.filters.endDate = savedFilters.endDate;
+        if (uiState.filters?.startDate) state.filters.startDate = uiState.filters.startDate;
+        if (uiState.filters?.endDate) state.filters.endDate = uiState.filters.endDate;
         
-        state.scale = savedScale.scale || 0.8;
-        state.fitToWindow = savedScale.fitToWindow || false;
-        state.emojiVisibility = savedEmojiVisibility || {};
+        state.scale = uiState.scale?.scale || 0.8;
+        state.fitToWindow = uiState.scale?.fitToWindow || false;
+        state.emojiVisibility = uiState.emojiVisibility || {};
         state.focusDate = savedFocusDate;
         
-        // Apply filters to get filteredEvents
+        // COHORT 3: stateExport - Combine timeline and UI data
         state.filteredEvents = applyFilters(state.allEvents, state.filters);
-        
-        // Calculate whether filters are active
+        state.coordinateSystem = calculateCoordinateSystem(state.filteredEvents, state.scale);
         state.hasActiveFilters = hasActiveFilters(state);
         
         // Call render with state
@@ -110,6 +76,44 @@ export async function loadData() {
         console.error('Failed to load data:', error);
         throw error;
     }
+}
+
+// Calculate coordinate system from filtered events and scale
+function calculateCoordinateSystem(events, scale) {
+    if (!events || events.length === 0) {
+        return null;
+    }
+    
+    // Calculate date range
+    const dates = events.map(e => e.date);
+    const minDate = new Date(Math.min(...dates));
+    const maxDate = new Date(Math.max(...dates));
+    
+    // Add 60-day padding
+    const startDate = new Date(minDate.getTime() - (60 * 24 * 60 * 60 * 1000));
+    const endDate = new Date(maxDate.getTime() + (60 * 24 * 60 * 60 * 1000));
+    const totalDays = (endDate - startDate) / (1000 * 60 * 60 * 24);
+    
+    // Calculate timeline width
+    const contentWidth = totalDays * scale + TIMELINE_RIGHT_PADDING;
+    const viewportWidth = window.innerWidth - 40;
+    const timelineWidth = Math.max(contentWidth, viewportWidth, 1200);
+    
+    return {
+        dateRange: { startDate, endDate, totalDays, minDate, maxDate },
+        pixelsPerDay: scale,
+        timelineWidth: timelineWidth,
+        // Function to convert date to x position
+        getXPosition: (date) => {
+            const daysFromStart = (date - startDate) / (1000 * 60 * 60 * 24);
+            return TIMELINE_LEFT_OFFSET + (daysFromStart * scale);
+        },
+        // Function to convert x position to date
+        getDateFromX: (x) => {
+            const daysFromStart = x / scale;
+            return new Date(startDate.getTime() + (daysFromStart * 1000 * 60 * 60 * 24));
+        }
+    };
 }
 
 // Get default cases based on defaultVisible from cases data
@@ -175,10 +179,12 @@ export function update(type, data) {
             state.emojiVisibility = {};
             state.scale = 0.8;
             state.fitToWindow = false;
+            state.focusDate = null;  // Clear focus date on reset
             
             saveFilterState(state.filters);
             saveEmojiVisibility(state.emojiVisibility);
             saveScaleState(state.scale, state.fitToWindow);
+            clearFocusDate();  // Clear from localStorage too
             break;
             
         case 'caseToggle':
@@ -245,6 +251,11 @@ export function update(type, data) {
         }
     }
     
+    // Recalculate coordinate system if events or scale changed
+    if (['dateFilter', 'caseToggle', 'reset', 'isolate', 'exitIsolation', 'scale', 'fit'].includes(type)) {
+        state.coordinateSystem = calculateCoordinateSystem(state.filteredEvents, state.scale);
+    }
+    
     // Calculate whether filters are active and add to state
     state.hasActiveFilters = hasActiveFilters(state);
     
@@ -255,6 +266,21 @@ export function update(type, data) {
 // Export helper to check isolation state
 export function checkIsolation(type, target) {
     return isIsolating(type, target);
+}
+
+// Save focus date based on scroll position
+export function saveFocus(scrollLeft, clientWidth) {
+    if (!state.coordinateSystem) return;
+    
+    // Calculate center position of viewport
+    const centerX = scrollLeft + (clientWidth / 2);
+    
+    // Convert pixel position to date using coordinate system
+    const focusDate = state.coordinateSystem.getDateFromX(centerX);
+    state.focusDate = focusDate;
+    
+    // Persist to localStorage
+    saveFocusDate(focusDate);
 }
 
 // Helper function to check if arrays are equal
@@ -281,6 +307,584 @@ export function hasActiveFilters(state) {
         !arraysEqual(state.filters.selectedCases, defaults.cases) ||
         (state.emojiVisibility && Object.values(state.emojiVisibility).some(v => v === false))
     );
+}
+
+// ============================================================================
+// CONSOLIDATED V1 FUNCTIONS - Brought into v2 for refactoring
+// ============================================================================
+
+// ----------------------------------------------------------------------------
+// OPTIMIZED: Combined markdown parsing
+// ----------------------------------------------------------------------------
+
+/**
+ * Parse all data from markdown in a single pass
+ * @param {string} markdownText - Raw markdown content
+ * @returns {Object} Combined parsing results
+ */
+function parseMarkdown(markdownText) {
+    const lines = markdownText.split('\n');
+    const result = {
+        tableData: null,
+        casesData: [],
+        events: [],
+        caseNumbers: []
+    };
+    
+    // Find main table header
+    const headerIndex = lines.findIndex(line => 
+        line.startsWith('|') && line.toLowerCase().includes('date')
+    );
+    
+    if (headerIndex === -1) {
+        throw new Error('No table header found in markdown');
+    }
+    
+    // Extract main table data
+    const headerLine = lines[headerIndex];
+    const headers = headerLine.split('|').slice(1, -1).map(s => s.trim());
+    const tableRows = [];
+    
+    for (let i = headerIndex + 2; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line || !line.startsWith('|')) break;
+        
+        const parts = line
+            .split('|')
+            .slice(1, -1)
+            .map(p => p.trim());
+        
+        if (parts.length === headers.length) {
+            tableRows.push(parts);
+        }
+    }
+    
+    result.tableData = { headers, rows: tableRows };
+    
+    // Find cases section and extract cases data
+    const casesIndex = lines.findIndex(line => line.trim() === '## Cases');
+    
+    if (casesIndex !== -1) {
+        let casesHeaderIndex = -1;
+        for (let i = casesIndex + 1; i < lines.length && i < casesIndex + 5; i++) {
+            if (lines[i].includes('| Case Number |')) {
+                casesHeaderIndex = i;
+                break;
+            }
+        }
+        
+        if (casesHeaderIndex !== -1) {
+            for (let i = casesHeaderIndex + 2; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line || !line.startsWith('|')) break;
+                
+                const parts = line
+                    .split('|')
+                    .slice(1, -1)
+                    .map(p => p.trim());
+                
+                if (parts.length >= 4) {
+                    result.casesData.push({
+                        caseNumber: parts[0],
+                        year: parts[1],
+                        title: parts[2],
+                        defaultVisible: parts[3].toUpperCase() !== 'FALSE',
+                        depNumber: parts[4] || ''
+                    });
+                }
+            }
+        }
+    }
+    
+    // Parse events and extract case numbers in one pass
+    const caseSet = new Set();
+    result.events = parseEventsOptimized(result.tableData, caseSet);
+    result.caseNumbers = Array.from(caseSet).sort();
+    
+    return result;
+}
+
+// ----------------------------------------------------------------------------
+// From data-loader.js
+// ----------------------------------------------------------------------------
+
+/**
+ * Fetches the timeline markdown file
+ * @returns {Promise<string>} Raw markdown text
+ */
+async function loadTableData() {
+    // Cache busting is important - prevents browser from serving stale timeline data
+    const response = await fetch('../!!42_Mill_St_Timeline_Overview.md?v=' + Date.now());
+    
+    if (!response.ok) {
+        throw new Error(`Failed to load timeline data: ${response.status}`);
+    }
+    
+    return response.text();
+}
+
+// REMOVED: extractTableRows() - replaced by parseMarkdown()
+// (deleted to avoid comment block issues)
+
+// REMOVED: extractCasesTable() - replaced by parseMarkdown()
+// (deleted to avoid comment block issues)
+
+// ----------------------------------------------------------------------------
+// OPTIMIZED: parseEvents that also extracts case numbers  
+// ----------------------------------------------------------------------------
+
+/**
+ * Parse events from table data and extract case numbers in one pass
+ * @param {Object} tableData - Object with headers and rows arrays
+ * @param {Set} caseSet - Set to collect unique case numbers
+ * @returns {Object[]} Array of parsed event objects
+ */
+function parseEventsOptimized(tableData, caseSet) {
+    const events = [];
+    const { headers, rows } = tableData;
+    
+    // Find column indices by header name (case-insensitive)
+    const findColumn = (names) => {
+        for (const name of names) {
+            const index = headers.findIndex(h => h.toLowerCase().includes(name.toLowerCase()));
+            if (index !== -1) return index;
+        }
+        return -1;
+    };
+    
+    // Map column names to indices
+    const cols = {
+        date: findColumn(['date']),
+        document: findColumn(['document_title', 'document', 'doc']),
+        caseNumber: findColumn(['case_num', 'case #', 'case', 'case number']),
+        markers: findColumn(['mrkrs', 'mrkr', 'marker', 'markers']),
+        procedural: findColumn(['procedural_step', 'procedural step', 'procedural', 'procedure']),
+        legal: findColumn(['notes', 'legal']),
+        environmental: findColumn(['environmental_analysis', 'environmental/strategic', 'environmental', 'environ', 'strategic']),
+        documentUrl: findColumn(['document_url', 'url', 'link'])
+    };
+    
+    // Validate we have minimum required columns
+    if (cols.date === -1 || cols.document === -1) {
+        throw new Error('Missing required columns: Date and Document');
+    }
+    
+    rows.forEach(row => {
+        const dateStr = row[cols.date];
+        const document = row[cols.document] || '';
+        const caseNumber = cols.caseNumber !== -1 ? row[cols.caseNumber] : '';
+        const markers = cols.markers !== -1 ? row[cols.markers] : '';
+        const procedural = cols.procedural !== -1 ? row[cols.procedural] : '';
+        const legal = cols.legal !== -1 ? row[cols.legal] : '';
+        const environmental = cols.environmental !== -1 ? row[cols.environmental] : '';
+        
+        // Skip rows with empty dates
+        if (!dateStr || dateStr.trim() === '') {
+            return;
+        }
+        
+        // Add case number to set if it exists
+        if (caseNumber && caseNumber.trim()) {
+            caseSet.add(caseNumber.trim());
+        }
+        
+        // Parse date
+        const [year, month, day] = dateStr.split('-');
+        const date = new Date(year, parseInt(month) - 1, day);
+        
+        // Parse document link
+        let title = document;
+        let documentUrl = null;
+        
+        if (cols.documentUrl !== -1 && row[cols.documentUrl]) {
+            documentUrl = row[cols.documentUrl];
+        } else {
+            const linkMatch = document.match(/\[([^\]]+)\]\(([^)]+)\)/);
+            if (linkMatch) {
+                title = linkMatch[1];
+                documentUrl = linkMatch[2];
+            }
+        }
+        
+        // Clean up title
+        title = title.replace(/_/g, ' ')
+                    .replace(/MISSING:/g, '❌ ')
+                    .replace(/\.txt$/g, '')
+                    .replace(/\.pdf$/g, '');
+        
+        // Check for label override in procedural column
+        let proceduralLabel = null;
+        let labelEmphasis = null;
+        
+        const highEmphasisMatch = procedural.match(/!\*\*([^*]+)\*\*!/);
+        if (highEmphasisMatch) {
+            proceduralLabel = highEmphasisMatch[1];
+            labelEmphasis = 'high';
+        } else {
+            const labelMatch = procedural.match(/\*\*([^*]+)\*\*/);
+            if (labelMatch) {
+                proceduralLabel = labelMatch[1];
+            }
+        }
+        
+        // Extract display detail
+        const displayDetail = procedural
+            .replace(/!\*\*[^*]+\*\*!/g, '')
+            .replace(/\*\*[^*]+\*\*/g, '')
+            .trim()
+            .substring(0, 100);
+        
+        // Basic flags
+        const isPrivate = markers.includes('🔒');
+        const hasMissingDoc = markers.includes('❌');
+        const isTimelineEvent = markers.includes('🟢');
+        
+        // Find ALL caseline emojis
+        const emojiRegex = /([\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{2B00}-\u{2BFF}]|[\u{23F0}-\u{23FF}]|[\u{2190}-\u{21FF}])[\u{FE0F}]?/gu;
+        const allEmojis = markers.match(emojiRegex) || [];
+        const caselineEmojis = allEmojis.filter(e => e !== '🔒' && e !== '❌' && e !== '🟢');
+        
+        // Create base event object
+        const baseEvent = {
+            date,
+            dateStr,
+            title,
+            documentUrl,
+            caseNumber: caseNumber.trim(),
+            markers,
+            procedural,
+            proceduralLabel,
+            labelEmphasis,
+            displayDetail,
+            isPrivate,
+            hasMissingDoc,
+            isTimelineEvent,
+            caselineEmojis
+        };
+        
+        // Add timeline event if has 🟢
+        if (isTimelineEvent) {
+            events.push({
+                ...baseEvent,
+                eventType: 'timeline',
+                eventClass: isPrivate ? 'tracked-event-priv' : 'tracked-event'
+            });
+        }
+        
+        // Add caseline event if has other emojis
+        if (caselineEmojis.length > 0) {
+            events.push({
+                ...baseEvent,
+                eventType: 'caseline',
+                eventClass: 'case-procedural',
+                caselineEmoji: caselineEmojis[0]
+            });
+        }
+    });
+    
+    // Sort by date
+    return events.sort((a, b) => a.date - b.date);
+}
+
+// ----------------------------------------------------------------------------
+// From event-parser.js (ORIGINAL - kept for compatibility)
+// ----------------------------------------------------------------------------
+
+// REMOVED: parseEvents() - replaced by parseEventsOptimized()
+// ----------------------------------------------------------------------------
+
+/**
+ * Apply all filters to events
+ * @param {Object[]} events - All events
+ * @param {Object} filterState - Current filter state
+ * @returns {Object[]} Filtered events
+ */
+function applyFilters(events, filterState) {
+    let filtered = events;
+    
+    // Apply date filter
+    if (filterState.startDate || filterState.endDate) {
+        filtered = filterByDate(filtered, filterState.startDate, filterState.endDate);
+    }
+    
+    // Apply case filter - always apply it (empty array means show nothing)
+    if (filterState.selectedCases !== undefined) {
+        filtered = filterByCase(filtered, filterState.selectedCases);
+    }
+    
+    return filtered;
+}
+
+/**
+ * Filter events by date range
+ * @param {Object[]} events - All events
+ * @param {Date|null} startDate - Start date filter (null = no filter)
+ * @param {Date|null} endDate - End date filter (null = no filter)
+ * @returns {Object[]} Filtered events
+ */
+function filterByDate(events, startDate, endDate) {
+    if (!startDate && !endDate) {
+        return events;
+    }
+    
+    return events.filter(event => {
+        const eventDate = new Date(event.date);
+        
+        if (startDate && eventDate < startDate) {
+            return false;
+        }
+        
+        if (endDate && eventDate > endDate) {
+            return false;
+        }
+        
+        return true;
+    });
+}
+
+/**
+ * Filter events by case numbers
+ * @param {Object[]} events - All events
+ * @param {string[]} selectedCases - Array of selected case numbers (empty = show none)
+ * @returns {Object[]} Filtered events
+ */
+function filterByCase(events, selectedCases) {
+    if (!selectedCases || selectedCases.length === 0) {
+        return [];  // When no cases selected, show nothing
+    }
+    
+    return events.filter(event => {
+        // Events without case numbers are always shown
+        if (!event.caseNumber) {
+            return true;
+        }
+        
+        // Check if event's case is in selected cases
+        return selectedCases.includes(event.caseNumber);
+    });
+}
+
+// ----------------------------------------------------------------------------
+// OPTIMIZED: Combined UI state loading
+// ----------------------------------------------------------------------------
+
+/**
+ * Load all UI state in a single operation
+ * @returns {Object} All saved UI state
+ */
+function loadAllUIState() {
+    const STORAGE_PREFIX = 'timeline-';
+    const keys = {
+        startDate: STORAGE_PREFIX + 'start-date',
+        endDate: STORAGE_PREFIX + 'end-date',
+        selectedCases: STORAGE_PREFIX + 'selected-cases',
+        scale: STORAGE_PREFIX + 'scale',
+        fitToWindow: STORAGE_PREFIX + 'fit-to-window',
+        emojiVisibility: STORAGE_PREFIX + 'emoji-visibility',
+        focusDate: STORAGE_PREFIX + 'focus-date'
+    };
+    
+    const result = {
+        filters: {
+            startDate: null,
+            endDate: null,
+            selectedCases: null
+        },
+        scale: 0.8,
+        fitToWindow: false,
+        emojiVisibility: {},
+        focusDate: null
+    };
+    
+    // Get all values in one batch
+    for (const [key, storageKey] of Object.entries(keys)) {
+        const value = localStorage.getItem(storageKey);
+        if (value) {
+            try {
+                // Parse JSON values
+                if (value.startsWith('[') || value.startsWith('{') || value === 'true' || value === 'false') {
+                    const parsed = JSON.parse(value);
+                    
+                    // Route to correct location in result
+                    if (key === 'startDate' || key === 'endDate' || key === 'selectedCases') {
+                        result.filters[key] = parsed;
+                    } else if (key === 'scale') {
+                        result.scale = parseFloat(value);
+                    } else if (key === 'fitToWindow') {
+                        result.fitToWindow = parsed;
+                    } else if (key === 'emojiVisibility') {
+                        result.emojiVisibility = parsed;
+                    } else if (key === 'focusDate') {
+                        result.focusDate = new Date(value);
+                    }
+                } else {
+                    // Handle string values
+                    if (key === 'scale') {
+                        result.scale = parseFloat(value);
+                    } else if (key === 'focusDate') {
+                        result.focusDate = new Date(value);
+                    }
+                }
+            } catch (e) {
+                console.warn(`Failed to parse ${key}:`, e);
+            }
+        }
+    }
+    
+    return result;
+}
+
+// ----------------------------------------------------------------------------
+// From state-persistence.js
+// ----------------------------------------------------------------------------
+
+const STORAGE_PREFIX = 'timeline-';
+
+const STORAGE_KEYS = {
+    START_DATE: STORAGE_PREFIX + 'start-date',
+    END_DATE: STORAGE_PREFIX + 'end-date',
+    SELECTED_CASES: STORAGE_PREFIX + 'selected-cases',
+    SCALE: STORAGE_PREFIX + 'scale',
+    FIT_TO_WINDOW: STORAGE_PREFIX + 'fit-to-window',
+    EMOJI_VISIBILITY: STORAGE_PREFIX + 'emoji-visibility',
+    SCROLL_POSITION: STORAGE_PREFIX + 'scroll-position',
+    FOCUS_DATE: STORAGE_PREFIX + 'focus-date'
+};
+
+/**
+ * Save a value to localStorage
+ * @param {string} key - Storage key
+ * @param {*} value - Value to save
+ */
+function saveState(key, value) {
+    const stringValue = typeof value === 'string' ? value : JSON.stringify(value);
+    localStorage.setItem(key, stringValue);
+}
+
+/**
+ * Load a value from localStorage
+ * @param {string} key - Storage key
+ * @returns {*} Loaded value or null
+ */
+function loadState(key) {
+    const value = localStorage.getItem(key);
+    if (!value) return null;
+    
+    // Parse JSON values
+    if (value.startsWith('[') || value.startsWith('{') || value === 'true' || value === 'false') {
+        return JSON.parse(value);
+    }
+    return value;
+}
+
+/**
+ * Save filter state
+ * @param {Object} filters - Filter state object
+ */
+function saveFilterState(filters) {
+    if (filters.startDate) {
+        saveState(STORAGE_KEYS.START_DATE, filters.startDate);
+    }
+    if (filters.endDate) {
+        saveState(STORAGE_KEYS.END_DATE, filters.endDate);
+    }
+    if (filters.selectedCases) {
+        saveState(STORAGE_KEYS.SELECTED_CASES, filters.selectedCases);
+    }
+}
+
+// REMOVED: loadFilterState() - replaced by loadAllUIState()
+
+/**
+ * Save scale state
+ * @param {number} scale - Scale value
+ * @param {boolean} fitToWindow - Fit to window enabled
+ */
+function saveScaleState(scale, fitToWindow) {
+    saveState(STORAGE_KEYS.SCALE, scale);
+    saveState(STORAGE_KEYS.FIT_TO_WINDOW, fitToWindow);
+}
+
+// REMOVED: loadScaleState() - replaced by loadAllUIState()
+
+/**
+ * Save emoji visibility state
+ * @param {Object} emojiVisibility - Object with emoji classes as keys and boolean visibility as values
+ */
+function saveEmojiVisibility(emojiVisibility) {
+    saveState(STORAGE_KEYS.EMOJI_VISIBILITY, emojiVisibility);
+}
+
+// REMOVED: loadEmojiVisibility() - replaced by loadAllUIState()
+
+/**
+ * Isolation mode management - temporary UI state
+ */
+let isolationMode = {
+    type: null,      // 'case' | 'emoji' | null
+    target: null,    // case number or emoji class
+    previousState: null // snapshot before isolation
+};
+
+/**
+ * Set isolation mode
+ * @param {string} type - 'case' or 'emoji'
+ * @param {string} target - The case number or emoji class to isolate
+ * @param {Object} previousState - State snapshot before isolation
+ */
+function setIsolationMode(type, target, previousState) {
+    isolationMode = { type, target, previousState };
+}
+
+/**
+ * Get current isolation mode
+ * @returns {Object} Current isolation state
+ */
+function getIsolationMode() {
+    return isolationMode;
+}
+
+/**
+ * Clear isolation mode
+ */
+function clearIsolationMode() {
+    isolationMode = { type: null, target: null, previousState: null };
+}
+
+/**
+ * Check if currently isolating a specific target
+ * @param {string} type - 'case' or 'emoji'
+ * @param {string} target - The case number or emoji class
+ * @returns {boolean} Whether this target is currently isolated
+ */
+function isIsolating(type, target) {
+    return isolationMode.type === type && isolationMode.target === target;
+}
+
+/**
+ * Save focus date (the date at center of viewport)
+ * @param {Date} focusDate - Date to save
+ */
+function saveFocusDate(focusDate) {
+    if (focusDate) {
+        saveState(STORAGE_KEYS.FOCUS_DATE, focusDate.toISOString());
+    }
+}
+
+/**
+ * Load focus date
+ * @returns {Date|null} Saved focus date or null
+ */
+function loadFocusDate() {
+    const saved = loadState(STORAGE_KEYS.FOCUS_DATE);
+    return saved ? new Date(saved) : null;
+}
+
+/**
+ * Clear focus date from storage
+ */
+function clearFocusDate() {
+    localStorage.removeItem(STORAGE_KEYS.FOCUS_DATE);
 }
 
 // Export state for focus date calculation
