@@ -10,7 +10,7 @@
  */
 
 // Constants from original
-export const TIMELINE_LEFT_OFFSET = 155;
+export const TIMELINE_LEFT_OFFSET = 0; // Nodes positioned relative to container which is already at 50px
 export const TIMELINE_RIGHT_PADDING = 50;
 export const DEFAULT_SCALE = 0.8;
 
@@ -72,7 +72,56 @@ export function calculateTimelineWidth(totalDays, pixelsPerDay) {
 }
 
 /**
- * Draw year markers and labels
+ * Calculate year marker positions (v2 - returns data only, no DOM manipulation)
+ * @param {Object} dateRange - From calculateDateRange
+ * @param {number} pixelsPerDay - Scale factor
+ * @returns {Array} Array of year marker data objects
+ */
+export function calculateYearMarkers(dateRange, pixelsPerDay) {
+    const { startDate, endDate, minDate, maxDate, totalDays } = dateRange;
+    const timelineWidth = calculateTimelineWidth(totalDays, pixelsPerDay);
+    const markers = [];
+    
+    const firstEventYear = minDate.getFullYear();
+    const lastEventYear = maxDate.getFullYear();
+    
+    // Determine if we should show decade markers instead of yearly markers
+    const useDecadeMarkers = pixelsPerDay < 0.2;
+    
+    for (let year = startDate.getFullYear(); year <= lastEventYear; year++) {
+        const yearStart = new Date(year, 0, 1);
+        const yearStartDays = Math.max(0, (yearStart - startDate) / (1000 * 60 * 60 * 24));
+        const yearStartX = TIMELINE_LEFT_OFFSET + (yearStartDays * pixelsPerDay);
+        
+        // Only process years that are at least partially visible
+        if (yearStartX >= TIMELINE_LEFT_OFFSET && yearStartX <= timelineWidth + TIMELINE_LEFT_OFFSET) {
+            const isDecadeYear = year % 10 === 0;
+            
+            if (useDecadeMarkers && !isDecadeYear) {
+                // In decade mode, only show small ticks for non-decade years
+                markers.push({
+                    type: 'tick',
+                    x: yearStartX,
+                    year: year,
+                    label: null
+                });
+            } else {
+                // Show full line and label for all years in normal mode, or decades in decade mode
+                markers.push({
+                    type: 'line',
+                    x: yearStartX,
+                    year: year,
+                    label: year.toString()
+                });
+            }
+        }
+    }
+    
+    return markers;
+}
+
+/**
+ * Draw year markers and labels (v1 - legacy, direct DOM manipulation)
  * @param {HTMLElement} container - Year markers container
  * @param {Object} dateRange - From calculateDateRange
  * @param {number} pixelsPerDay - Scale factor

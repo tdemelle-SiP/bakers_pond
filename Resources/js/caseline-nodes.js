@@ -49,6 +49,11 @@ export function renderCaselineNodes(events, dateRange, pixelsPerDay) {
     // Use the nodes container
     const container = document.getElementById('nodes-container');
     
+    // Get container height once for all nodes
+    const caselineContainer = document.getElementById('caseline-container');
+    const containerHeight = caselineContainer ? caselineContainer.offsetHeight : 500;
+    const containerCenter = 60 + (containerHeight - 60) / 2; // Match CSS calculation
+    
     // Filter to caseline events only
     const caselineEvents = events.filter(e => e.eventType === 'caseline');
     
@@ -160,9 +165,19 @@ export function renderCaselineNodes(events, dateRange, pixelsPerDay) {
         // Get secondary emoji type for multi-emoji nodes
         const secondaryConfig = emojis.length > 1 ? getEmojiConfig(emojis[1], 'caseline') : null;
         
+        // Y position for label positioning (containerCenter calculated once above)
+        let yPosition;
+        if (isBypassPositioned) {
+            yPosition = containerCenter; // Inline/bypass nodes on the center line
+        } else if (event.isPrivate) {
+            yPosition = containerCenter + 25; // Private nodes 25px below center
+        } else {
+            yPosition = containerCenter - 25; // Public nodes 25px above center
+        }
+        
         const nodeData = {
             x: x,
-            y: isBypassPositioned ? 127.5 : (event.isPrivate ? 140 : 115), // Centered for bypass, else original positions
+            y: yPosition,
             node: node,
             emojis: emojis,
             displayEmoji: emojis.join(''),

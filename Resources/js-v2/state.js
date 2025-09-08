@@ -20,6 +20,7 @@ import { render } from './render.js';
 import { loadTableData, extractTableRows, extractCasesTable } from '../js/data-loader.js';
 import { parseEvents } from '../js/event-parser.js';
 import { applyFilters } from '../js/filters.js';
+import { DEFAULT_SCALE } from '../js/date-scale.js';
 import { 
     loadFilterState, 
     saveFilterState,
@@ -154,6 +155,9 @@ export function update(type, data) {
                     const days = Math.ceil((maxDate - minDate) / (1000 * 60 * 60 * 24));
                     state.scale = Math.min(3, Math.max(0.2, width / days));
                 }
+            } else {
+                // Reset to default scale when unchecked
+                state.scale = DEFAULT_SCALE;
             }
             saveScaleState(state.scale, state.fitToWindow);
             break;

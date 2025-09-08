@@ -9,7 +9,7 @@ import { drawCaselineConnections } from '../js/connections.js';
 import { createLabelsWithCollisionDetection } from './label-layout.js';
 import { renderCaseTitles } from '../js/case-titles.js';
 import { calculateStats } from '../js/stats.js';
-import { calculateDateRange, drawYearMarkers, calculateTimelineWidth, setContainerWidth, getXPosition } from '../js/date-scale.js';
+import { calculateDateRange, calculateYearMarkers, calculateTimelineWidth, setContainerWidth, getXPosition } from '../js/date-scale.js';
 
 /**
  * Main render function - updates entire UI to reflect state
@@ -150,8 +150,8 @@ function renderTimeline(state) {
     const timelineWidth = calculateTimelineWidth(dateRange.totalDays, pixelsPerDay);
     setContainerWidth(container, timelineWidth);
     
-    // Draw year markers
-    drawYearMarkers(yearMarkersContainer, dateRange, pixelsPerDay);
+    // Render year markers
+    renderYearMarkers(yearMarkersContainer, dateRange, pixelsPerDay);
     
     // Render caseline nodes only
     const caselineData = renderCaselineNodes(state.filteredEvents, dateRange, pixelsPerDay);
@@ -225,5 +225,71 @@ function renderTimeline(state) {
             state.focusDate = null;
         });
     }
+}
+
+/**
+ * Render year markers on the timeline
+ * @param {HTMLElement} container - Year markers container
+ * @param {Object} dateRange - Date range from calculateDateRange
+ * @param {number} pixelsPerDay - Scale factor
+ */
+function renderYearMarkers(container, dateRange, pixelsPerDay) {
+    if (!container) return;
+    
+    // Clear existing markers
+    container.innerHTML = '';
+    
+    // Get year marker data from date-scale
+    const markers = calculateYearMarkers(dateRange, pixelsPerDay);
+    
+    // Get container height for dynamic positioning
+    const caselineContainer = document.getElementById('caseline-container');
+    const containerHeight = caselineContainer ? caselineContainer.offsetHeight : 344;
+    const centerY = 60 + (containerHeight - 60) / 2;
+    
+    markers.forEach(marker => {
+        if (marker.type === 'line') {
+            // Full vertical line for years/decades
+            const line = document.createElement('div');
+            line.className = 'year-marker';
+            line.style.position = 'absolute';
+            line.style.left = marker.x + 'px';
+            line.style.top = '0';
+            line.style.bottom = '0';
+            line.style.width = '1px';
+            container.appendChild(line);
+            
+            // Add tick mark on center line
+            const tick = document.createElement('div');
+            tick.className = 'year-tick';
+            tick.style.position = 'absolute';
+            tick.style.left = marker.x + 'px';
+            tick.style.top = (centerY - 5) + 'px';
+            tick.style.width = '1px';
+            tick.style.height = '10px';
+            container.appendChild(tick);
+            
+            // Add year label at bottom
+            if (marker.label) {
+                const label = document.createElement('div');
+                label.className = 'year-label';
+                label.style.position = 'absolute';
+                label.style.left = marker.x + 'px';
+                label.style.bottom = '5px';
+                label.textContent = marker.label;
+                container.appendChild(label);
+            }
+        } else if (marker.type === 'tick') {
+            // Small tick for non-decade years in decade mode
+            const tick = document.createElement('div');
+            tick.className = 'year-tick-small';
+            tick.style.position = 'absolute';
+            tick.style.left = marker.x + 'px';
+            tick.style.top = (centerY - 3) + 'px';
+            tick.style.width = '1px';
+            tick.style.height = '6px';
+            container.appendChild(tick);
+        }
+    });
 }
 

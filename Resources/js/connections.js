@@ -105,9 +105,9 @@ export function drawCaselineConnections(caseGroups, container) {
     // Create SVG for caseline connections
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.style.position = 'absolute';
-    svg.style.left = '0';
+    svg.style.left = '50px';  // Match nodes-container left position
     svg.style.top = '0';  // Changed from sectionTop since container is now relative
-    svg.style.width = '100%';
+    svg.style.width = 'calc(100% - 50px)';  // Adjust width to account for left offset
     svg.style.height = sectionHeight + 'px';
     svg.style.pointerEvents = 'none';
     svg.style.zIndex = '5';  // Connections below nodes
@@ -150,27 +150,27 @@ export function drawCaselineConnections(caseGroups, container) {
             
             const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             line.setAttribute('x1', current.x);
-            // Calculate Y positions based on verticalPosition
-            // Public nodes: TOP at 50% + 15px (50% - 20px + 35px)
-            // Private nodes: TOP at 50% + 55px (50% + 20px + 35px)
-            // Inline nodes: TOP at 50% + 35px (centered on timeline)
-            // Emoji visual center is further down due to line-height and glyph rendering
+            // Calculate Y positions to match CSS positioning
+            // Center of space below titles: 60px + (height - 60px) / 2
+            // Nodes use translateY(-50%) so they're vertically centered
+            const centerY = 60 + (sectionHeight - 60) / 2;
+            
             let y1;
             if (current.verticalPosition === 'inline') {
-                y1 = sectionHeight * 0.5 + 35 + 12; // Inline center: TOP + 12px to visual center
+                y1 = centerY; // Centered on line
             } else if (current.verticalPosition === 'private') {
-                y1 = sectionHeight * 0.5 + 55 + 12; // Private center: TOP + 12px to visual center
+                y1 = centerY + 25; // 25px below center
             } else {
-                y1 = sectionHeight * 0.5 + 15 + 12; // Public center: TOP + 12px to visual center
+                y1 = centerY - 25; // 25px above center
             }
             
             let y2;
             if (next.verticalPosition === 'inline') {
-                y2 = sectionHeight * 0.5 + 35 + 12; // Inline center: TOP + 12px to visual center
+                y2 = centerY; // Centered on line
             } else if (next.verticalPosition === 'private') {
-                y2 = sectionHeight * 0.5 + 55 + 12; // Private center: TOP + 12px to visual center
+                y2 = centerY + 25; // 25px below center
             } else {
-                y2 = sectionHeight * 0.5 + 15 + 12; // Public center: TOP + 12px to visual center
+                y2 = centerY - 25; // 25px above center
             }
             
             line.setAttribute('y1', y1);

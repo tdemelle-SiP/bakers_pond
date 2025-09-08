@@ -146,16 +146,18 @@ export function createLabelsWithCollisionDetection(nodeData, container) {
  * Get Y position for label based on node position
  */
 function getYPosition(node, labelHeight) {
-    const nodeY = getNodeY(node);
+    // Get container to calculate fixed label positions
+    const caselineContainer = document.getElementById('caseline-container');
+    const containerHeight = caselineContainer ? caselineContainer.offsetHeight : 344;
+    const centerY = 60 + (containerHeight - 60) / 2;
     
     if (node.verticalPosition === 'private') {
-        // Labels below: top edge at fixed distance (30px) from node
-        return nodeY + 30;
+        // All private labels - top edge at fixed distance below center
+        return centerY + 50;
     } else {
-        // Labels above: center the label vertically around a fixed point
-        const singleLineHeight = 20; // Approximate height of single line label
-        const centerPoint = nodeY - 25 - (singleLineHeight / 2);
-        return centerPoint - (labelHeight / 2);
+        // All public/inline labels - top edge at fixed distance above center
+        // Further away to account for typical 2-line height
+        return centerY - 90;
     }
 }
 
@@ -163,15 +165,9 @@ function getYPosition(node, labelHeight) {
  * Get Y position of node
  */
 function getNodeY(node) {
-    const containerHeight = document.getElementById('caseline-container').offsetHeight;
-    const centerY = containerHeight / 2;
-    
-    if (node.verticalPosition === 'private') {
-        return centerY + 35 + 20;
-    } else {
-        // Public and inline both positioned above the line
-        return centerY + 35 - 20;
-    }
+    // Nodes are already positioned correctly in caseline-nodes.js
+    // Just return the node's Y position
+    return node.y;
 }
 
 /**
@@ -198,7 +194,7 @@ function resolveCollisions(labelData) {
         // Find and resolve overlaps
         let hasOverlap = true;
         let iterations = 0;
-        const minLeftBound = 0; // No left boundary constraint
+        const minLeftBound = -40; // Labels can go 40px left of nodes container (which starts at 50px)
         
         while (hasOverlap && iterations < 100) {
             hasOverlap = false;

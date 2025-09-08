@@ -55,7 +55,7 @@ function getCaseTitlesContainer() {
         container = document.createElement('div');
         container.id = 'case-titles-container';
         container.style.position = 'absolute';
-        container.style.top = '35px'; // Lower to avoid header border overlap
+        container.style.top = '10px'; // 10px from bottom of header
         container.style.left = '0';
         container.style.right = '0';
         container.style.height = '50px'; // More height for titles

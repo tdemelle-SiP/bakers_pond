@@ -1,11 +1,32 @@
 /* Timeline v2 CSS - Simplified structure for caseline-only view */
 
+/* Override header border from timeline.css */
+.sticky-nav {
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Thin subtle border instead of 15px */
+    top: 5px; /* Small offset from top */
+    left: 10px;
+    right: 10px;
+}
+
+/* Adjust main content padding for smaller header */
+.main-content {
+    padding-top: 160px; /* Actual header height */
+    padding-bottom: 5px; /* Minimal bottom padding */
+    align-items: flex-start; /* Align to top instead of center */
+}
+
+/* Override container padding from timeline.css */
+.container {
+    padding: 10px 10px; /* Reduced from 40px 20px */
+    height: calc(100vh - 165px); /* viewport minus padding-top (160) and padding-bottom (5) */
+    box-sizing: border-box; /* Include padding in height calculation */
+}
+
 /* Main caseline container */
 .caseline-container {
     position: relative;
-    min-height: 300px;
-    overflow-x: auto;
-    overflow-y: hidden;
+    height: 100%; /* Fill the parent container */
+    overflow: visible; /* No scrollbar here - main-content handles scrolling */
 }
 
 /* Section label */
@@ -25,19 +46,19 @@
 /* Center line */
 .caseline-center-line {
     position: absolute;
-    top: 50%;
-    left: 0;
+    top: calc(60px + (100% - 60px) / 2); /* Center of space below titles */
+    left: 50px; /* 50px margin from left */
     right: 0;
     height: 1px;
-    background-color: #444;
-    z-index: 1;
+    background: rgba(52, 73, 94, 0.25); /* 25% opacity like v1 */
+    z-index: 4; /* Match v1 z-index */
 }
 
 /* Nodes container */
 .nodes-container {
     position: absolute;
     top: 0;
-    left: 0;
+    left: 50px; /* 50px margin from left */
     right: 0;
     bottom: 0;
     z-index: 10;
@@ -52,19 +73,22 @@
     z-index: 50;
 }
 
-/* Position variants - matching original CSS */
+/* Position variants - aligned with dynamic center line */
 .caseline-node.public,
 .case-procedural-above {
-    top: calc(50% - 20px + 35px); /* 20px above center + 35px down for title space */
+    top: calc(60px + (100% - 60px) / 2 - 25px); /* 25px above center line */
+    transform: translateX(-50%) translateY(-50%); /* Center both horizontally and vertically */
 }
 
 .caseline-node.private,
 .case-procedural-below {
-    top: calc(50% + 20px + 35px); /* 20px below center + 35px down for title space */
+    top: calc(60px + (100% - 60px) / 2 + 25px); /* 25px below center line */
+    transform: translateX(-50%) translateY(-50%); /* Center both horizontally and vertically */
 }
 
 .caseline-node.centered {
-    top: calc(50% + 35px); /* Exactly centered + 35px down for title space */
+    top: calc(60px + (100% - 60px) / 2); /* Exactly on center line */
+    transform: translateX(-50%) translateY(-50%); /* Center both horizontally and vertically */
 }
 
 /* Multi-emoji styling */
@@ -117,7 +141,23 @@
     top: 0;
     bottom: 0;
     width: 1px;
-    background-color: #333;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.year-tick {
+    position: absolute;
+    width: 1px;
+    height: 10px;
+    background-color: rgba(52, 73, 94, 0.7);
+    z-index: 3;
+}
+
+.year-tick-small {
+    position: absolute;
+    width: 1px;
+    height: 6px;
+    background-color: rgba(52, 73, 94, 0.3);
+    z-index: 3;
 }
 
 .year-label {
@@ -162,7 +202,6 @@
     font-weight: bold;
     text-transform: uppercase;
     padding: 2px 4px;
-    background-color: rgba(0, 0, 0, 0.5);
     border-radius: 2px;
 }
 
