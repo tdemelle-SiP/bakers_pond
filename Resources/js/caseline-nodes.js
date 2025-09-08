@@ -20,19 +20,33 @@ import { getEmojiConfig } from './emoji-config.js';
 function determineCaselineColor(emojis) {
     if (!emojis || emojis.length === 0) return '#999999';
     
-    // For multi-emoji, use the superscript (second) emoji's color
-    if (emojis.length > 1) {
-        const superscriptConfig = getEmojiConfig(emojis[1], 'caseline');
-        if (superscriptConfig && superscriptConfig.caselineColor) {
-            return superscriptConfig.caselineColor;
-        }
+    // Get all configs
+    const configs = emojis.map(emoji => getEmojiConfig(emoji, 'caseline')).filter(c => c);
+    if (configs.length === 0) return '#999999';
+    
+    // If only one emoji and it's bypass, return bypass
+    if (emojis.length === 1 && configs[0].caselineColor === 'bypass') {
+        return 'bypass';
     }
     
-    // For single emoji, use its color
-    const config = getEmojiConfig(emojis[0], 'caseline');
-    if (!config) return '#999999';
+    // Check for red colors (denials, expired)
+    const redConfig = configs.find(c => c.caselineColor === '#f44336');
+    if (redConfig) return '#f44336';
     
-    return config.caselineColor || '#999999';
+    // Check for green colors (approvals, extended)
+    const greenConfig = configs.find(c => c.caselineColor === '#4caf50');
+    if (greenConfig) return '#4caf50';
+    
+    // Check for yellow colors (filings, plans, appeals)
+    const yellowConfig = configs.find(c => c.caselineColor === '#ffd700');
+    if (yellowConfig) return '#ffd700';
+    
+    // Check for inherit
+    const inheritConfig = configs.find(c => c.caselineColor === 'inherit');
+    if (inheritConfig) return 'inherit';
+    
+    // Default
+    return '#999999';
 }
 
 /**
@@ -46,13 +60,8 @@ export function renderCaselineNodes(events, dateRange, pixelsPerDay) {
     const caselineData = [];
     const caseGroups = {};
     
-    // Use the nodes container
-    const container = document.getElementById('nodes-container');
-    
-    // Get container height once for all nodes
-    const caselineContainer = document.getElementById('caseline-container');
-    const containerHeight = caselineContainer ? caselineContainer.offsetHeight : 500;
-    const containerCenter = 60 + (containerHeight - 60) / 2; // Match CSS calculation
+    // Use the caseline container
+    const container = document.getElementById('caseline-container');
     
     // Filter to caseline events only
     const caselineEvents = events.filter(e => e.eventType === 'caseline');
@@ -76,15 +85,8 @@ export function renderCaselineNodes(events, dateRange, pixelsPerDay) {
         node.className = 'caseline-node';
         
         // Add positioning classes
-        // Use bypass positioning if all emojis are bypass
-        const allBypass = emojis.length > 1 ? 
-            emojis.every(emoji => {
-                const config = getEmojiConfig(emoji, 'caseline');
-                return config && config.caselineColor === 'bypass';
-            }) :
-            primaryConfig.caselineColor === 'bypass';
-            
-        if (allBypass) {
+        // Only use bypass positioning if it's the ONLY emoji
+        if (emojis.length === 1 && primaryConfig.caselineColor === 'bypass') {
             // Bypass nodes are centered on the timeline
             node.classList.add('centered');
         } else if (event.isPrivate) {
@@ -100,10 +102,7 @@ export function renderCaselineNodes(events, dateRange, pixelsPerDay) {
         // Add emoji-specific data attributes
         if (emojis.length > 1) {
             node.classList.add('multi-emoji');
-            // Create a container for the multi-emoji structure
-            const emojiContainer = document.createElement('div');
-            emojiContainer.className = 'emoji-container';
-            
+            // For multi-emoji, create HTML structure with superscript
             const primaryEmoji = document.createElement('span');
             primaryEmoji.className = 'primary-emoji';
             primaryEmoji.textContent = emojis[0];
@@ -112,20 +111,15 @@ export function renderCaselineNodes(events, dateRange, pixelsPerDay) {
             secondaryEmoji.className = 'secondary-emoji';
             secondaryEmoji.textContent = emojis.slice(1).join('');
             
-            emojiContainer.appendChild(primaryEmoji);
-            emojiContainer.appendChild(secondaryEmoji);
-            node.appendChild(emojiContainer);
+            node.appendChild(primaryEmoji);
+            node.appendChild(secondaryEmoji);
         } else {
             // Single emoji - just set text content
             node.textContent = emojis[0] || '';
         }
         
-        // For multi-emoji, store both emoji types for visibility filtering
-        if (emojis.length > 1) {
-            const secondaryConfig = getEmojiConfig(emojis[1], 'caseline');
-            node.dataset.emojiType = primaryConfig.class || '';
-            node.dataset.emojiType2 = secondaryConfig?.class || '';
-        } else if (primaryConfig.class) {
+        // Use primary emoji's class for filtering
+        if (primaryConfig.class) {
             node.dataset.emojiType = primaryConfig.class;
         }
         
@@ -150,11 +144,11 @@ export function renderCaselineNodes(events, dateRange, pixelsPerDay) {
         container.appendChild(node);
         
         // Store data for labels and connections
-        // allBypass is already calculated above for CSS classes - reuse it
+        const isBypassPositioned = emojis.length === 1 && primaryConfig.caselineColor === 'bypass';
         
         // Determine vertical position: 'public', 'private', or 'inline'
         let verticalPosition;
-        if (allBypass) {
+        if (isBypassPositioned) {
             verticalPosition = 'inline';
         } else if (event.isPrivate) {
             verticalPosition = 'private';
@@ -162,22 +156,9 @@ export function renderCaselineNodes(events, dateRange, pixelsPerDay) {
             verticalPosition = 'public';
         }
         
-        // Get secondary emoji type for multi-emoji nodes
-        const secondaryConfig = emojis.length > 1 ? getEmojiConfig(emojis[1], 'caseline') : null;
-        
-        // Y position for label positioning (containerCenter calculated once above)
-        let yPosition;
-        if (allBypass) {
-            yPosition = containerCenter; // Inline/bypass nodes on the center line
-        } else if (event.isPrivate) {
-            yPosition = containerCenter + 25; // Private nodes 25px below center
-        } else {
-            yPosition = containerCenter - 25; // Public nodes 25px above center
-        }
-        
         const nodeData = {
             x: x,
-            y: yPosition,
+            y: isBypassPositioned ? 127.5 : (event.isPrivate ? 140 : 115), // Centered for bypass, else original positions
             node: node,
             emojis: emojis,
             displayEmoji: emojis.join(''),
@@ -185,7 +166,6 @@ export function renderCaselineNodes(events, dateRange, pixelsPerDay) {
             labelEmphasis: event.labelEmphasis,  // Pass emphasis level through (null or 'high')
             caselineColor: caselineColor,  // Can be 'inherit', 'bypass', or a color value
             emojiType: primaryConfig.class || null,  // Data attribute value for filtering
-            emojiType2: secondaryConfig?.class || null,  // Secondary emoji type for multi-emoji
             verticalPosition: verticalPosition,  // 'public', 'private', or 'inline'
             caseNumber: event.caseNumber,
             date: event.date,
