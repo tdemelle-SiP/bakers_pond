@@ -17,6 +17,7 @@
 import { loadData, update, state, checkIsolation } from './state.js';
 import { getEmojiArray } from '../js/emoji-config.js';
 import { getDateFromX, calculateDateRange } from '../js/date-scale.js';
+import { saveFocusDate as persistFocusDate } from '../js/state-persistence.js';
 
 // Wait for DOM ready
 if (document.readyState === 'loading') {
@@ -195,6 +196,9 @@ function saveFocusDate() {
     // Calculate what date is at center
     const focusDate = getDateFromX(centerX, dateRange.startDate, pixelsPerDay);
     state.focusDate = focusDate;
+    
+    // Persist to localStorage
+    persistFocusDate(focusDate);
 }
 
 function setupListeners() {
@@ -208,7 +212,7 @@ function setupListeners() {
         }
     }, { passive: false });
     
-    // Track focus date when scrolling
+    // Track focus date and save to localStorage when scrolling
     if (mainContent) {
         let scrollTimeout;
         mainContent.addEventListener('scroll', () => {

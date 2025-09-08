@@ -12,11 +12,31 @@ function splitLabel(text) {
     const words = text.split(' ');
     if (words.length <= 1) return text;
     
-    // Split into two lines as evenly as possible
-    const midpoint = Math.floor(words.length / 2);
-    const line1 = words.slice(0, midpoint).join(' ');
-    const line2 = words.slice(midpoint).join(' ');
-    return line1 + '\n' + line2;
+    // For 3+ words, always try to use 3 lines for narrower labels
+    if (words.length >= 3) {
+        if (words.length === 3) {
+            // 3 words: one per line
+            return words[0] + '\n' + words[1] + '\n' + words[2];
+        } else if (words.length === 4) {
+            // 4 words: 2-1-1 or 1-2-1 distribution
+            return words[0] + ' ' + words[1] + '\n' + words[2] + '\n' + words[3];
+        } else {
+            // 5+ words: distribute as evenly as possible
+            const first = Math.ceil(words.length / 3);
+            const second = Math.ceil((words.length - first) / 2);
+            const line1 = words.slice(0, first).join(' ');
+            const line2 = words.slice(first, first + second).join(' ');
+            const line3 = words.slice(first + second).join(' ');
+            return line1 + '\n' + line2 + '\n' + line3;
+        }
+    }
+    
+    // For 2 words, split into two lines
+    if (words.length === 2) {
+        return words[0] + '\n' + words[1];
+    }
+    
+    return text;
 }
 
 /**
@@ -83,13 +103,9 @@ export function createLabelsWithCollisionDetection(nodeData, container) {
             labelEl.dataset.emojiType = node.emojiType;
         }
         
-        // Add status coloring
+        // Add status coloring - only red for denied
         if (node.caselineColor === '#f44336') {
             labelEl.classList.add('status-denied');
-        } else if (node.caselineColor === '#4caf50') {
-            labelEl.classList.add('status-approved');
-        } else if (node.caselineColor === '#ffd700') {
-            labelEl.classList.add('status-pending');
         }
         
         labelEl.style.whiteSpace = 'pre-line';
@@ -175,7 +191,7 @@ function getNodeY(node) {
  * Uses bidirectional order-preserving algorithm from original
  */
 function resolveCollisions(labelData) {
-    const minGap = 3; // horizontal breathing room between labels
+    const minGap = 1; // horizontal breathing room between labels
     
     // Process each band (public/private) separately - inline goes with public
     [false, true].forEach(isPrivate => {
@@ -195,8 +211,9 @@ function resolveCollisions(labelData) {
         let hasOverlap = true;
         let iterations = 0;
         const minLeftBound = -40; // Labels can go 40px left of nodes container (which starts at 50px)
+        const maxIterations = 50; // Balance between separation and tightness
         
-        while (hasOverlap && iterations < 100) {
+        while (hasOverlap && iterations < maxIterations) {
             hasOverlap = false;
             
             for (let i = 1; i < bandLabels.length; i++) {
@@ -211,7 +228,7 @@ function resolveCollisions(labelData) {
                     // Move labels apart to achieve exactly minGap spacing
                     const targetGap = minGap;
                     const currentGap = curr.x - (prev.x + prev.width);
-                    const adjustment = (targetGap - currentGap) / 2;
+                    const adjustment = (targetGap - currentGap) / 2; // Full correction
                     
                     prev.x -= adjustment;
                     curr.x += adjustment;
@@ -230,6 +247,34 @@ function resolveCollisions(labelData) {
             }
             
             iterations++;
+        }
+        
+        // Compression pass: pull labels back toward ideal positions while maintaining min distance
+        // Process left to right first to establish minimum positions
+        for (let i = 1; i < bandLabels.length; i++) {
+            const prev = bandLabels[i - 1];
+            const curr = bandLabels[i];
+            const minX = prev.x + prev.width + minGap;
+            
+            // If current label can move closer to its ideal without violating min distance
+            if (curr.x > minX) {
+                const idealX = curr.baseX;
+                // Move to ideal or as close as possible while maintaining min distance
+                curr.x = Math.max(minX, Math.min(idealX, curr.x));
+            }
+        }
+        
+        // Then process right to left to pull rightmost labels back
+        for (let i = bandLabels.length - 1; i > 0; i--) {
+            const curr = bandLabels[i];
+            const prev = bandLabels[i - 1];
+            const idealX = curr.baseX;
+            
+            // If this label is far from ideal and has room to move left
+            if (curr.x > idealX) {
+                const minX = prev.x + prev.width + minGap;
+                curr.x = Math.max(minX, idealX);
+            }
         }
         
         // Don't warn about hitting iteration limit - some overlap is acceptable in dense areas

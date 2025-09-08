@@ -129,7 +129,7 @@
 .year-markers-overlay {
     position: absolute;
     top: 0;
-    left: 0;
+    left: 50px; /* Match nodes-container positioning */
     right: 0;
     bottom: 0;
     pointer-events: none;
@@ -197,12 +197,17 @@
 
 .case-title {
     position: absolute;
-    color: #aaa;
-    font-size: 10px;
-    font-weight: bold;
-    text-transform: uppercase;
-    padding: 2px 4px;
-    border-radius: 2px;
+    font-size: 22px;
+    font-weight: 900;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.case-dep, .case-label {
+    position: absolute;
+    font-size: 22px;
+    white-space: nowrap;
+    cursor: pointer;
 }
 
 /* Stats container */

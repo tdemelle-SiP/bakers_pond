@@ -7,11 +7,11 @@ The mermaid chart should show:
 
 <!-- 
 Note: v2 imports functions from ../js/ (v1 files):
-- date-scale.js: calculateDateRange, getXPosition, getDateFromX
+- date-scale.js: calculateDateRange, getXPosition, getDateFromX, calculateYearMarkers, calculateTimelineWidth, setContainerWidth
 - caseline-nodes.js: renderCaselineNodes
 - connections.js: drawCaselineConnections
 - case-titles.js: renderCaseTitles
-- stats.js: calculateStats, renderStats
+- stats.js: calculateStats
 - emoji-config.js: getEmojiArray
 - data-loader.js, event-parser.js, filters.js, state-persistence.js
 -->
@@ -66,6 +66,7 @@ graph TD
         render["render(state)"]:::renderStyle
         updateControls["updateControls(state)<br/>(includes smart button text,<br/>active filter indicator)"]:::updateControlsStyle
         renderTimeline["renderTimeline(state)<br/>(includes emoji visibility<br/>with OR logic for multi-emoji,<br/>legend count updates)"]:::renderTimelineStyle
+        renderYearMarkers["renderYearMarkers(container, dateRange, pixelsPerDay)<br/>(creates DOM elements from marker data)"]
     end
     
     subgraph "label-layout.js"
@@ -133,6 +134,7 @@ graph TD
     %% Render.js connections
     render --> updateControls
     render --> renderTimeline
+    renderTimeline --> renderYearMarkers
     renderTimeline --> createLabelsWithCollisionDetection
     
     %% State.js internal calls before render

@@ -58,7 +58,7 @@ export const EMOJI_CONFIG = {
         },
         '🏛️': { 
             legendLabel: 'Hearing', 
-            displayLabel: 'HEARING',
+            displayLabel: '',
             caselineColor: 'inherit',
             class: 'hearing',
             defaultVisible: true

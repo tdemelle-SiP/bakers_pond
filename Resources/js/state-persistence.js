@@ -12,7 +12,8 @@ const STORAGE_KEYS = {
     SCALE: STORAGE_PREFIX + 'scale',
     FIT_TO_WINDOW: STORAGE_PREFIX + 'fit-to-window',
     EMOJI_VISIBILITY: STORAGE_PREFIX + 'emoji-visibility',
-    SCROLL_POSITION: STORAGE_PREFIX + 'scroll-position'
+    SCROLL_POSITION: STORAGE_PREFIX + 'scroll-position',
+    FOCUS_DATE: STORAGE_PREFIX + 'focus-date'
 };
 
 /**
@@ -175,6 +176,25 @@ export function saveScrollPosition(scrollPosition) {
 export function loadScrollPosition() {
     const saved = loadState(STORAGE_KEYS.SCROLL_POSITION);
     return saved ? parseFloat(saved) : 0;
+}
+
+/**
+ * Save focus date (the date at center of viewport)
+ * @param {Date} focusDate - Date to save
+ */
+export function saveFocusDate(focusDate) {
+    if (focusDate) {
+        saveState(STORAGE_KEYS.FOCUS_DATE, focusDate.toISOString());
+    }
+}
+
+/**
+ * Load focus date
+ * @returns {Date|null} Saved focus date or null
+ */
+export function loadFocusDate() {
+    const saved = loadState(STORAGE_KEYS.FOCUS_DATE);
+    return saved ? new Date(saved) : null;
 }
 
 /**

@@ -150,11 +150,11 @@ export function renderCaselineNodes(events, dateRange, pixelsPerDay) {
         container.appendChild(node);
         
         // Store data for labels and connections
-        const isBypassPositioned = emojis.length === 1 && primaryConfig.caselineColor === 'bypass';
+        // allBypass is already calculated above for CSS classes - reuse it
         
         // Determine vertical position: 'public', 'private', or 'inline'
         let verticalPosition;
-        if (isBypassPositioned) {
+        if (allBypass) {
             verticalPosition = 'inline';
         } else if (event.isPrivate) {
             verticalPosition = 'private';
@@ -167,7 +167,7 @@ export function renderCaselineNodes(events, dateRange, pixelsPerDay) {
         
         // Y position for label positioning (containerCenter calculated once above)
         let yPosition;
-        if (isBypassPositioned) {
+        if (allBypass) {
             yPosition = containerCenter; // Inline/bypass nodes on the center line
         } else if (event.isPrivate) {
             yPosition = containerCenter + 25; // Private nodes 25px below center

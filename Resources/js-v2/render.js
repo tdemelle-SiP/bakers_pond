@@ -7,7 +7,7 @@
 import { renderCaselineNodes } from '../js/caseline-nodes.js';
 import { drawCaselineConnections } from '../js/connections.js';
 import { createLabelsWithCollisionDetection } from './label-layout.js';
-import { renderCaseTitles } from '../js/case-titles.js';
+import { renderCaseTitles } from './case-titles.js';
 import { calculateStats } from '../js/stats.js';
 import { calculateDateRange, calculateYearMarkers, calculateTimelineWidth, setContainerWidth, getXPosition } from '../js/date-scale.js';
 
@@ -37,16 +37,6 @@ function updateControls(state) {
     // Update date inputs
     const startInput = document.getElementById('filter-start-date');
     const endInput = document.getElementById('filter-end-date');
-    
-    if (startInput) {
-        startInput.value = state.filters.startDate ? 
-            state.filters.startDate.replace(/"/g, '').split('T')[0] : '';
-    }
-    
-    if (endInput) {
-        endInput.value = state.filters.endDate ? 
-            state.filters.endDate.replace(/"/g, '').split('T')[0] : '';
-    }
     
     // Update scale slider
     const scaleSlider = document.getElementById('scale-slider');
@@ -116,9 +106,27 @@ function updateControls(state) {
     emojiCheckboxes.forEach(checkbox => {
         const emojiClass = checkbox.dataset.emojiClass;
         // If emojiVisibility doesn't have this emoji, default to checked (visible)
-        const isVisible = state.emojiVisibility[emojiClass] !== false;
+        const isVisible = state.emojiVisibility ? state.emojiVisibility[emojiClass] !== false : true;
         checkbox.checked = isVisible;
     });
+    
+    // Update date inputs to reflect filtered data range
+    if (startInput && endInput && state.filteredEvents && state.filteredEvents.length > 0) {
+        // Get date range from filtered events
+        const dates = state.filteredEvents.map(e => new Date(e.date));
+        const minDate = new Date(Math.min(...dates));
+        const maxDate = new Date(Math.max(...dates));
+        
+        // Always update inputs with the filtered data range
+        startInput.value = minDate.toISOString().split('T')[0];
+        endInput.value = maxDate.toISOString().split('T')[0];
+        
+        // Update min/max constraints
+        startInput.min = minDate.toISOString().split('T')[0];
+        startInput.max = maxDate.toISOString().split('T')[0];
+        endInput.min = minDate.toISOString().split('T')[0];
+        endInput.max = maxDate.toISOString().split('T')[0];
+    }
 }
 
 /**

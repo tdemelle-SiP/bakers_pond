@@ -21,6 +21,7 @@ import { loadTableData, extractTableRows, extractCasesTable } from '../js/data-l
 import { parseEvents } from '../js/event-parser.js';
 import { applyFilters } from '../js/filters.js';
 import { DEFAULT_SCALE } from '../js/date-scale.js';
+import { getEmojiArray } from '../js/emoji-config.js';
 import { 
     loadFilterState, 
     saveFilterState,
@@ -31,7 +32,9 @@ import {
     setIsolationMode,
     getIsolationMode,
     clearIsolationMode,
-    isIsolating
+    isIsolating,
+    saveFocusDate,
+    loadFocusDate
 } from '../js/state-persistence.js';
 
 // State object - structure from existing state-manager.js
@@ -78,6 +81,7 @@ export async function loadData() {
         const savedFilters = loadFilterState();
         const savedScale = loadScaleState();
         const savedEmojiVisibility = loadEmojiVisibility();
+        const savedFocusDate = loadFocusDate();
         
         // Apply saved preferences
         // Use saved cases only if the array exists and has items; otherwise fall back to defaults.
@@ -90,7 +94,8 @@ export async function loadData() {
         
         state.scale = savedScale.scale || 0.8;
         state.fitToWindow = savedScale.fitToWindow || false;
-        state.emojiVisibility = savedEmojiVisibility;
+        state.emojiVisibility = savedEmojiVisibility || {};
+        state.focusDate = savedFocusDate;
         
         // Apply filters to get filteredEvents
         state.filteredEvents = applyFilters(state.allEvents, state.filters);
@@ -197,9 +202,12 @@ export function update(type, data) {
                 state.filters.selectedCases = [data.target];
                 setIsolationMode('case', data.target, previousState);
             } else if (data.type === 'emoji') {
-                // Hide all emojis except the target
-                Object.keys(state.emojiVisibility).forEach(emoji => {
-                    state.emojiVisibility[emoji] = emoji === data.target;
+                // Get all emoji classes from config
+                const caselineEmojis = getEmojiArray('caseline');
+                
+                // Set all emojis to false except the target
+                caselineEmojis.forEach(item => {
+                    state.emojiVisibility[item.class] = item.class === data.target;
                 });
                 setIsolationMode('emoji', data.target, previousState);
             }
@@ -271,7 +279,7 @@ export function hasActiveFilters(state) {
         state.filters.startDate !== defaults.startDate ||
         state.filters.endDate !== defaults.endDate ||
         !arraysEqual(state.filters.selectedCases, defaults.cases) ||
-        Object.values(state.emojiVisibility).some(v => v === false)
+        (state.emojiVisibility && Object.values(state.emojiVisibility).some(v => v === false))
     );
 }
 

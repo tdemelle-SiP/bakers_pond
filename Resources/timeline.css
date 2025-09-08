@@ -370,8 +370,6 @@ body {
     height: 13px;
     line-height: 13px;
     text-align: center;
-    background: #1a252f; /* Dark background to match timeline background */
-    border-radius: 50%;
     z-index: 1;
 }
 
