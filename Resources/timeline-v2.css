@@ -68,15 +68,26 @@
 }
 
 /* Multi-emoji styling */
-.caseline-node.multi-emoji {
+.emoji-container {
     position: relative;
+    display: inline-block;
+    width: 16px;  /* Fixed width to match single emoji for proper centering */
+    height: 16px; /* Fixed height */
 }
 
-.caseline-node .secondary-emoji {
+.emoji-container .primary-emoji {
+    font-size: 16px; /* Keep primary at full size */
+}
+
+.emoji-container .secondary-emoji {
     position: absolute;
-    top: -8px;
-    right: -8px;
-    font-size: 14px;
+    top: -2px;
+    right: -2px;
+    font-size: 13px;
+    width: 13px;
+    height: 13px;
+    line-height: 13px;
+    text-align: center;
 }
 
 /* Connections overlay */

@@ -111,7 +111,14 @@ export const EMOJI_CONFIG = {
             caselineColor: 'bypass',
             class: 'document',
             defaultVisible: true
-        }   
+        },
+        '🏗️': { 
+            legendLabel: 'Planning Board', 
+            displayLabel: '',
+            caselineColor: 'bypass',
+            class: 'planning-board',
+            defaultVisible: true
+        }
     },
 
     timeline: {

@@ -27,8 +27,6 @@ import {
     saveScaleState,
     loadEmojiVisibility,
     saveEmojiVisibility,
-    loadScrollPosition,
-    saveScrollPosition,
     setIsolationMode,
     getIsolationMode,
     clearIsolationMode,
@@ -50,7 +48,7 @@ const state = {
         selectedCases: [],
         manualDateOverride: false
     },
-    scrollPosition: 0
+    focusDate: null  // Date that should be centered after refresh
 };
 
 // Load data and saved preferences
@@ -79,7 +77,6 @@ export async function loadData() {
         const savedFilters = loadFilterState();
         const savedScale = loadScaleState();
         const savedEmojiVisibility = loadEmojiVisibility();
-        const savedScrollPosition = loadScrollPosition();
         
         // Apply saved preferences
         // Use saved cases only if the array exists and has items; otherwise fall back to defaults.
@@ -93,7 +90,6 @@ export async function loadData() {
         state.scale = savedScale.scale || 0.8;
         state.fitToWindow = savedScale.fitToWindow || false;
         state.emojiVisibility = savedEmojiVisibility;
-        state.scrollPosition = savedScrollPosition;
         
         // Apply filters to get filteredEvents
         state.filteredEvents = applyFilters(state.allEvents, state.filters);
@@ -183,11 +179,6 @@ export function update(type, data) {
             saveEmojiVisibility(state.emojiVisibility);
             break;
             
-        case 'scroll':
-            state.scrollPosition = data.scrollPosition || 0;
-            saveScrollPosition(state.scrollPosition);
-            break;
-            
         case 'isolate':
             // Save current state before isolation
             const previousState = {
@@ -236,3 +227,6 @@ export function update(type, data) {
 export function checkIsolation(type, target) {
     return isIsolating(type, target);
 }
+
+// Export state for focus date calculation
+export { state };

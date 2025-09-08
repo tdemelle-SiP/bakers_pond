@@ -5,6 +5,17 @@ The mermaid chart should show:
 - connections between functions
 -->
 
+<!-- 
+Note: v2 imports functions from ../js/ (v1 files):
+- date-scale.js: calculateDateRange, getXPosition, getDateFromX
+- caseline-nodes.js: renderCaselineNodes
+- connections.js: drawCaselineConnections
+- case-titles.js: renderCaseTitles
+- stats.js: calculateStats, renderStats
+- emoji-config.js: getEmojiArray
+- data-loader.js, event-parser.js, filters.js, state-persistence.js
+-->
+
 ```mermaid
 graph TD
     subgraph "inputs"
@@ -24,10 +35,11 @@ graph TD
     subgraph "main.js"
         subgraph "init()"
             clearContainers["clearContainers()"]
-            setupListeners["setupListeners()"]:::setupStyle
+            setupListeners["setupListeners()<br/>(includes scroll tracking<br/>& window resize)"]:::setupStyle
             buildLegend["buildLegend()"]
         end
         clearTimelineContainers["clearTimelineContainers()"]
+        saveFocusDate["saveFocusDate()"]
         handleInput["handleInput(type, providedData)"]:::handleInputStyle
     end
     
@@ -47,12 +59,23 @@ graph TD
     subgraph "render.js"
         render["render(state)"]:::renderStyle
         updateControls["updateControls(state)"]:::updateControlsStyle
-        renderTimeline["renderTimeline(state)"]:::renderTimelineStyle
+        renderTimeline["renderTimeline(state)<br/>(includes emoji visibility<br/>with OR logic for multi-emoji)"]:::renderTimelineStyle
+    end
+    
+    subgraph "label-layout.js"
+        createLabelsWithCollisionDetection["createLabelsWithCollisionDetection(nodeData, container)"]
+        splitLabel["splitLabel(text)"]
+        measureLabel["measureLabel(text, verticalPosition)"]
+        getYPosition["getYPosition(node, labelHeight)"]
+        getNodeY["getNodeY(node)"]
+        resolveCollisions["resolveCollisions(labelData)"]
+        drawLeaderLine["drawLeaderLine(container, labelData)"]
     end
     
     %% Input connections
     DOM --> clearContainers
-    RefreshBtn --> clearContainers
+    RefreshBtn --> saveFocusDate
+    saveFocusDate --> clearContainers
     DateFilterBtn --> handleInput
     ResetBtn --> handleInput
     ScaleSlider --> handleInput
@@ -94,6 +117,16 @@ graph TD
     %% Render.js connections
     render --> updateControls
     render --> renderTimeline
+    renderTimeline --> createLabelsWithCollisionDetection
+    
+    %% label-layout.js internal connections
+    createLabelsWithCollisionDetection --> splitLabel
+    createLabelsWithCollisionDetection --> measureLabel
+    createLabelsWithCollisionDetection --> getYPosition
+    createLabelsWithCollisionDetection --> getNodeY
+    createLabelsWithCollisionDetection --> resolveCollisions
+    createLabelsWithCollisionDetection --> drawLeaderLine
+    getYPosition --> getNodeY
     
     classDef userInput fill:#87ceeb,stroke:#333,stroke-width:3px
     classDef initStyle fill:#ffd700,stroke:#333,stroke-width:2px

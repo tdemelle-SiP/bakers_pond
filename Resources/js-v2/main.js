@@ -14,8 +14,9 @@
 // - Updates controls to reflect state
 // - Updates timeline to reflect state
 
-import { loadData, update } from './state.js';
+import { loadData, update, state } from './state.js';
 import { getEmojiArray } from '../js/emoji-config.js';
+import { getDateFromX, calculateDateRange } from '../js/date-scale.js';
 
 // Wait for DOM ready
 if (document.readyState === 'loading') {
@@ -141,7 +142,49 @@ function clearTimelineContainers() {
     });
 }
 
+/**
+ * Save the date at the center of the viewport
+ */
+function saveFocusDate() {
+    const mainContent = document.querySelector('.main-content');
+    if (!mainContent || !state.filteredEvents || state.filteredEvents.length === 0) {
+        return;
+    }
+    
+    // Calculate center position of viewport
+    const centerX = mainContent.scrollLeft + (mainContent.clientWidth / 2);
+    
+    // Get date range and scale from current state
+    const dateRange = calculateDateRange(state.filteredEvents);
+    const pixelsPerDay = state.scale;
+    
+    // Calculate what date is at center
+    const focusDate = getDateFromX(centerX, dateRange.startDate, pixelsPerDay);
+    state.focusDate = focusDate;
+}
+
 function setupListeners() {
+    const mainContent = document.querySelector('.main-content');
+    
+    // Mousewheel horizontal scrolling
+    document.addEventListener('wheel', (e) => {
+        if (mainContent && mainContent.contains(e.target)) {
+            e.preventDefault();
+            mainContent.scrollLeft += e.deltaY;
+        }
+    }, { passive: false });
+    
+    // Track focus date when scrolling
+    if (mainContent) {
+        let scrollTimeout;
+        mainContent.addEventListener('scroll', () => {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                saveFocusDate();
+            }, 100);
+        });
+    }
+    
     // Single event listener on the nav for all controls
     const nav = document.querySelector('.sticky-nav');
     if (nav) {
@@ -159,6 +202,7 @@ function setupListeners() {
             }
             // Refresh button
             else if (target.id === 'refresh-timeline') {
+                saveFocusDate();
                 init();
             }
             // Case filter dropdown toggle
@@ -228,6 +272,19 @@ function setupListeners() {
             dropdown.style.display = 'none';
         }
     });
+    
+    // Window resize handler for fit-to-window
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            // Only recalculate if fit-to-window is checked
+            const fitCheckbox = document.getElementById('fit-to-window');
+            if (fitCheckbox && fitCheckbox.checked) {
+                handleInput('fit');
+            }
+        }, 250);
+    });
 }
 
 function handleInput(type, providedData = null) {
@@ -242,9 +299,11 @@ function handleInput(type, providedData = null) {
                 break;
             case 'scale':
                 data.scale = parseFloat(document.getElementById('scale-slider').value);
+                clearTimelineContainers();
                 break;
             case 'fit':
                 data.fitToWindow = document.getElementById('fit-to-window').checked;
+                clearTimelineContainers();
                 break;
             case 'reset':
                 data.reset = true;

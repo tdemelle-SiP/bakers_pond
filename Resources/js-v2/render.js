@@ -6,10 +6,10 @@
 // Import existing rendering functions
 import { renderCaselineNodes } from '../js/caseline-nodes.js';
 import { drawCaselineConnections } from '../js/connections.js';
-import { createLabelsWithCollisionDetection } from '../js/label-layout.js';
+import { createLabelsWithCollisionDetection } from './label-layout.js';
 import { renderCaseTitles } from '../js/case-titles.js';
 import { calculateStats, renderStats } from '../js/stats.js';
-import { calculateDateRange, drawYearMarkers, calculateTimelineWidth, setContainerWidth } from '../js/date-scale.js';
+import { calculateDateRange, drawYearMarkers, calculateTimelineWidth, setContainerWidth, getXPosition } from '../js/date-scale.js';
 
 /**
  * Main render function - updates entire UI to reflect state
@@ -145,17 +145,33 @@ function renderTimeline(state) {
     
     // Apply emoji visibility BEFORE label collision detection
     if (state.emojiVisibility) {
+        // Handle single emoji nodes
         Object.entries(state.emojiVisibility).forEach(([emojiClass, isVisible]) => {
-            const elements = document.querySelectorAll(`[data-emoji-type="${emojiClass}"]`);
+            const elements = document.querySelectorAll(`[data-emoji-type="${emojiClass}"]:not([data-emoji-type2])`);
             elements.forEach(element => {
                 element.style.display = isVisible === false ? 'none' : '';
             });
+        });
+        
+        // Handle multi-emoji nodes with OR logic
+        const multiEmojiNodes = document.querySelectorAll('[data-emoji-type2]');
+        multiEmojiNodes.forEach(node => {
+            const type1Visible = state.emojiVisibility[node.dataset.emojiType] !== false;
+            const type2Visible = state.emojiVisibility[node.dataset.emojiType2] !== false;
+            // Show if either emoji is visible
+            node.style.display = (type1Visible || type2Visible) ? '' : 'none';
         });
     }
     
     // Filter nodes to only include visible ones for label collision detection
     const visibleNodes = caselineData.nodes.filter(node => {
         if (!node.emojiType) return true;
+        // For multi-emoji nodes, check if either is visible
+        if (node.emojiType2) {
+            const type1Visible = state.emojiVisibility?.[node.emojiType] !== false;
+            const type2Visible = state.emojiVisibility?.[node.emojiType2] !== false;
+            return type1Visible || type2Visible;
+        }
         return state.emojiVisibility?.[node.emojiType] !== false;
     });
     
@@ -175,11 +191,17 @@ function renderTimeline(state) {
     const stats = calculateStats(state.filteredEvents, emojiVisibility);
     renderStats(stats, emojiVisibility);
     
-    // Restore scroll position
+    // Restore focus date (center the previously centered date)
     const mainContent = document.querySelector('.main-content');
-    if (mainContent && state.scrollPosition) {
+    if (mainContent && state.focusDate) {
         requestAnimationFrame(() => {
-            mainContent.scrollLeft = state.scrollPosition;
+            // Calculate where the focus date is now
+            const focusX = getXPosition(state.focusDate, dateRange.startDate, pixelsPerDay);
+            // Calculate scroll position to center it
+            const scrollLeft = focusX - (mainContent.clientWidth / 2);
+            mainContent.scrollLeft = Math.max(0, scrollLeft);
+            // Clear focus date after using it
+            state.focusDate = null;
         });
     }
 }

@@ -353,7 +353,7 @@ body {
 
 /* Multi-emoji nodes - superscript style for secondary emoji */
 .caseline-node.multi-emoji {
-    position: relative;
+    /* Keep position: absolute from .caseline-node */
     display: inline-block;
 }
 
