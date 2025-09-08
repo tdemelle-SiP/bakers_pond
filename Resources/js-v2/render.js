@@ -8,7 +8,7 @@ import { renderCaselineNodes } from '../js/caseline-nodes.js';
 import { drawCaselineConnections } from '../js/connections.js';
 import { createLabelsWithCollisionDetection } from './label-layout.js';
 import { renderCaseTitles } from '../js/case-titles.js';
-import { calculateStats, renderStats } from '../js/stats.js';
+import { calculateStats } from '../js/stats.js';
 import { calculateDateRange, drawYearMarkers, calculateTimelineWidth, setContainerWidth, getXPosition } from '../js/date-scale.js';
 
 /**
@@ -199,16 +199,16 @@ function renderTimeline(state) {
     // Draw caseline connections only
     drawCaselineConnections(caselineData.caseGroups, connectionsContainer);
     
-    // Update stats
+    // Calculate stats for legend counts
     const emojiVisibility = state.emojiVisibility || {};
     const stats = calculateStats(state.filteredEvents, emojiVisibility);
-    renderStats(stats, emojiVisibility);
     
-    // Update legend counts dynamically
+    // Update legend counts dynamically (only show for visible emojis)
     const emojiCounts = document.querySelectorAll('.emoji-count');
     emojiCounts.forEach(countSpan => {
-        const emojiClass = countSpan.dataset.emojiClass;
-        const count = stats.emojiStats?.[emojiClass] || 0;
+        const emoji = countSpan.dataset.emoji;
+        // The count will already be 0 if emoji is hidden (due to calculateStats logic)
+        const count = stats.emojiStats?.[emoji] || 0;
         countSpan.textContent = count > 0 ? `(${count})` : '';
     });
     

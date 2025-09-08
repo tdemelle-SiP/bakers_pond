@@ -42,11 +42,11 @@ function buildLegend() {
     // Build legend HTML matching original two-row table format
     let html = '<div style="display: flex; gap: 20px; align-items: center;">';
     
-    // Caseline legend (two-row table)
+    // Legend table (two-row)
     html += '<div>';
     html += '<table style="border-collapse: collapse; color: white; font-size: 12px;">';
     
-    // Split caseline emojis into two rows (balanced)
+    // Split emojis into two rows (balanced)
     const splitPoint = Math.ceil(caselineEmojis.length / 2);
     const firstRowEmojis = caselineEmojis.slice(0, splitPoint);
     const secondRowEmojis = caselineEmojis.slice(splitPoint);
@@ -62,20 +62,19 @@ function buildLegend() {
                        style="margin-right: 4px; cursor: pointer;" 
                        ${checked}>
                 ${item.emoji} ${item.legendLabel}
-                <span class="emoji-count" data-emoji-class="${item.class}" style="opacity: 0.7; margin-left: 4px;"></span>
+                <span class="emoji-count" data-emoji="${item.emoji}" style="opacity: 0.7; margin-left: 4px;"></span>
             </label>
         </td>`;
     };
     
-    // First row of caseline
+    // First row
     html += '<tr>';
-    html += '<td style="padding: 2px 10px 2px 0; font-weight: bold; white-space: nowrap; vertical-align: top;" rowspan="2">Caseline:</td>';
     firstRowEmojis.forEach(item => {
         html += createEmojiCell(item);
     });
     html += '</tr>';
     
-    // Second row of caseline
+    // Second row
     html += '<tr>';
     secondRowEmojis.forEach(item => {
         html += createEmojiCell(item);
@@ -146,6 +145,40 @@ function clearTimelineContainers() {
 /**
  * Save the date at the center of the viewport
  */
+async function handleRefresh() {
+    const refreshButton = document.getElementById('refresh-timeline');
+    if (!refreshButton) return;
+    
+    // Disable button and show loading indicator
+    refreshButton.disabled = true;
+    const originalText = refreshButton.textContent;
+    refreshButton.textContent = '⟳';  // Spinning icon
+    
+    try {
+        // Save focus date before refresh
+        saveFocusDate();
+        
+        // Re-initialize (reloads data and re-renders)
+        await init();
+        
+        // Show success feedback
+        refreshButton.textContent = '✓';
+        setTimeout(() => {
+            refreshButton.textContent = originalText;
+            refreshButton.disabled = false;
+        }, 1000);
+    } catch (error) {
+        console.error('Refresh failed:', error);
+        
+        // Show error feedback
+        refreshButton.textContent = '✗';
+        setTimeout(() => {
+            refreshButton.textContent = originalText;
+            refreshButton.disabled = false;
+        }, 2000);
+    }
+}
+
 function saveFocusDate() {
     const mainContent = document.querySelector('.main-content');
     if (!mainContent || !state.filteredEvents || state.filteredEvents.length === 0) {
@@ -203,8 +236,7 @@ function setupListeners() {
             }
             // Refresh button
             else if (target.id === 'refresh-timeline') {
-                saveFocusDate();
-                init();
+                handleRefresh();
             }
             // Case filter dropdown toggle
             else if (target.id === 'case-filter-button' || target.closest('#case-filter-button')) {

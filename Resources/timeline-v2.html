@@ -39,15 +39,15 @@
     <!-- Sticky Navigation Header -->
     <nav class="sticky-nav">
         <!-- Top Row: Title and Stats -->
-        <div class="nav-top-row">
+        <div class="nav-top-row" style="display: flex; align-items: center; justify-content: space-between; position: relative;">
             <a href="https://github.com/tdemelle-SiP/bakers_pond/blob/master/README.md" class="nav-link">← Back to README</a>
-            <div class="nav-title">
+            <div class="nav-title" style="position: absolute; left: 50%; transform: translateX(-50%);">
                 42 Mill Street Timeline v3
                 <button id="refresh-timeline" class="refresh-button" title="Refresh timeline data">
                     ↻
                 </button>
             </div>
-            <div id="stats-container" class="stats-container"></div>
+            <div style="visibility: hidden;">← Back to README</div> <!-- Spacer for balance -->
         </div>
         
         <!-- Middle Row: Legend -->

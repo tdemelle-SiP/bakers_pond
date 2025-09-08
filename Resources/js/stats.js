@@ -21,29 +21,29 @@ export function calculateStats(events, emojiVisibility = null) {
     const emojiStats = {};
     
     events.forEach(event => {
-        // Skip if emoji visibility is hidden for this event
-        if (emojiVisibility && event.eventType === 'caseline' && event.caselineEmoji) {
-            const config = getEmojiConfig(event.caselineEmoji, 'caseline');
-            if (config && config.class && emojiVisibility[config.class] === false) {
-                return; // Skip this event in counting
-            }
-        }
-        
         // Count by type
         if (event.eventType === 'timeline') {
             stats.timeline++;
         } else if (event.eventType === 'caseline') {
             stats.caseline++;
             
-            // Count emoji metrics
-            if (event.caselineEmoji) {
-                const config = getEmojiConfig(event.caselineEmoji, 'caseline');
-                if (config && config.metricDisplay !== undefined) {
-                    if (!emojiStats[event.caselineEmoji]) {
-                        emojiStats[event.caselineEmoji] = 0;
+            // Count ALL emoji metrics in the event (handles multi-emoji)
+            if (event.caselineEmojis && event.caselineEmojis.length > 0) {
+                // Count each emoji in the array
+                event.caselineEmojis.forEach(emoji => {
+                    const config = getEmojiConfig(emoji, 'caseline');
+                    
+                    // Skip counting this emoji if it's hidden
+                    const isHidden = emojiVisibility && config && config.class && 
+                                    emojiVisibility[config.class] === false;
+                    
+                    if (!isHidden && config && config.metricDisplay !== undefined) {
+                        if (!emojiStats[emoji]) {
+                            emojiStats[emoji] = 0;
+                        }
+                        emojiStats[emoji]++;
                     }
-                    emojiStats[event.caselineEmoji]++;
-                }
+                });
             }
         }
     });

@@ -153,7 +153,8 @@ export function parseEvents(tableData) {
             events.push({
                 ...baseEvent,
                 eventType: 'caseline',
-                eventClass: 'case-procedural'
+                eventClass: 'case-procedural',
+                caselineEmoji: caselineEmojis[0]  // Set the first emoji for stats counting
             });
         }
     });
