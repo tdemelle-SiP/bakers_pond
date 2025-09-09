@@ -1,0 +1,3795 @@
+{
+  "metadata": {
+    "generated": "2025-09-09T04:51:24.729Z",
+    "files": []
+  },
+  "functions": {
+    "case-titles.getCaseInfo": {
+      "file": "case-titles",
+      "name": "getCaseInfo",
+      "type": "function",
+      "params": [
+        "caseNumber",
+        "casesData"
+      ],
+      "paramString": "caseNumber, casesData",
+      "hasParams": true
+    },
+    "case-titles.getCaseTitlesContainer": {
+      "file": "case-titles",
+      "name": "getCaseTitlesContainer",
+      "type": "function",
+      "params": [],
+      "paramString": "",
+      "hasParams": false
+    },
+    "case-titles.renderCaseTitles": {
+      "file": "case-titles",
+      "name": "renderCaseTitles",
+      "type": "function",
+      "params": [
+        "caseGroups",
+        "visibleCases",
+        "casesData"
+      ],
+      "paramString": "caseGroups, visibleCases, casesData",
+      "hasParams": true
+    },
+    "case-titles.updateCaseTitlesVisibility": {
+      "file": "case-titles",
+      "name": "updateCaseTitlesVisibility",
+      "type": "function",
+      "params": [
+        "visibleCases"
+      ],
+      "paramString": "visibleCases",
+      "hasParams": true
+    },
+    "emoji-config.getEmojiConfig": {
+      "file": "emoji-config",
+      "name": "getEmojiConfig",
+      "type": "function",
+      "params": [
+        "emoji"
+      ],
+      "paramString": "emoji",
+      "hasParams": true
+    },
+    "emoji-config.getEmojiArray": {
+      "file": "emoji-config",
+      "name": "getEmojiArray",
+      "type": "function",
+      "params": [],
+      "paramString": "",
+      "hasParams": false
+    },
+    "label-layout.splitLabel": {
+      "file": "label-layout",
+      "name": "splitLabel",
+      "type": "function",
+      "params": [
+        "text"
+      ],
+      "paramString": "text",
+      "hasParams": true
+    },
+    "label-layout.measureLabel": {
+      "file": "label-layout",
+      "name": "measureLabel",
+      "type": "function",
+      "params": [
+        "text",
+        "verticalPosition",
+        "emphasis"
+      ],
+      "paramString": "text, verticalPosition, emphasis",
+      "hasParams": true
+    },
+    "label-layout.createLabelsWithCollisionDetection": {
+      "file": "label-layout",
+      "name": "createLabelsWithCollisionDetection",
+      "type": "function",
+      "params": [
+        "nodeData",
+        "container"
+      ],
+      "paramString": "nodeData, container",
+      "hasParams": true
+    },
+    "label-layout.getYPosition": {
+      "file": "label-layout",
+      "name": "getYPosition",
+      "type": "function",
+      "params": [
+        "node",
+        "labelHeight"
+      ],
+      "paramString": "node, labelHeight",
+      "hasParams": true
+    },
+    "label-layout.getNodeY": {
+      "file": "label-layout",
+      "name": "getNodeY",
+      "type": "function",
+      "params": [
+        "node"
+      ],
+      "paramString": "node",
+      "hasParams": true
+    },
+    "label-layout.resolveCollisions": {
+      "file": "label-layout",
+      "name": "resolveCollisions",
+      "type": "function",
+      "params": [
+        "labelData"
+      ],
+      "paramString": "labelData",
+      "hasParams": true
+    },
+    "label-layout.drawLeaderLine": {
+      "file": "label-layout",
+      "name": "drawLeaderLine",
+      "type": "function",
+      "params": [
+        "container",
+        "labelData"
+      ],
+      "paramString": "container, labelData",
+      "hasParams": true
+    },
+    "main.init": {
+      "file": "main",
+      "name": "init",
+      "type": "function",
+      "params": [],
+      "paramString": "",
+      "hasParams": false
+    },
+    "main.buildLegend": {
+      "file": "main",
+      "name": "buildLegend",
+      "type": "function",
+      "params": [],
+      "paramString": "",
+      "hasParams": false
+    },
+    "main.clearContainers": {
+      "file": "main",
+      "name": "clearContainers",
+      "type": "function",
+      "params": [],
+      "paramString": "",
+      "hasParams": false
+    },
+    "main.clearTimelineContainers": {
+      "file": "main",
+      "name": "clearTimelineContainers",
+      "type": "function",
+      "params": [],
+      "paramString": "",
+      "hasParams": false
+    },
+    "main.handleRefresh": {
+      "file": "main",
+      "name": "handleRefresh",
+      "type": "function",
+      "params": [],
+      "paramString": "",
+      "hasParams": false
+    },
+    "main.saveFocusDate": {
+      "file": "main",
+      "name": "saveFocusDate",
+      "type": "function",
+      "params": [],
+      "paramString": "",
+      "hasParams": false
+    },
+    "main.setupListeners": {
+      "file": "main",
+      "name": "setupListeners",
+      "type": "function",
+      "params": [],
+      "paramString": "",
+      "hasParams": false
+    },
+    "main.handleInput": {
+      "file": "main",
+      "name": "handleInput",
+      "type": "function",
+      "params": [
+        "type",
+        "providedData"
+      ],
+      "paramString": "type, providedData = null",
+      "hasParams": true
+    },
+    "main.createEmojiCell": {
+      "file": "main",
+      "name": "createEmojiCell",
+      "type": "function",
+      "params": [
+        "item"
+      ],
+      "paramString": "item",
+      "hasParams": true
+    },
+    "render.setContainerWidth": {
+      "file": "render",
+      "name": "setContainerWidth",
+      "type": "function",
+      "params": [
+        "container",
+        "width"
+      ],
+      "paramString": "container, width",
+      "hasParams": true
+    },
+    "render.calculateYearMarkers": {
+      "file": "render",
+      "name": "calculateYearMarkers",
+      "type": "function",
+      "params": [
+        "coordinateSystem"
+      ],
+      "paramString": "coordinateSystem",
+      "hasParams": true
+    },
+    "render.determineCaselineColor": {
+      "file": "render",
+      "name": "determineCaselineColor",
+      "type": "function",
+      "params": [
+        "emojis"
+      ],
+      "paramString": "emojis",
+      "hasParams": true
+    },
+    "render.renderCaselineNodes": {
+      "file": "render",
+      "name": "renderCaselineNodes",
+      "type": "function",
+      "params": [
+        "events",
+        "coordinateSystem"
+      ],
+      "paramString": "events, coordinateSystem",
+      "hasParams": true
+    },
+    "render.render": {
+      "file": "render",
+      "name": "render",
+      "type": "function",
+      "params": [
+        "state"
+      ],
+      "paramString": "state",
+      "hasParams": true
+    },
+    "render.updateControls": {
+      "file": "render",
+      "name": "updateControls",
+      "type": "function",
+      "params": [
+        "state"
+      ],
+      "paramString": "state",
+      "hasParams": true
+    },
+    "render.renderTimeline": {
+      "file": "render",
+      "name": "renderTimeline",
+      "type": "function",
+      "params": [
+        "state"
+      ],
+      "paramString": "state",
+      "hasParams": true
+    },
+    "render.renderYearMarkers": {
+      "file": "render",
+      "name": "renderYearMarkers",
+      "type": "function",
+      "params": [
+        "container",
+        "coordinateSystem"
+      ],
+      "paramString": "container, coordinateSystem",
+      "hasParams": true
+    },
+    "render.drawCaselineConnections": {
+      "file": "render",
+      "name": "drawCaselineConnections",
+      "type": "function",
+      "params": [
+        "caseGroups",
+        "container"
+      ],
+      "paramString": "caseGroups, container",
+      "hasParams": true
+    },
+    "state.loadData": {
+      "file": "state",
+      "name": "loadData",
+      "type": "function",
+      "params": [],
+      "paramString": "",
+      "hasParams": false
+    },
+    "state.calculateCoordinateSystem": {
+      "file": "state",
+      "name": "calculateCoordinateSystem",
+      "type": "function",
+      "params": [
+        "events",
+        "scale"
+      ],
+      "paramString": "events, scale",
+      "hasParams": true
+    },
+    "state.getDefaultCases": {
+      "file": "state",
+      "name": "getDefaultCases",
+      "type": "function",
+      "params": [],
+      "paramString": "",
+      "hasParams": false
+    },
+    "state.update": {
+      "file": "state",
+      "name": "update",
+      "type": "function",
+      "params": [
+        "type",
+        "data"
+      ],
+      "paramString": "type, data",
+      "hasParams": true
+    },
+    "state.checkIsolation": {
+      "file": "state",
+      "name": "checkIsolation",
+      "type": "function",
+      "params": [
+        "type",
+        "target"
+      ],
+      "paramString": "type, target",
+      "hasParams": true
+    },
+    "state.saveFocus": {
+      "file": "state",
+      "name": "saveFocus",
+      "type": "function",
+      "params": [
+        "scrollLeft",
+        "clientWidth"
+      ],
+      "paramString": "scrollLeft, clientWidth",
+      "hasParams": true
+    },
+    "state.arraysEqual": {
+      "file": "state",
+      "name": "arraysEqual",
+      "type": "function",
+      "params": [
+        "a",
+        "b"
+      ],
+      "paramString": "a, b",
+      "hasParams": true
+    },
+    "state.calculateStats": {
+      "file": "state",
+      "name": "calculateStats",
+      "type": "function",
+      "params": [
+        "events",
+        "emojiVisibility"
+      ],
+      "paramString": "events, emojiVisibility = null",
+      "hasParams": true
+    },
+    "state.hasActiveFilters": {
+      "file": "state",
+      "name": "hasActiveFilters",
+      "type": "function",
+      "params": [
+        "state"
+      ],
+      "paramString": "state",
+      "hasParams": true
+    },
+    "state.parseMarkdown": {
+      "file": "state",
+      "name": "parseMarkdown",
+      "type": "function",
+      "params": [
+        "markdownText"
+      ],
+      "paramString": "markdownText",
+      "hasParams": true
+    },
+    "state.loadTableData": {
+      "file": "state",
+      "name": "loadTableData",
+      "type": "function",
+      "params": [],
+      "paramString": "",
+      "hasParams": false
+    },
+    "state.parseEventsOptimized": {
+      "file": "state",
+      "name": "parseEventsOptimized",
+      "type": "function",
+      "params": [
+        "tableData",
+        "caseSet"
+      ],
+      "paramString": "tableData, caseSet",
+      "hasParams": true
+    },
+    "state.applyFilters": {
+      "file": "state",
+      "name": "applyFilters",
+      "type": "function",
+      "params": [
+        "events",
+        "filterState"
+      ],
+      "paramString": "events, filterState",
+      "hasParams": true
+    },
+    "state.filterByDate": {
+      "file": "state",
+      "name": "filterByDate",
+      "type": "function",
+      "params": [
+        "events",
+        "startDate",
+        "endDate"
+      ],
+      "paramString": "events, startDate, endDate",
+      "hasParams": true
+    },
+    "state.filterByCase": {
+      "file": "state",
+      "name": "filterByCase",
+      "type": "function",
+      "params": [
+        "events",
+        "selectedCases"
+      ],
+      "paramString": "events, selectedCases",
+      "hasParams": true
+    },
+    "state.loadAllUIState": {
+      "file": "state",
+      "name": "loadAllUIState",
+      "type": "function",
+      "params": [],
+      "paramString": "",
+      "hasParams": false
+    },
+    "state.saveState": {
+      "file": "state",
+      "name": "saveState",
+      "type": "function",
+      "params": [
+        "key",
+        "value"
+      ],
+      "paramString": "key, value",
+      "hasParams": true
+    },
+    "state.loadState": {
+      "file": "state",
+      "name": "loadState",
+      "type": "function",
+      "params": [
+        "key"
+      ],
+      "paramString": "key",
+      "hasParams": true
+    },
+    "state.saveFilterState": {
+      "file": "state",
+      "name": "saveFilterState",
+      "type": "function",
+      "params": [
+        "filters"
+      ],
+      "paramString": "filters",
+      "hasParams": true
+    },
+    "state.saveScaleState": {
+      "file": "state",
+      "name": "saveScaleState",
+      "type": "function",
+      "params": [
+        "scale",
+        "fitToWindow"
+      ],
+      "paramString": "scale, fitToWindow",
+      "hasParams": true
+    },
+    "state.saveEmojiVisibility": {
+      "file": "state",
+      "name": "saveEmojiVisibility",
+      "type": "function",
+      "params": [
+        "emojiVisibility"
+      ],
+      "paramString": "emojiVisibility",
+      "hasParams": true
+    },
+    "state.setIsolationMode": {
+      "file": "state",
+      "name": "setIsolationMode",
+      "type": "function",
+      "params": [
+        "type",
+        "target",
+        "previousState"
+      ],
+      "paramString": "type, target, previousState",
+      "hasParams": true
+    },
+    "state.getIsolationMode": {
+      "file": "state",
+      "name": "getIsolationMode",
+      "type": "function",
+      "params": [],
+      "paramString": "",
+      "hasParams": false
+    },
+    "state.clearIsolationMode": {
+      "file": "state",
+      "name": "clearIsolationMode",
+      "type": "function",
+      "params": [],
+      "paramString": "",
+      "hasParams": false
+    },
+    "state.isIsolating": {
+      "file": "state",
+      "name": "isIsolating",
+      "type": "function",
+      "params": [
+        "type",
+        "target"
+      ],
+      "paramString": "type, target",
+      "hasParams": true
+    },
+    "state.loadFocusDate": {
+      "file": "state",
+      "name": "loadFocusDate",
+      "type": "function",
+      "params": [],
+      "paramString": "",
+      "hasParams": false
+    },
+    "state.clearFocusDate": {
+      "file": "state",
+      "name": "clearFocusDate",
+      "type": "function",
+      "params": [],
+      "paramString": "",
+      "hasParams": false
+    },
+    "state.findColumn": {
+      "file": "state",
+      "name": "findColumn",
+      "type": "function",
+      "params": [
+        "names"
+      ],
+      "paramString": "names",
+      "hasParams": true
+    }
+  },
+  "calls": {
+    "case-titles.renderCaseTitles": [
+      {
+        "callee": "getCaseInfo",
+        "calleeFile": "case-titles",
+        "position": 716,
+        "braceDepth": 3,
+        "arguments": "caseNumber, casesData",
+        "argList": [
+          "caseNumber",
+          "casesData"
+        ]
+      },
+      {
+        "callee": "getCaseTitlesContainer",
+        "calleeFile": "case-titles",
+        "position": 95,
+        "braceDepth": 1,
+        "arguments": "",
+        "argList": []
+      }
+    ],
+    "case-titles.updateCaseTitlesVisibility": [
+      {
+        "callee": "getCaseTitlesContainer",
+        "calleeFile": "case-titles",
+        "position": 82,
+        "braceDepth": 1,
+        "arguments": "",
+        "argList": []
+      }
+    ],
+    "label-layout.createLabelsWithCollisionDetection": [
+      {
+        "callee": "splitLabel",
+        "calleeFile": "label-layout",
+        "position": 374,
+        "braceDepth": 2,
+        "arguments": "node.label",
+        "argList": [
+          "node.label"
+        ]
+      },
+      {
+        "callee": "measureLabel",
+        "calleeFile": "label-layout",
+        "position": 479,
+        "braceDepth": 2,
+        "arguments": "labelText, node.verticalPosition, node.labelEmphasis",
+        "argList": [
+          "labelText",
+          "node.verticalPosition",
+          "node.labelEmphasis"
+        ]
+      },
+      {
+        "callee": "getYPosition",
+        "calleeFile": "label-layout",
+        "position": 1850,
+        "braceDepth": 2,
+        "arguments": "node, height",
+        "argList": [
+          "node",
+          "height"
+        ]
+      },
+      {
+        "callee": "getNodeY",
+        "calleeFile": "label-layout",
+        "position": 2224,
+        "braceDepth": 3,
+        "arguments": "node",
+        "argList": [
+          "node"
+        ]
+      },
+      {
+        "callee": "resolveCollisions",
+        "calleeFile": "label-layout",
+        "position": 2318,
+        "braceDepth": 1,
+        "arguments": "labels",
+        "argList": [
+          "labels"
+        ]
+      },
+      {
+        "callee": "drawLeaderLine",
+        "calleeFile": "label-layout",
+        "position": 2836,
+        "braceDepth": 3,
+        "arguments": "container, label",
+        "argList": [
+          "container",
+          "label"
+        ]
+      }
+    ],
+    "main.init": [
+      {
+        "callee": "buildLegend",
+        "calleeFile": "main",
+        "position": 76,
+        "braceDepth": 1,
+        "arguments": "",
+        "argList": []
+      },
+      {
+        "callee": "clearContainers",
+        "calleeFile": "main",
+        "position": 29,
+        "braceDepth": 1,
+        "arguments": "",
+        "argList": []
+      },
+      {
+        "callee": "setupListeners",
+        "calleeFile": "main",
+        "position": 53,
+        "braceDepth": 1,
+        "arguments": "",
+        "argList": []
+      },
+      {
+        "callee": "loadData",
+        "calleeFile": "state",
+        "position": 102,
+        "braceDepth": 1,
+        "arguments": "",
+        "argList": []
+      }
+    ],
+    "main.buildLegend": [
+      {
+        "callee": "getEmojiArray",
+        "calleeFile": "emoji-config",
+        "position": 224,
+        "braceDepth": 1,
+        "arguments": "",
+        "argList": []
+      },
+      {
+        "callee": "createEmojiCell",
+        "calleeFile": "main",
+        "position": 1643,
+        "braceDepth": 2,
+        "arguments": "item",
+        "argList": [
+          "item"
+        ]
+      },
+      {
+        "callee": "createEmojiCell",
+        "calleeFile": "main",
+        "position": 1799,
+        "braceDepth": 2,
+        "arguments": "item",
+        "argList": [
+          "item"
+        ]
+      }
+    ],
+    "main.handleRefresh": [
+      {
+        "callee": "init",
+        "calleeFile": "main",
+        "position": 506,
+        "braceDepth": 2,
+        "arguments": "",
+        "argList": []
+      },
+      {
+        "callee": "saveFocusDate",
+        "calleeFile": "main",
+        "position": 408,
+        "braceDepth": 2,
+        "arguments": "",
+        "argList": []
+      }
+    ],
+    "main.saveFocusDate": [
+      {
+        "callee": "saveFocus",
+        "calleeFile": "state",
+        "position": 196,
+        "braceDepth": 1,
+        "arguments": "mainContent.scrollLeft, mainContent.clientWidth",
+        "argList": [
+          "mainContent.scrollLeft",
+          "mainContent.clientWidth"
+        ]
+      }
+    ],
+    "main.setupListeners": [
+      {
+        "callee": "handleRefresh",
+        "calleeFile": "main",
+        "position": 1364,
+        "braceDepth": 4,
+        "arguments": "",
+        "argList": []
+      },
+      {
+        "callee": "handleInput",
+        "calleeFile": "main",
+        "position": 627,
+        "braceDepth": 4,
+        "arguments": "'scroll'",
+        "argList": [
+          "'scroll'"
+        ]
+      },
+      {
+        "callee": "handleInput",
+        "calleeFile": "main",
+        "position": 1078,
+        "braceDepth": 4,
+        "arguments": "'dateFilter'",
+        "argList": [
+          "'dateFilter'"
+        ]
+      },
+      {
+        "callee": "handleInput",
+        "calleeFile": "main",
+        "position": 1221,
+        "braceDepth": 4,
+        "arguments": "'reset'",
+        "argList": [
+          "'reset'"
+        ]
+      },
+      {
+        "callee": "handleInput",
+        "calleeFile": "main",
+        "position": 2204,
+        "braceDepth": 4,
+        "arguments": "'caseToggle', { selectedCases }",
+        "argList": [
+          "'caseToggle'",
+          "{ selectedCases }"
+        ]
+      },
+      {
+        "callee": "handleInput",
+        "calleeFile": "main",
+        "position": 2467,
+        "braceDepth": 4,
+        "arguments": "'caseToggle', { selectedCases: [] }",
+        "argList": [
+          "'caseToggle'",
+          "{ selectedCases: [] }"
+        ]
+      },
+      {
+        "callee": "handleInput",
+        "calleeFile": "main",
+        "position": 3385,
+        "braceDepth": 7,
+        "arguments": "'exitIsolation'",
+        "argList": [
+          "'exitIsolation'"
+        ]
+      },
+      {
+        "callee": "handleInput",
+        "calleeFile": "main",
+        "position": 3478,
+        "braceDepth": 7,
+        "arguments": "'isolate', { type: 'emoji', target: emojiClass }",
+        "argList": [
+          "'isolate'",
+          "{ type: 'emoji', target: emojiClass }"
+        ]
+      },
+      {
+        "callee": "handleInput",
+        "calleeFile": "main",
+        "position": 3897,
+        "braceDepth": 4,
+        "arguments": "'scale'",
+        "argList": [
+          "'scale'"
+        ]
+      },
+      {
+        "callee": "handleInput",
+        "calleeFile": "main",
+        "position": 4045,
+        "braceDepth": 4,
+        "arguments": "'fit'",
+        "argList": [
+          "'fit'"
+        ]
+      },
+      {
+        "callee": "handleInput",
+        "calleeFile": "main",
+        "position": 4369,
+        "braceDepth": 4,
+        "arguments": "'caseToggle', { selectedCases }",
+        "argList": [
+          "'caseToggle'",
+          "{ selectedCases }"
+        ]
+      },
+      {
+        "callee": "handleInput",
+        "calleeFile": "main",
+        "position": 4658,
+        "braceDepth": 4,
+        "arguments": "'emojiToggle', { emoji: emojiClass, visible: isVisible }",
+        "argList": [
+          "'emojiToggle'",
+          "{ emoji: emojiClass, visible: isVisible }"
+        ]
+      },
+      {
+        "callee": "handleInput",
+        "calleeFile": "main",
+        "position": 4920,
+        "braceDepth": 4,
+        "arguments": "'scale'",
+        "argList": [
+          "'scale'"
+        ]
+      },
+      {
+        "callee": "handleInput",
+        "calleeFile": "main",
+        "position": 5849,
+        "braceDepth": 6,
+        "arguments": "'exitIsolation'",
+        "argList": [
+          "'exitIsolation'"
+        ]
+      },
+      {
+        "callee": "handleInput",
+        "calleeFile": "main",
+        "position": 5934,
+        "braceDepth": 6,
+        "arguments": "'isolate', { type: 'case', target: caseNumber }",
+        "argList": [
+          "'isolate'",
+          "{ type: 'case', target: caseNumber }"
+        ]
+      },
+      {
+        "callee": "handleInput",
+        "calleeFile": "main",
+        "position": 6488,
+        "braceDepth": 4,
+        "arguments": "'fit'",
+        "argList": [
+          "'fit'"
+        ]
+      },
+      {
+        "callee": "checkIsolation",
+        "calleeFile": "state",
+        "position": 3317,
+        "braceDepth": 6,
+        "arguments": "'emoji', emojiClass",
+        "argList": [
+          "'emoji'",
+          "emojiClass"
+        ]
+      },
+      {
+        "callee": "checkIsolation",
+        "calleeFile": "state",
+        "position": 5786,
+        "braceDepth": 5,
+        "arguments": "'case', caseNumber",
+        "argList": [
+          "'case'",
+          "caseNumber"
+        ]
+      }
+    ],
+    "main.handleInput": [
+      {
+        "callee": "clearTimelineContainers",
+        "calleeFile": "main",
+        "position": 769,
+        "braceDepth": 3,
+        "arguments": "",
+        "argList": []
+      },
+      {
+        "callee": "clearTimelineContainers",
+        "calleeFile": "main",
+        "position": 953,
+        "braceDepth": 3,
+        "arguments": "",
+        "argList": []
+      },
+      {
+        "callee": "clearTimelineContainers",
+        "calleeFile": "main",
+        "position": 1132,
+        "braceDepth": 3,
+        "arguments": "",
+        "argList": []
+      },
+      {
+        "callee": "clearTimelineContainers",
+        "calleeFile": "main",
+        "position": 1263,
+        "braceDepth": 3,
+        "arguments": "",
+        "argList": []
+      },
+      {
+        "callee": "clearTimelineContainers",
+        "calleeFile": "main",
+        "position": 1566,
+        "braceDepth": 3,
+        "arguments": "",
+        "argList": []
+      },
+      {
+        "callee": "saveFocusDate",
+        "calleeFile": "main",
+        "position": 184,
+        "braceDepth": 2,
+        "arguments": "",
+        "argList": []
+      },
+      {
+        "callee": "saveFocusDate",
+        "calleeFile": "main",
+        "position": 472,
+        "braceDepth": 2,
+        "arguments": "",
+        "argList": []
+      },
+      {
+        "callee": "update",
+        "calleeFile": "state",
+        "position": 1646,
+        "braceDepth": 1,
+        "arguments": "type, data",
+        "argList": [
+          "type",
+          "data"
+        ]
+      }
+    ],
+    "render.determineCaselineColor": [
+      {
+        "callee": "getEmojiConfig",
+        "calleeFile": "emoji-config",
+        "position": 240,
+        "braceDepth": 2,
+        "arguments": "emojis[1]",
+        "argList": [
+          "emojis[1]"
+        ]
+      },
+      {
+        "callee": "getEmojiConfig",
+        "calleeFile": "emoji-config",
+        "position": 473,
+        "braceDepth": 1,
+        "arguments": "emojis[0]",
+        "argList": [
+          "emojis[0]"
+        ]
+      }
+    ],
+    "render.renderCaselineNodes": [
+      {
+        "callee": "getEmojiConfig",
+        "calleeFile": "emoji-config",
+        "position": 1016,
+        "braceDepth": 2,
+        "arguments": "emojis[0]",
+        "argList": [
+          "emojis[0]"
+        ]
+      },
+      {
+        "callee": "getEmojiConfig",
+        "calleeFile": "emoji-config",
+        "position": 1609,
+        "braceDepth": 3,
+        "arguments": "emoji",
+        "argList": [
+          "emoji"
+        ]
+      },
+      {
+        "callee": "getEmojiConfig",
+        "calleeFile": "emoji-config",
+        "position": 3214,
+        "braceDepth": 3,
+        "arguments": "emojis[1]",
+        "argList": [
+          "emojis[1]"
+        ]
+      },
+      {
+        "callee": "getEmojiConfig",
+        "calleeFile": "emoji-config",
+        "position": 4753,
+        "braceDepth": 2,
+        "arguments": "emojis[1]",
+        "argList": [
+          "emojis[1]"
+        ]
+      },
+      {
+        "callee": "determineCaselineColor",
+        "calleeFile": "render",
+        "position": 1080,
+        "braceDepth": 2,
+        "arguments": "emojis",
+        "argList": [
+          "emojis"
+        ]
+      }
+    ],
+    "render.render": [
+      {
+        "callee": "updateControls",
+        "calleeFile": "render",
+        "position": 398,
+        "braceDepth": 1,
+        "arguments": "state",
+        "argList": [
+          "state"
+        ]
+      },
+      {
+        "callee": "renderTimeline",
+        "calleeFile": "render",
+        "position": 466,
+        "braceDepth": 1,
+        "arguments": "state",
+        "argList": [
+          "state"
+        ]
+      }
+    ],
+    "render.renderTimeline": [
+      {
+        "callee": "renderCaseTitles",
+        "calleeFile": "case-titles",
+        "position": 3141,
+        "braceDepth": 1,
+        "arguments": "caselineData.caseGroups, visibleCases, state.casesData",
+        "argList": [
+          "caselineData.caseGroups",
+          "visibleCases",
+          "state.casesData"
+        ]
+      },
+      {
+        "callee": "createLabelsWithCollisionDetection",
+        "calleeFile": "label-layout",
+        "position": 2881,
+        "braceDepth": 1,
+        "arguments": "visibleNodes, nodesContainer",
+        "argList": [
+          "visibleNodes",
+          "nodesContainer"
+        ]
+      },
+      {
+        "callee": "setContainerWidth",
+        "calleeFile": "render",
+        "position": 930,
+        "braceDepth": 1,
+        "arguments": "container, coordinateSystem.timelineWidth",
+        "argList": [
+          "container",
+          "coordinateSystem.timelineWidth"
+        ]
+      },
+      {
+        "callee": "renderCaselineNodes",
+        "calleeFile": "render",
+        "position": 1157,
+        "braceDepth": 1,
+        "arguments": "state.filteredEvents, coordinateSystem",
+        "argList": [
+          "state.filteredEvents",
+          "coordinateSystem"
+        ]
+      },
+      {
+        "callee": "renderYearMarkers",
+        "calleeFile": "render",
+        "position": 1031,
+        "braceDepth": 1,
+        "arguments": "yearMarkersContainer, coordinateSystem",
+        "argList": [
+          "yearMarkersContainer",
+          "coordinateSystem"
+        ]
+      },
+      {
+        "callee": "drawCaselineConnections",
+        "calleeFile": "render",
+        "position": 3265,
+        "braceDepth": 1,
+        "arguments": "caselineData.caseGroups, connectionsContainer",
+        "argList": [
+          "caselineData.caseGroups",
+          "connectionsContainer"
+        ]
+      },
+      {
+        "callee": "calculateStats",
+        "calleeFile": "state",
+        "position": 3462,
+        "braceDepth": 1,
+        "arguments": "state.filteredEvents, emojiVisibility",
+        "argList": [
+          "state.filteredEvents",
+          "emojiVisibility"
+        ]
+      }
+    ],
+    "render.renderYearMarkers": [
+      {
+        "callee": "calculateYearMarkers",
+        "calleeFile": "render",
+        "position": 248,
+        "braceDepth": 1,
+        "arguments": "coordinateSystem",
+        "argList": [
+          "coordinateSystem"
+        ]
+      }
+    ],
+    "state.loadData": [
+      {
+        "callee": "render",
+        "calleeFile": "render",
+        "position": 1759,
+        "braceDepth": 2,
+        "arguments": "state",
+        "argList": [
+          "state"
+        ]
+      },
+      {
+        "callee": "calculateCoordinateSystem",
+        "calleeFile": "state",
+        "position": 1584,
+        "braceDepth": 2,
+        "arguments": "state.filteredEvents, state.scale",
+        "argList": [
+          "state.filteredEvents",
+          "state.scale"
+        ]
+      },
+      {
+        "callee": "getDefaultCases",
+        "calleeFile": "state",
+        "position": 965,
+        "braceDepth": 2,
+        "arguments": "",
+        "argList": []
+      },
+      {
+        "callee": "hasActiveFilters",
+        "calleeFile": "state",
+        "position": 1680,
+        "braceDepth": 2,
+        "arguments": "state",
+        "argList": [
+          "state"
+        ]
+      },
+      {
+        "callee": "parseMarkdown",
+        "calleeFile": "state",
+        "position": 200,
+        "braceDepth": 2,
+        "arguments": "markdownText",
+        "argList": [
+          "markdownText"
+        ]
+      },
+      {
+        "callee": "loadTableData",
+        "calleeFile": "state",
+        "position": 155,
+        "braceDepth": 2,
+        "arguments": "",
+        "argList": []
+      },
+      {
+        "callee": "applyFilters",
+        "calleeFile": "state",
+        "position": 1504,
+        "braceDepth": 2,
+        "arguments": "state.allEvents, state.filters",
+        "argList": [
+          "state.allEvents",
+          "state.filters"
+        ]
+      },
+      {
+        "callee": "loadAllUIState",
+        "calleeFile": "state",
+        "position": 537,
+        "braceDepth": 2,
+        "arguments": "",
+        "argList": []
+      },
+      {
+        "callee": "loadFocusDate",
+        "calleeFile": "state",
+        "position": 587,
+        "braceDepth": 2,
+        "arguments": "",
+        "argList": []
+      }
+    ],
+    "state.update": [
+      {
+        "callee": "getEmojiArray",
+        "calleeFile": "emoji-config",
+        "position": 3161,
+        "braceDepth": 3,
+        "arguments": "",
+        "argList": []
+      },
+      {
+        "callee": "render",
+        "calleeFile": "render",
+        "position": 5424,
+        "braceDepth": 1,
+        "arguments": "state",
+        "argList": [
+          "state"
+        ]
+      },
+      {
+        "callee": "calculateCoordinateSystem",
+        "calleeFile": "state",
+        "position": 5190,
+        "braceDepth": 2,
+        "arguments": "state.filteredEvents, state.scale",
+        "argList": [
+          "state.filteredEvents",
+          "state.scale"
+        ]
+      },
+      {
+        "callee": "getDefaultCases",
+        "calleeFile": "state",
+        "position": 1598,
+        "braceDepth": 2,
+        "arguments": "",
+        "argList": []
+      },
+      {
+        "callee": "hasActiveFilters",
+        "calleeFile": "state",
+        "position": 5357,
+        "braceDepth": 1,
+        "arguments": "state",
+        "argList": [
+          "state"
+        ]
+      },
+      {
+        "callee": "applyFilters",
+        "calleeFile": "state",
+        "position": 4320,
+        "braceDepth": 2,
+        "arguments": "state.allEvents, state.filters",
+        "argList": [
+          "state.allEvents",
+          "state.filters"
+        ]
+      },
+      {
+        "callee": "saveFilterState",
+        "calleeFile": "state",
+        "position": 301,
+        "braceDepth": 2,
+        "arguments": "state.filters",
+        "argList": [
+          "state.filters"
+        ]
+      },
+      {
+        "callee": "saveFilterState",
+        "calleeFile": "state",
+        "position": 1967,
+        "braceDepth": 2,
+        "arguments": "state.filters",
+        "argList": [
+          "state.filters"
+        ]
+      },
+      {
+        "callee": "saveFilterState",
+        "calleeFile": "state",
+        "position": 2324,
+        "braceDepth": 2,
+        "arguments": "state.filters",
+        "argList": [
+          "state.filters"
+        ]
+      },
+      {
+        "callee": "saveFilterState",
+        "calleeFile": "state",
+        "position": 3528,
+        "braceDepth": 2,
+        "arguments": "state.filters",
+        "argList": [
+          "state.filters"
+        ]
+      },
+      {
+        "callee": "saveFilterState",
+        "calleeFile": "state",
+        "position": 3980,
+        "braceDepth": 3,
+        "arguments": "state.filters",
+        "argList": [
+          "state.filters"
+        ]
+      },
+      {
+        "callee": "saveScaleState",
+        "calleeFile": "state",
+        "position": 482,
+        "braceDepth": 2,
+        "arguments": "state.scale, state.fitToWindow",
+        "argList": [
+          "state.scale",
+          "state.fitToWindow"
+        ]
+      },
+      {
+        "callee": "saveScaleState",
+        "calleeFile": "state",
+        "position": 1450,
+        "braceDepth": 2,
+        "arguments": "state.scale, state.fitToWindow",
+        "argList": [
+          "state.scale",
+          "state.fitToWindow"
+        ]
+      },
+      {
+        "callee": "saveScaleState",
+        "calleeFile": "state",
+        "position": 2069,
+        "braceDepth": 2,
+        "arguments": "state.scale, state.fitToWindow",
+        "argList": [
+          "state.scale",
+          "state.fitToWindow"
+        ]
+      },
+      {
+        "callee": "saveScaleState",
+        "calleeFile": "state",
+        "position": 4910,
+        "braceDepth": 3,
+        "arguments": "state.scale, state.fitToWindow",
+        "argList": [
+          "state.scale",
+          "state.fitToWindow"
+        ]
+      },
+      {
+        "callee": "saveEmojiVisibility",
+        "calleeFile": "state",
+        "position": 2012,
+        "braceDepth": 2,
+        "arguments": "state.emojiVisibility",
+        "argList": [
+          "state.emojiVisibility"
+        ]
+      },
+      {
+        "callee": "saveEmojiVisibility",
+        "calleeFile": "state",
+        "position": 2495,
+        "braceDepth": 2,
+        "arguments": "state.emojiVisibility",
+        "argList": [
+          "state.emojiVisibility"
+        ]
+      },
+      {
+        "callee": "saveEmojiVisibility",
+        "calleeFile": "state",
+        "position": 3573,
+        "braceDepth": 2,
+        "arguments": "state.emojiVisibility",
+        "argList": [
+          "state.emojiVisibility"
+        ]
+      },
+      {
+        "callee": "saveEmojiVisibility",
+        "calleeFile": "state",
+        "position": 4029,
+        "braceDepth": 3,
+        "arguments": "state.emojiVisibility",
+        "argList": [
+          "state.emojiVisibility"
+        ]
+      },
+      {
+        "callee": "setIsolationMode",
+        "calleeFile": "state",
+        "position": 2964,
+        "braceDepth": 3,
+        "arguments": "'case', data.target, previousState",
+        "argList": [
+          "'case'",
+          "data.target",
+          "previousState"
+        ]
+      },
+      {
+        "callee": "setIsolationMode",
+        "calleeFile": "state",
+        "position": 3431,
+        "braceDepth": 3,
+        "arguments": "'emoji', data.target, previousState",
+        "argList": [
+          "'emoji'",
+          "data.target",
+          "previousState"
+        ]
+      },
+      {
+        "callee": "getIsolationMode",
+        "calleeFile": "state",
+        "position": 3713,
+        "braceDepth": 2,
+        "arguments": "",
+        "argList": []
+      },
+      {
+        "callee": "clearIsolationMode",
+        "calleeFile": "state",
+        "position": 4090,
+        "braceDepth": 3,
+        "arguments": "",
+        "argList": []
+      },
+      {
+        "callee": "clearFocusDate",
+        "calleeFile": "state",
+        "position": 2130,
+        "braceDepth": 2,
+        "arguments": "",
+        "argList": []
+      }
+    ],
+    "state.checkIsolation": [
+      {
+        "callee": "isIsolating",
+        "calleeFile": "state",
+        "position": 59,
+        "braceDepth": 1,
+        "arguments": "type, target",
+        "argList": [
+          "type",
+          "target"
+        ]
+      }
+    ],
+    "state.saveFocus": [
+      {
+        "callee": "saveState",
+        "calleeFile": "state",
+        "position": 441,
+        "braceDepth": 2,
+        "arguments": "STORAGE_KEYS.FOCUS_DATE, focusDate.toISOString()",
+        "argList": [
+          "STORAGE_KEYS.FOCUS_DATE",
+          "focusDate.toISOString()"
+        ]
+      }
+    ],
+    "state.calculateStats": [
+      {
+        "callee": "getEmojiConfig",
+        "calleeFile": "emoji-config",
+        "position": 576,
+        "braceDepth": 5,
+        "arguments": "emoji",
+        "argList": [
+          "emoji"
+        ]
+      }
+    ],
+    "state.hasActiveFilters": [
+      {
+        "callee": "getDefaultCases",
+        "calleeFile": "state",
+        "position": 182,
+        "braceDepth": 2,
+        "arguments": "",
+        "argList": []
+      },
+      {
+        "callee": "arraysEqual",
+        "calleeFile": "state",
+        "position": 450,
+        "braceDepth": 1,
+        "arguments": "state.filters.selectedCases, defaults.cases",
+        "argList": [
+          "state.filters.selectedCases",
+          "defaults.cases"
+        ]
+      }
+    ],
+    "state.parseMarkdown": [
+      {
+        "callee": "parseEventsOptimized",
+        "calleeFile": "state",
+        "position": 2506,
+        "braceDepth": 1,
+        "arguments": "result.tableData, caseSet",
+        "argList": [
+          "result.tableData",
+          "caseSet"
+        ]
+      }
+    ],
+    "state.parseEventsOptimized": [
+      {
+        "callee": "findColumn",
+        "calleeFile": "state",
+        "position": 518,
+        "braceDepth": 2,
+        "arguments": "['date']",
+        "argList": [
+          "['date']"
+        ]
+      },
+      {
+        "callee": "findColumn",
+        "calleeFile": "state",
+        "position": 559,
+        "braceDepth": 2,
+        "arguments": "['document_title', 'document', 'doc']",
+        "argList": [
+          "['document_title', 'document', 'doc']"
+        ]
+      },
+      {
+        "callee": "findColumn",
+        "calleeFile": "state",
+        "position": 631,
+        "braceDepth": 2,
+        "arguments": "['case_num', 'case #', 'case', 'case number']",
+        "argList": [
+          "['case_num', 'case #', 'case', 'case number']"
+        ]
+      },
+      {
+        "callee": "findColumn",
+        "calleeFile": "state",
+        "position": 708,
+        "braceDepth": 2,
+        "arguments": "['mrkrs', 'mrkr', 'marker', 'markers']",
+        "argList": [
+          "['mrkrs', 'mrkr', 'marker', 'markers']"
+        ]
+      },
+      {
+        "callee": "findColumn",
+        "calleeFile": "state",
+        "position": 781,
+        "braceDepth": 2,
+        "arguments": "['procedural_step', 'procedural step', 'procedural', 'procedure']",
+        "argList": [
+          "['procedural_step', 'procedural step', 'procedural', 'procedure']"
+        ]
+      },
+      {
+        "callee": "findColumn",
+        "calleeFile": "state",
+        "position": 876,
+        "braceDepth": 2,
+        "arguments": "['notes', 'legal']",
+        "argList": [
+          "['notes', 'legal']"
+        ]
+      },
+      {
+        "callee": "findColumn",
+        "calleeFile": "state",
+        "position": 932,
+        "braceDepth": 2,
+        "arguments": "['environmental_analysis', 'environmental/strategic', 'environmental', 'environ', 'strategic']",
+        "argList": [
+          "['environmental_analysis', 'environmental/strategic', 'environmental', 'environ', 'strategic']"
+        ]
+      },
+      {
+        "callee": "findColumn",
+        "calleeFile": "state",
+        "position": 1062,
+        "braceDepth": 2,
+        "arguments": "['document_url', 'url', 'link']",
+        "argList": [
+          "['document_url', 'url', 'link']"
+        ]
+      }
+    ],
+    "state.applyFilters": [
+      {
+        "callee": "filterByDate",
+        "calleeFile": "state",
+        "position": 182,
+        "braceDepth": 2,
+        "arguments": "filtered, filterState.startDate, filterState.endDate",
+        "argList": [
+          "filtered",
+          "filterState.startDate",
+          "filterState.endDate"
+        ]
+      },
+      {
+        "callee": "filterByCase",
+        "calleeFile": "state",
+        "position": 412,
+        "braceDepth": 2,
+        "arguments": "filtered, filterState.selectedCases",
+        "argList": [
+          "filtered",
+          "filterState.selectedCases"
+        ]
+      }
+    ],
+    "state.loadAllUIState": [
+      {
+        "callee": "loadState",
+        "calleeFile": "state",
+        "position": 86,
+        "braceDepth": 3,
+        "arguments": "STORAGE_KEYS.START_DATE",
+        "argList": [
+          "STORAGE_KEYS.START_DATE"
+        ]
+      },
+      {
+        "callee": "loadState",
+        "calleeFile": "state",
+        "position": 144,
+        "braceDepth": 3,
+        "arguments": "STORAGE_KEYS.END_DATE",
+        "argList": [
+          "STORAGE_KEYS.END_DATE"
+        ]
+      },
+      {
+        "callee": "loadState",
+        "calleeFile": "state",
+        "position": 206,
+        "braceDepth": 3,
+        "arguments": "STORAGE_KEYS.SELECTED_CASES",
+        "argList": [
+          "STORAGE_KEYS.SELECTED_CASES"
+        ]
+      },
+      {
+        "callee": "loadState",
+        "calleeFile": "state",
+        "position": 273,
+        "braceDepth": 2,
+        "arguments": "STORAGE_KEYS.SCALE",
+        "argList": [
+          "STORAGE_KEYS.SCALE"
+        ]
+      },
+      {
+        "callee": "loadState",
+        "calleeFile": "state",
+        "position": 333,
+        "braceDepth": 2,
+        "arguments": "STORAGE_KEYS.FIT_TO_WINDOW",
+        "argList": [
+          "STORAGE_KEYS.FIT_TO_WINDOW"
+        ]
+      },
+      {
+        "callee": "loadState",
+        "calleeFile": "state",
+        "position": 407,
+        "braceDepth": 2,
+        "arguments": "STORAGE_KEYS.EMOJI_VISIBILITY",
+        "argList": [
+          "STORAGE_KEYS.EMOJI_VISIBILITY"
+        ]
+      }
+    ],
+    "state.saveFilterState": [
+      {
+        "callee": "saveState",
+        "calleeFile": "state",
+        "position": 75,
+        "braceDepth": 2,
+        "arguments": "STORAGE_KEYS.START_DATE, filters.startDate",
+        "argList": [
+          "STORAGE_KEYS.START_DATE",
+          "filters.startDate"
+        ]
+      },
+      {
+        "callee": "saveState",
+        "calleeFile": "state",
+        "position": 174,
+        "braceDepth": 2,
+        "arguments": "STORAGE_KEYS.END_DATE, filters.endDate",
+        "argList": [
+          "STORAGE_KEYS.END_DATE",
+          "filters.endDate"
+        ]
+      },
+      {
+        "callee": "saveState",
+        "calleeFile": "state",
+        "position": 275,
+        "braceDepth": 2,
+        "arguments": "STORAGE_KEYS.SELECTED_CASES, filters.selectedCases",
+        "argList": [
+          "STORAGE_KEYS.SELECTED_CASES",
+          "filters.selectedCases"
+        ]
+      }
+    ],
+    "state.saveScaleState": [
+      {
+        "callee": "saveState",
+        "calleeFile": "state",
+        "position": 51,
+        "braceDepth": 1,
+        "arguments": "STORAGE_KEYS.SCALE, scale",
+        "argList": [
+          "STORAGE_KEYS.SCALE",
+          "scale"
+        ]
+      },
+      {
+        "callee": "saveState",
+        "calleeFile": "state",
+        "position": 94,
+        "braceDepth": 1,
+        "arguments": "STORAGE_KEYS.FIT_TO_WINDOW, fitToWindow",
+        "argList": [
+          "STORAGE_KEYS.FIT_TO_WINDOW",
+          "fitToWindow"
+        ]
+      }
+    ],
+    "state.saveEmojiVisibility": [
+      {
+        "callee": "saveState",
+        "calleeFile": "state",
+        "position": 53,
+        "braceDepth": 1,
+        "arguments": "STORAGE_KEYS.EMOJI_VISIBILITY, emojiVisibility",
+        "argList": [
+          "STORAGE_KEYS.EMOJI_VISIBILITY",
+          "emojiVisibility"
+        ]
+      }
+    ],
+    "state.loadFocusDate": [
+      {
+        "callee": "loadState",
+        "calleeFile": "state",
+        "position": 46,
+        "braceDepth": 1,
+        "arguments": "STORAGE_KEYS.FOCUS_DATE",
+        "argList": [
+          "STORAGE_KEYS.FOCUS_DATE"
+        ]
+      }
+    ]
+  },
+  "flows": {
+    "case-titles.renderCaseTitles": {
+      "function": "case-titles.renderCaseTitles",
+      "flows": [
+        {
+          "from": "getCaseTitlesContainer",
+          "to": "getCaseInfo",
+          "relationship": "enters-block",
+          "reason": "↘️ Enters nested block (2 deeper)",
+          "depthChange": 2,
+          "fromArgs": "",
+          "toArgs": "caseNumber, casesData"
+        }
+      ]
+    },
+    "label-layout.createLabelsWithCollisionDetection": {
+      "function": "label-layout.createLabelsWithCollisionDetection",
+      "flows": [
+        {
+          "from": "measureLabel",
+          "to": "getYPosition",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (shared vars)",
+          "depthChange": 0,
+          "fromArgs": "labelText, node.verticalPosition, node.labelEmphasis",
+          "toArgs": "node, height"
+        },
+        {
+          "from": "getYPosition",
+          "to": "getNodeY",
+          "relationship": "enters-block",
+          "reason": "↘️ Enters nested block (1 deeper)",
+          "depthChange": 1,
+          "fromArgs": "node, height",
+          "toArgs": "node"
+        },
+        {
+          "from": "getNodeY",
+          "to": "resolveCollisions",
+          "relationship": "exits-block",
+          "reason": "↗️ Exits to outer scope (2 up)",
+          "depthChange": -2,
+          "fromArgs": "node",
+          "toArgs": "labels"
+        }
+      ]
+    },
+    "main.buildLegend": {
+      "function": "main.buildLegend",
+      "flows": []
+    },
+    "main.handleRefresh": {
+      "function": "main.handleRefresh",
+      "flows": [
+        {
+          "from": "saveFocusDate",
+          "to": "init",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (no args)",
+          "depthChange": 0,
+          "fromArgs": "",
+          "toArgs": ""
+        }
+      ]
+    },
+    "main.handleInput": {
+      "function": "main.handleInput",
+      "flows": [
+        {
+          "from": "saveFocusDate",
+          "to": "saveFocusDate",
+          "relationship": "branched",
+          "reason": "🔀 Different branches",
+          "depthChange": 0,
+          "fromArgs": "",
+          "toArgs": ""
+        },
+        {
+          "from": "saveFocusDate",
+          "to": "clearTimelineContainers",
+          "relationship": "enters-block",
+          "reason": "↘️ Enters nested block (1 deeper)",
+          "depthChange": 1,
+          "fromArgs": "",
+          "toArgs": ""
+        },
+        {
+          "from": "clearTimelineContainers",
+          "to": "update",
+          "relationship": "exits-block",
+          "reason": "↗️ Exits to outer scope (2 up)",
+          "depthChange": -2,
+          "fromArgs": "",
+          "toArgs": "type, data"
+        }
+      ]
+    },
+    "render.determineCaselineColor": {
+      "function": "render.determineCaselineColor",
+      "flows": [
+        {
+          "from": "getEmojiConfig",
+          "to": "getEmojiConfig",
+          "relationship": "exits-block",
+          "reason": "↗️ Exits to outer scope (1 up)",
+          "depthChange": -1,
+          "fromArgs": "emojis[1]",
+          "toArgs": "emojis[0]"
+        }
+      ]
+    },
+    "render.renderCaselineNodes": {
+      "function": "render.renderCaselineNodes",
+      "flows": [
+        {
+          "from": "determineCaselineColor",
+          "to": "getEmojiConfig",
+          "relationship": "enters-block",
+          "reason": "↘️ Enters nested block (1 deeper)",
+          "depthChange": 1,
+          "fromArgs": "emojis",
+          "toArgs": "emoji"
+        },
+        {
+          "from": "getEmojiConfig",
+          "to": "getEmojiConfig",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (shared vars)",
+          "depthChange": 0,
+          "fromArgs": "emoji",
+          "toArgs": "emojis[1]"
+        },
+        {
+          "from": "getEmojiConfig",
+          "to": "getEmojiConfig",
+          "relationship": "exits-block",
+          "reason": "↗️ Exits to outer scope (1 up)",
+          "depthChange": -1,
+          "fromArgs": "emojis[1]",
+          "toArgs": "emojis[1]"
+        }
+      ]
+    },
+    "render.render": {
+      "function": "render.render",
+      "flows": [
+        {
+          "from": "updateControls",
+          "to": "renderTimeline",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (shared vars)",
+          "depthChange": 0,
+          "fromArgs": "state",
+          "toArgs": "state"
+        }
+      ]
+    },
+    "render.renderTimeline": {
+      "function": "render.renderTimeline",
+      "flows": [
+        {
+          "from": "setContainerWidth",
+          "to": "renderYearMarkers",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (shared vars)",
+          "depthChange": 0,
+          "fromArgs": "container, coordinateSystem.timelineWidth",
+          "toArgs": "yearMarkersContainer, coordinateSystem"
+        },
+        {
+          "from": "renderYearMarkers",
+          "to": "renderCaselineNodes",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (shared vars)",
+          "depthChange": 0,
+          "fromArgs": "yearMarkersContainer, coordinateSystem",
+          "toArgs": "state.filteredEvents, coordinateSystem"
+        },
+        {
+          "from": "renderCaselineNodes",
+          "to": "createLabelsWithCollisionDetection",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (potential flow)",
+          "depthChange": 0,
+          "fromArgs": "state.filteredEvents, coordinateSystem",
+          "toArgs": "visibleNodes, nodesContainer"
+        },
+        {
+          "from": "createLabelsWithCollisionDetection",
+          "to": "renderCaseTitles",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (potential flow)",
+          "depthChange": 0,
+          "fromArgs": "visibleNodes, nodesContainer",
+          "toArgs": "caselineData.caseGroups, visibleCases, state.casesData"
+        },
+        {
+          "from": "renderCaseTitles",
+          "to": "drawCaselineConnections",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (shared vars)",
+          "depthChange": 0,
+          "fromArgs": "caselineData.caseGroups, visibleCases, state.casesData",
+          "toArgs": "caselineData.caseGroups, connectionsContainer"
+        },
+        {
+          "from": "drawCaselineConnections",
+          "to": "calculateStats",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (potential flow)",
+          "depthChange": 0,
+          "fromArgs": "caselineData.caseGroups, connectionsContainer",
+          "toArgs": "state.filteredEvents, emojiVisibility"
+        }
+      ]
+    },
+    "state.loadData": {
+      "function": "state.loadData",
+      "flows": [
+        {
+          "from": "loadTableData",
+          "to": "parseMarkdown",
+          "relationship": "data-flow",
+          "reason": "📊 Data flow (may use return)",
+          "depthChange": 0,
+          "fromArgs": "",
+          "toArgs": "markdownText"
+        },
+        {
+          "from": "parseMarkdown",
+          "to": "loadAllUIState",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (no args)",
+          "depthChange": 0,
+          "fromArgs": "markdownText",
+          "toArgs": ""
+        },
+        {
+          "from": "loadAllUIState",
+          "to": "loadFocusDate",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (no args)",
+          "depthChange": 0,
+          "fromArgs": "",
+          "toArgs": ""
+        },
+        {
+          "from": "loadFocusDate",
+          "to": "getDefaultCases",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (no args)",
+          "depthChange": 0,
+          "fromArgs": "",
+          "toArgs": ""
+        },
+        {
+          "from": "getDefaultCases",
+          "to": "applyFilters",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (scope vars)",
+          "depthChange": 0,
+          "fromArgs": "",
+          "toArgs": "state.allEvents, state.filters"
+        },
+        {
+          "from": "applyFilters",
+          "to": "calculateCoordinateSystem",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (shared vars)",
+          "depthChange": 0,
+          "fromArgs": "state.allEvents, state.filters",
+          "toArgs": "state.filteredEvents, state.scale"
+        },
+        {
+          "from": "calculateCoordinateSystem",
+          "to": "hasActiveFilters",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (shared vars)",
+          "depthChange": 0,
+          "fromArgs": "state.filteredEvents, state.scale",
+          "toArgs": "state"
+        },
+        {
+          "from": "hasActiveFilters",
+          "to": "render",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (shared vars)",
+          "depthChange": 0,
+          "fromArgs": "state",
+          "toArgs": "state"
+        }
+      ]
+    },
+    "state.update": {
+      "function": "state.update",
+      "flows": [
+        {
+          "from": "getDefaultCases",
+          "to": "saveFilterState",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (scope vars)",
+          "depthChange": 0,
+          "fromArgs": "",
+          "toArgs": "state.filters"
+        },
+        {
+          "from": "saveFilterState",
+          "to": "saveEmojiVisibility",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (shared vars)",
+          "depthChange": 0,
+          "fromArgs": "state.filters",
+          "toArgs": "state.emojiVisibility"
+        },
+        {
+          "from": "saveEmojiVisibility",
+          "to": "saveScaleState",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (shared vars)",
+          "depthChange": 0,
+          "fromArgs": "state.emojiVisibility",
+          "toArgs": "state.scale, state.fitToWindow"
+        },
+        {
+          "from": "saveScaleState",
+          "to": "clearFocusDate",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (no args)",
+          "depthChange": 0,
+          "fromArgs": "state.scale, state.fitToWindow",
+          "toArgs": ""
+        },
+        {
+          "from": "setIsolationMode",
+          "to": "getEmojiArray",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (no args)",
+          "depthChange": 0,
+          "fromArgs": "'case', data.target, previousState",
+          "toArgs": ""
+        },
+        {
+          "from": "getEmojiArray",
+          "to": "setIsolationMode",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (scope vars)",
+          "depthChange": 0,
+          "fromArgs": "",
+          "toArgs": "'emoji', data.target, previousState"
+        },
+        {
+          "from": "setIsolationMode",
+          "to": "saveFilterState",
+          "relationship": "exits-block",
+          "reason": "↗️ Exits to outer scope (1 up)",
+          "depthChange": -1,
+          "fromArgs": "'emoji', data.target, previousState",
+          "toArgs": "state.filters"
+        },
+        {
+          "from": "saveFilterState",
+          "to": "saveEmojiVisibility",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (shared vars)",
+          "depthChange": 0,
+          "fromArgs": "state.filters",
+          "toArgs": "state.emojiVisibility"
+        },
+        {
+          "from": "getIsolationMode",
+          "to": "saveFilterState",
+          "relationship": "enters-block",
+          "reason": "↘️ Enters nested block (1 deeper)",
+          "depthChange": 1,
+          "fromArgs": "",
+          "toArgs": "state.filters"
+        },
+        {
+          "from": "saveFilterState",
+          "to": "saveEmojiVisibility",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (shared vars)",
+          "depthChange": 0,
+          "fromArgs": "state.filters",
+          "toArgs": "state.emojiVisibility"
+        },
+        {
+          "from": "saveEmojiVisibility",
+          "to": "clearIsolationMode",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (no args)",
+          "depthChange": 0,
+          "fromArgs": "state.emojiVisibility",
+          "toArgs": ""
+        },
+        {
+          "from": "clearIsolationMode",
+          "to": "applyFilters",
+          "relationship": "exits-block",
+          "reason": "↗️ Exits to outer scope (1 up)",
+          "depthChange": -1,
+          "fromArgs": "",
+          "toArgs": "state.allEvents, state.filters"
+        },
+        {
+          "from": "applyFilters",
+          "to": "saveScaleState",
+          "relationship": "enters-block",
+          "reason": "↘️ Enters nested block (1 deeper)",
+          "depthChange": 1,
+          "fromArgs": "state.allEvents, state.filters",
+          "toArgs": "state.scale, state.fitToWindow"
+        },
+        {
+          "from": "hasActiveFilters",
+          "to": "render",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (shared vars)",
+          "depthChange": 0,
+          "fromArgs": "state",
+          "toArgs": "state"
+        }
+      ]
+    },
+    "state.hasActiveFilters": {
+      "function": "state.hasActiveFilters",
+      "flows": [
+        {
+          "from": "getDefaultCases",
+          "to": "arraysEqual",
+          "relationship": "exits-block",
+          "reason": "↗️ Exits to outer scope (1 up)",
+          "depthChange": -1,
+          "fromArgs": "",
+          "toArgs": "state.filters.selectedCases, defaults.cases"
+        }
+      ]
+    },
+    "state.parseEventsOptimized": {
+      "function": "state.parseEventsOptimized",
+      "flows": [
+        {
+          "from": "findColumn",
+          "to": "findColumn",
+          "relationship": "iterative",
+          "reason": "🔄 Loop/Iteration",
+          "depthChange": 0,
+          "fromArgs": "['date']",
+          "toArgs": "['document_title', 'document', 'doc']"
+        },
+        {
+          "from": "findColumn",
+          "to": "findColumn",
+          "relationship": "iterative",
+          "reason": "🔄 Loop/Iteration",
+          "depthChange": 0,
+          "fromArgs": "['document_title', 'document', 'doc']",
+          "toArgs": "['case_num', 'case #', 'case', 'case number']"
+        },
+        {
+          "from": "findColumn",
+          "to": "findColumn",
+          "relationship": "iterative",
+          "reason": "🔄 Loop/Iteration",
+          "depthChange": 0,
+          "fromArgs": "['case_num', 'case #', 'case', 'case number']",
+          "toArgs": "['mrkrs', 'mrkr', 'marker', 'markers']"
+        },
+        {
+          "from": "findColumn",
+          "to": "findColumn",
+          "relationship": "iterative",
+          "reason": "🔄 Loop/Iteration",
+          "depthChange": 0,
+          "fromArgs": "['mrkrs', 'mrkr', 'marker', 'markers']",
+          "toArgs": "['procedural_step', 'procedural step', 'procedural', 'procedure']"
+        },
+        {
+          "from": "findColumn",
+          "to": "findColumn",
+          "relationship": "iterative",
+          "reason": "🔄 Loop/Iteration",
+          "depthChange": 0,
+          "fromArgs": "['procedural_step', 'procedural step', 'procedural', 'procedure']",
+          "toArgs": "['notes', 'legal']"
+        },
+        {
+          "from": "findColumn",
+          "to": "findColumn",
+          "relationship": "iterative",
+          "reason": "🔄 Loop/Iteration",
+          "depthChange": 0,
+          "fromArgs": "['notes', 'legal']",
+          "toArgs": "['environmental_analysis', 'environmental/strategic', 'environmental', 'environ', 'strategic']"
+        },
+        {
+          "from": "findColumn",
+          "to": "findColumn",
+          "relationship": "iterative",
+          "reason": "🔄 Loop/Iteration",
+          "depthChange": 0,
+          "fromArgs": "['environmental_analysis', 'environmental/strategic', 'environmental', 'environ', 'strategic']",
+          "toArgs": "['document_url', 'url', 'link']"
+        }
+      ]
+    },
+    "state.applyFilters": {
+      "function": "state.applyFilters",
+      "flows": [
+        {
+          "from": "filterByDate",
+          "to": "filterByCase",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (shared vars)",
+          "depthChange": 0,
+          "fromArgs": "filtered, filterState.startDate, filterState.endDate",
+          "toArgs": "filtered, filterState.selectedCases"
+        }
+      ]
+    },
+    "state.loadAllUIState": {
+      "function": "state.loadAllUIState",
+      "flows": [
+        {
+          "from": "loadState",
+          "to": "loadState",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (shared vars)",
+          "depthChange": 0,
+          "fromArgs": "STORAGE_KEYS.START_DATE",
+          "toArgs": "STORAGE_KEYS.END_DATE"
+        },
+        {
+          "from": "loadState",
+          "to": "loadState",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (shared vars)",
+          "depthChange": 0,
+          "fromArgs": "STORAGE_KEYS.END_DATE",
+          "toArgs": "STORAGE_KEYS.SELECTED_CASES"
+        },
+        {
+          "from": "loadState",
+          "to": "loadState",
+          "relationship": "exits-block",
+          "reason": "↗️ Exits to outer scope (1 up)",
+          "depthChange": -1,
+          "fromArgs": "STORAGE_KEYS.SELECTED_CASES",
+          "toArgs": "STORAGE_KEYS.SCALE"
+        },
+        {
+          "from": "loadState",
+          "to": "loadState",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (shared vars)",
+          "depthChange": 0,
+          "fromArgs": "STORAGE_KEYS.SCALE",
+          "toArgs": "STORAGE_KEYS.FIT_TO_WINDOW"
+        },
+        {
+          "from": "loadState",
+          "to": "loadState",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (shared vars)",
+          "depthChange": 0,
+          "fromArgs": "STORAGE_KEYS.FIT_TO_WINDOW",
+          "toArgs": "STORAGE_KEYS.EMOJI_VISIBILITY"
+        }
+      ]
+    },
+    "state.saveFilterState": {
+      "function": "state.saveFilterState",
+      "flows": [
+        {
+          "from": "saveState",
+          "to": "saveState",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (shared vars)",
+          "depthChange": 0,
+          "fromArgs": "STORAGE_KEYS.START_DATE, filters.startDate",
+          "toArgs": "STORAGE_KEYS.END_DATE, filters.endDate"
+        },
+        {
+          "from": "saveState",
+          "to": "saveState",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (shared vars)",
+          "depthChange": 0,
+          "fromArgs": "STORAGE_KEYS.END_DATE, filters.endDate",
+          "toArgs": "STORAGE_KEYS.SELECTED_CASES, filters.selectedCases"
+        }
+      ]
+    },
+    "state.saveScaleState": {
+      "function": "state.saveScaleState",
+      "flows": [
+        {
+          "from": "saveState",
+          "to": "saveState",
+          "relationship": "sequential",
+          "reason": "➡️ Sequential (shared vars)",
+          "depthChange": 0,
+          "fromArgs": "STORAGE_KEYS.SCALE, scale",
+          "toArgs": "STORAGE_KEYS.FIT_TO_WINDOW, fitToWindow"
+        }
+      ]
+    }
+  },
+  "graph": {
+    "nodes": {
+      "case-titles.getCaseInfo": {
+        "id": "case-titles.getCaseInfo",
+        "file": "case-titles",
+        "name": "getCaseInfo",
+        "label": "case-titles::getCaseInfo",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 1
+      },
+      "case-titles.getCaseTitlesContainer": {
+        "id": "case-titles.getCaseTitlesContainer",
+        "file": "case-titles",
+        "name": "getCaseTitlesContainer",
+        "label": "case-titles::getCaseTitlesContainer",
+        "type": "function",
+        "hasParams": false,
+        "callCount": 0
+      },
+      "case-titles.renderCaseTitles": {
+        "id": "case-titles.renderCaseTitles",
+        "file": "case-titles",
+        "name": "renderCaseTitles",
+        "label": "case-titles::renderCaseTitles",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 0
+      },
+      "case-titles.updateCaseTitlesVisibility": {
+        "id": "case-titles.updateCaseTitlesVisibility",
+        "file": "case-titles",
+        "name": "updateCaseTitlesVisibility",
+        "label": "case-titles::updateCaseTitlesVisibility",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 0
+      },
+      "emoji-config.getEmojiConfig": {
+        "id": "emoji-config.getEmojiConfig",
+        "file": "emoji-config",
+        "name": "getEmojiConfig",
+        "label": "emoji-config::getEmojiConfig",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 0
+      },
+      "emoji-config.getEmojiArray": {
+        "id": "emoji-config.getEmojiArray",
+        "file": "emoji-config",
+        "name": "getEmojiArray",
+        "label": "emoji-config::getEmojiArray",
+        "type": "function",
+        "hasParams": false,
+        "callCount": 0
+      },
+      "label-layout.splitLabel": {
+        "id": "label-layout.splitLabel",
+        "file": "label-layout",
+        "name": "splitLabel",
+        "label": "label-layout::splitLabel",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 0
+      },
+      "label-layout.measureLabel": {
+        "id": "label-layout.measureLabel",
+        "file": "label-layout",
+        "name": "measureLabel",
+        "label": "label-layout::measureLabel",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 0
+      },
+      "label-layout.createLabelsWithCollisionDetection": {
+        "id": "label-layout.createLabelsWithCollisionDetection",
+        "file": "label-layout",
+        "name": "createLabelsWithCollisionDetection",
+        "label": "label-layout::createLabelsWithCollisionDetection",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 0
+      },
+      "label-layout.getYPosition": {
+        "id": "label-layout.getYPosition",
+        "file": "label-layout",
+        "name": "getYPosition",
+        "label": "label-layout::getYPosition",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 1
+      },
+      "label-layout.getNodeY": {
+        "id": "label-layout.getNodeY",
+        "file": "label-layout",
+        "name": "getNodeY",
+        "label": "label-layout::getNodeY",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 1
+      },
+      "label-layout.resolveCollisions": {
+        "id": "label-layout.resolveCollisions",
+        "file": "label-layout",
+        "name": "resolveCollisions",
+        "label": "label-layout::resolveCollisions",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 1
+      },
+      "label-layout.drawLeaderLine": {
+        "id": "label-layout.drawLeaderLine",
+        "file": "label-layout",
+        "name": "drawLeaderLine",
+        "label": "label-layout::drawLeaderLine",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 0
+      },
+      "main.init": {
+        "id": "main.init",
+        "file": "main",
+        "name": "init",
+        "label": "main::init",
+        "type": "function",
+        "hasParams": false,
+        "callCount": 1
+      },
+      "main.buildLegend": {
+        "id": "main.buildLegend",
+        "file": "main",
+        "name": "buildLegend",
+        "label": "main::buildLegend",
+        "type": "function",
+        "hasParams": false,
+        "callCount": 0
+      },
+      "main.clearContainers": {
+        "id": "main.clearContainers",
+        "file": "main",
+        "name": "clearContainers",
+        "label": "main::clearContainers",
+        "type": "function",
+        "hasParams": false,
+        "callCount": 0
+      },
+      "main.clearTimelineContainers": {
+        "id": "main.clearTimelineContainers",
+        "file": "main",
+        "name": "clearTimelineContainers",
+        "label": "main::clearTimelineContainers",
+        "type": "function",
+        "hasParams": false,
+        "callCount": 1
+      },
+      "main.handleRefresh": {
+        "id": "main.handleRefresh",
+        "file": "main",
+        "name": "handleRefresh",
+        "label": "main::handleRefresh",
+        "type": "function",
+        "hasParams": false,
+        "callCount": 0
+      },
+      "main.saveFocusDate": {
+        "id": "main.saveFocusDate",
+        "file": "main",
+        "name": "saveFocusDate",
+        "label": "main::saveFocusDate",
+        "type": "function",
+        "hasParams": false,
+        "callCount": 1
+      },
+      "main.setupListeners": {
+        "id": "main.setupListeners",
+        "file": "main",
+        "name": "setupListeners",
+        "label": "main::setupListeners",
+        "type": "function",
+        "hasParams": false,
+        "callCount": 0
+      },
+      "main.handleInput": {
+        "id": "main.handleInput",
+        "file": "main",
+        "name": "handleInput",
+        "label": "main::handleInput",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 0
+      },
+      "main.createEmojiCell": {
+        "id": "main.createEmojiCell",
+        "file": "main",
+        "name": "createEmojiCell",
+        "label": "main::createEmojiCell",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 0
+      },
+      "render.setContainerWidth": {
+        "id": "render.setContainerWidth",
+        "file": "render",
+        "name": "setContainerWidth",
+        "label": "render::setContainerWidth",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 0
+      },
+      "render.calculateYearMarkers": {
+        "id": "render.calculateYearMarkers",
+        "file": "render",
+        "name": "calculateYearMarkers",
+        "label": "render::calculateYearMarkers",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 0
+      },
+      "render.determineCaselineColor": {
+        "id": "render.determineCaselineColor",
+        "file": "render",
+        "name": "determineCaselineColor",
+        "label": "render::determineCaselineColor",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 0
+      },
+      "render.renderCaselineNodes": {
+        "id": "render.renderCaselineNodes",
+        "file": "render",
+        "name": "renderCaselineNodes",
+        "label": "render::renderCaselineNodes",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 1
+      },
+      "render.render": {
+        "id": "render.render",
+        "file": "render",
+        "name": "render",
+        "label": "render::render",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 0
+      },
+      "render.updateControls": {
+        "id": "render.updateControls",
+        "file": "render",
+        "name": "updateControls",
+        "label": "render::updateControls",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 0
+      },
+      "render.renderTimeline": {
+        "id": "render.renderTimeline",
+        "file": "render",
+        "name": "renderTimeline",
+        "label": "render::renderTimeline",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 1
+      },
+      "render.renderYearMarkers": {
+        "id": "render.renderYearMarkers",
+        "file": "render",
+        "name": "renderYearMarkers",
+        "label": "render::renderYearMarkers",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 1
+      },
+      "render.drawCaselineConnections": {
+        "id": "render.drawCaselineConnections",
+        "file": "render",
+        "name": "drawCaselineConnections",
+        "label": "render::drawCaselineConnections",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 1
+      },
+      "state.loadData": {
+        "id": "state.loadData",
+        "file": "state",
+        "name": "loadData",
+        "label": "state::loadData",
+        "type": "function",
+        "hasParams": false,
+        "callCount": 0
+      },
+      "state.calculateCoordinateSystem": {
+        "id": "state.calculateCoordinateSystem",
+        "file": "state",
+        "name": "calculateCoordinateSystem",
+        "label": "state::calculateCoordinateSystem",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 1
+      },
+      "state.getDefaultCases": {
+        "id": "state.getDefaultCases",
+        "file": "state",
+        "name": "getDefaultCases",
+        "label": "state::getDefaultCases",
+        "type": "function",
+        "hasParams": false,
+        "callCount": 1
+      },
+      "state.update": {
+        "id": "state.update",
+        "file": "state",
+        "name": "update",
+        "label": "state::update",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 0
+      },
+      "state.checkIsolation": {
+        "id": "state.checkIsolation",
+        "file": "state",
+        "name": "checkIsolation",
+        "label": "state::checkIsolation",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 0
+      },
+      "state.saveFocus": {
+        "id": "state.saveFocus",
+        "file": "state",
+        "name": "saveFocus",
+        "label": "state::saveFocus",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 0
+      },
+      "state.arraysEqual": {
+        "id": "state.arraysEqual",
+        "file": "state",
+        "name": "arraysEqual",
+        "label": "state::arraysEqual",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 1
+      },
+      "state.calculateStats": {
+        "id": "state.calculateStats",
+        "file": "state",
+        "name": "calculateStats",
+        "label": "state::calculateStats",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 0
+      },
+      "state.hasActiveFilters": {
+        "id": "state.hasActiveFilters",
+        "file": "state",
+        "name": "hasActiveFilters",
+        "label": "state::hasActiveFilters",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 1
+      },
+      "state.parseMarkdown": {
+        "id": "state.parseMarkdown",
+        "file": "state",
+        "name": "parseMarkdown",
+        "label": "state::parseMarkdown",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 1
+      },
+      "state.loadTableData": {
+        "id": "state.loadTableData",
+        "file": "state",
+        "name": "loadTableData",
+        "label": "state::loadTableData",
+        "type": "function",
+        "hasParams": false,
+        "callCount": 0
+      },
+      "state.parseEventsOptimized": {
+        "id": "state.parseEventsOptimized",
+        "file": "state",
+        "name": "parseEventsOptimized",
+        "label": "state::parseEventsOptimized",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 0
+      },
+      "state.applyFilters": {
+        "id": "state.applyFilters",
+        "file": "state",
+        "name": "applyFilters",
+        "label": "state::applyFilters",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 2
+      },
+      "state.filterByDate": {
+        "id": "state.filterByDate",
+        "file": "state",
+        "name": "filterByDate",
+        "label": "state::filterByDate",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 0
+      },
+      "state.filterByCase": {
+        "id": "state.filterByCase",
+        "file": "state",
+        "name": "filterByCase",
+        "label": "state::filterByCase",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 1
+      },
+      "state.loadAllUIState": {
+        "id": "state.loadAllUIState",
+        "file": "state",
+        "name": "loadAllUIState",
+        "label": "state::loadAllUIState",
+        "type": "function",
+        "hasParams": false,
+        "callCount": 1
+      },
+      "state.saveState": {
+        "id": "state.saveState",
+        "file": "state",
+        "name": "saveState",
+        "label": "state::saveState",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 3
+      },
+      "state.loadState": {
+        "id": "state.loadState",
+        "file": "state",
+        "name": "loadState",
+        "label": "state::loadState",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 5
+      },
+      "state.saveFilterState": {
+        "id": "state.saveFilterState",
+        "file": "state",
+        "name": "saveFilterState",
+        "label": "state::saveFilterState",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 3
+      },
+      "state.saveScaleState": {
+        "id": "state.saveScaleState",
+        "file": "state",
+        "name": "saveScaleState",
+        "label": "state::saveScaleState",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 2
+      },
+      "state.saveEmojiVisibility": {
+        "id": "state.saveEmojiVisibility",
+        "file": "state",
+        "name": "saveEmojiVisibility",
+        "label": "state::saveEmojiVisibility",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 3
+      },
+      "state.setIsolationMode": {
+        "id": "state.setIsolationMode",
+        "file": "state",
+        "name": "setIsolationMode",
+        "label": "state::setIsolationMode",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 1
+      },
+      "state.getIsolationMode": {
+        "id": "state.getIsolationMode",
+        "file": "state",
+        "name": "getIsolationMode",
+        "label": "state::getIsolationMode",
+        "type": "function",
+        "hasParams": false,
+        "callCount": 0
+      },
+      "state.clearIsolationMode": {
+        "id": "state.clearIsolationMode",
+        "file": "state",
+        "name": "clearIsolationMode",
+        "label": "state::clearIsolationMode",
+        "type": "function",
+        "hasParams": false,
+        "callCount": 1
+      },
+      "state.isIsolating": {
+        "id": "state.isIsolating",
+        "file": "state",
+        "name": "isIsolating",
+        "label": "state::isIsolating",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 0
+      },
+      "state.loadFocusDate": {
+        "id": "state.loadFocusDate",
+        "file": "state",
+        "name": "loadFocusDate",
+        "label": "state::loadFocusDate",
+        "type": "function",
+        "hasParams": false,
+        "callCount": 1
+      },
+      "state.clearFocusDate": {
+        "id": "state.clearFocusDate",
+        "file": "state",
+        "name": "clearFocusDate",
+        "label": "state::clearFocusDate",
+        "type": "function",
+        "hasParams": false,
+        "callCount": 1
+      },
+      "state.findColumn": {
+        "id": "state.findColumn",
+        "file": "state",
+        "name": "findColumn",
+        "label": "state::findColumn",
+        "type": "function",
+        "hasParams": true,
+        "callCount": 7
+      }
+    },
+    "edges": [
+      {
+        "from": "case-titles.getCaseTitlesContainer",
+        "to": "case-titles.getCaseInfo",
+        "relationship": "enters-block",
+        "depthChange": 2,
+        "caller": "case-titles.renderCaseTitles"
+      },
+      {
+        "from": "label-layout.measureLabel",
+        "to": "label-layout.getYPosition",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "label-layout.createLabelsWithCollisionDetection"
+      },
+      {
+        "from": "label-layout.getYPosition",
+        "to": "label-layout.getNodeY",
+        "relationship": "enters-block",
+        "depthChange": 1,
+        "caller": "label-layout.createLabelsWithCollisionDetection"
+      },
+      {
+        "from": "label-layout.getNodeY",
+        "to": "label-layout.resolveCollisions",
+        "relationship": "exits-block",
+        "depthChange": -2,
+        "caller": "label-layout.createLabelsWithCollisionDetection"
+      },
+      {
+        "from": "main.saveFocusDate",
+        "to": "main.init",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "main.handleRefresh"
+      },
+      {
+        "from": "main.saveFocusDate",
+        "to": "main.saveFocusDate",
+        "relationship": "branched",
+        "depthChange": 0,
+        "caller": "main.handleInput"
+      },
+      {
+        "from": "main.saveFocusDate",
+        "to": "main.clearTimelineContainers",
+        "relationship": "enters-block",
+        "depthChange": 1,
+        "caller": "main.handleInput"
+      },
+      {
+        "from": "main.clearTimelineContainers",
+        "to": "main.update",
+        "relationship": "exits-block",
+        "depthChange": -2,
+        "caller": "main.handleInput"
+      },
+      {
+        "from": "render.getEmojiConfig",
+        "to": "render.getEmojiConfig",
+        "relationship": "exits-block",
+        "depthChange": -1,
+        "caller": "render.determineCaselineColor"
+      },
+      {
+        "from": "render.determineCaselineColor",
+        "to": "render.getEmojiConfig",
+        "relationship": "enters-block",
+        "depthChange": 1,
+        "caller": "render.renderCaselineNodes"
+      },
+      {
+        "from": "render.getEmojiConfig",
+        "to": "render.getEmojiConfig",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "render.renderCaselineNodes"
+      },
+      {
+        "from": "render.getEmojiConfig",
+        "to": "render.getEmojiConfig",
+        "relationship": "exits-block",
+        "depthChange": -1,
+        "caller": "render.renderCaselineNodes"
+      },
+      {
+        "from": "render.updateControls",
+        "to": "render.renderTimeline",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "render.render"
+      },
+      {
+        "from": "render.setContainerWidth",
+        "to": "render.renderYearMarkers",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "render.renderTimeline"
+      },
+      {
+        "from": "render.renderYearMarkers",
+        "to": "render.renderCaselineNodes",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "render.renderTimeline"
+      },
+      {
+        "from": "render.renderCaselineNodes",
+        "to": "render.createLabelsWithCollisionDetection",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "render.renderTimeline"
+      },
+      {
+        "from": "render.createLabelsWithCollisionDetection",
+        "to": "render.renderCaseTitles",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "render.renderTimeline"
+      },
+      {
+        "from": "render.renderCaseTitles",
+        "to": "render.drawCaselineConnections",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "render.renderTimeline"
+      },
+      {
+        "from": "render.drawCaselineConnections",
+        "to": "render.calculateStats",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "render.renderTimeline"
+      },
+      {
+        "from": "state.loadTableData",
+        "to": "state.parseMarkdown",
+        "relationship": "data-flow",
+        "depthChange": 0,
+        "caller": "state.loadData"
+      },
+      {
+        "from": "state.parseMarkdown",
+        "to": "state.loadAllUIState",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "state.loadData"
+      },
+      {
+        "from": "state.loadAllUIState",
+        "to": "state.loadFocusDate",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "state.loadData"
+      },
+      {
+        "from": "state.loadFocusDate",
+        "to": "state.getDefaultCases",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "state.loadData"
+      },
+      {
+        "from": "state.getDefaultCases",
+        "to": "state.applyFilters",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "state.loadData"
+      },
+      {
+        "from": "state.applyFilters",
+        "to": "state.calculateCoordinateSystem",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "state.loadData"
+      },
+      {
+        "from": "state.calculateCoordinateSystem",
+        "to": "state.hasActiveFilters",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "state.loadData"
+      },
+      {
+        "from": "state.hasActiveFilters",
+        "to": "state.render",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "state.loadData"
+      },
+      {
+        "from": "state.getDefaultCases",
+        "to": "state.saveFilterState",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "state.update"
+      },
+      {
+        "from": "state.saveFilterState",
+        "to": "state.saveEmojiVisibility",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "state.update"
+      },
+      {
+        "from": "state.saveEmojiVisibility",
+        "to": "state.saveScaleState",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "state.update"
+      },
+      {
+        "from": "state.saveScaleState",
+        "to": "state.clearFocusDate",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "state.update"
+      },
+      {
+        "from": "state.setIsolationMode",
+        "to": "state.getEmojiArray",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "state.update"
+      },
+      {
+        "from": "state.getEmojiArray",
+        "to": "state.setIsolationMode",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "state.update"
+      },
+      {
+        "from": "state.setIsolationMode",
+        "to": "state.saveFilterState",
+        "relationship": "exits-block",
+        "depthChange": -1,
+        "caller": "state.update"
+      },
+      {
+        "from": "state.saveFilterState",
+        "to": "state.saveEmojiVisibility",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "state.update"
+      },
+      {
+        "from": "state.getIsolationMode",
+        "to": "state.saveFilterState",
+        "relationship": "enters-block",
+        "depthChange": 1,
+        "caller": "state.update"
+      },
+      {
+        "from": "state.saveFilterState",
+        "to": "state.saveEmojiVisibility",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "state.update"
+      },
+      {
+        "from": "state.saveEmojiVisibility",
+        "to": "state.clearIsolationMode",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "state.update"
+      },
+      {
+        "from": "state.clearIsolationMode",
+        "to": "state.applyFilters",
+        "relationship": "exits-block",
+        "depthChange": -1,
+        "caller": "state.update"
+      },
+      {
+        "from": "state.applyFilters",
+        "to": "state.saveScaleState",
+        "relationship": "enters-block",
+        "depthChange": 1,
+        "caller": "state.update"
+      },
+      {
+        "from": "state.hasActiveFilters",
+        "to": "state.render",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "state.update"
+      },
+      {
+        "from": "state.getDefaultCases",
+        "to": "state.arraysEqual",
+        "relationship": "exits-block",
+        "depthChange": -1,
+        "caller": "state.hasActiveFilters"
+      },
+      {
+        "from": "state.findColumn",
+        "to": "state.findColumn",
+        "relationship": "iterative",
+        "depthChange": 0,
+        "caller": "state.parseEventsOptimized"
+      },
+      {
+        "from": "state.findColumn",
+        "to": "state.findColumn",
+        "relationship": "iterative",
+        "depthChange": 0,
+        "caller": "state.parseEventsOptimized"
+      },
+      {
+        "from": "state.findColumn",
+        "to": "state.findColumn",
+        "relationship": "iterative",
+        "depthChange": 0,
+        "caller": "state.parseEventsOptimized"
+      },
+      {
+        "from": "state.findColumn",
+        "to": "state.findColumn",
+        "relationship": "iterative",
+        "depthChange": 0,
+        "caller": "state.parseEventsOptimized"
+      },
+      {
+        "from": "state.findColumn",
+        "to": "state.findColumn",
+        "relationship": "iterative",
+        "depthChange": 0,
+        "caller": "state.parseEventsOptimized"
+      },
+      {
+        "from": "state.findColumn",
+        "to": "state.findColumn",
+        "relationship": "iterative",
+        "depthChange": 0,
+        "caller": "state.parseEventsOptimized"
+      },
+      {
+        "from": "state.findColumn",
+        "to": "state.findColumn",
+        "relationship": "iterative",
+        "depthChange": 0,
+        "caller": "state.parseEventsOptimized"
+      },
+      {
+        "from": "state.filterByDate",
+        "to": "state.filterByCase",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "state.applyFilters"
+      },
+      {
+        "from": "state.loadState",
+        "to": "state.loadState",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "state.loadAllUIState"
+      },
+      {
+        "from": "state.loadState",
+        "to": "state.loadState",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "state.loadAllUIState"
+      },
+      {
+        "from": "state.loadState",
+        "to": "state.loadState",
+        "relationship": "exits-block",
+        "depthChange": -1,
+        "caller": "state.loadAllUIState"
+      },
+      {
+        "from": "state.loadState",
+        "to": "state.loadState",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "state.loadAllUIState"
+      },
+      {
+        "from": "state.loadState",
+        "to": "state.loadState",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "state.loadAllUIState"
+      },
+      {
+        "from": "state.saveState",
+        "to": "state.saveState",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "state.saveFilterState"
+      },
+      {
+        "from": "state.saveState",
+        "to": "state.saveState",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "state.saveFilterState"
+      },
+      {
+        "from": "state.saveState",
+        "to": "state.saveState",
+        "relationship": "sequential",
+        "depthChange": 0,
+        "caller": "state.saveScaleState"
+      }
+    ],
+    "recommendations": {
+      "sequential": [
+        {
+          "from": "measureLabel",
+          "to": "getYPosition",
+          "caller": "label-layout.createLabelsWithCollisionDetection",
+          "reason": "➡️ Sequential (shared vars)"
+        },
+        {
+          "from": "saveFocusDate",
+          "to": "init",
+          "caller": "main.handleRefresh",
+          "reason": "➡️ Sequential (no args)"
+        },
+        {
+          "from": "getEmojiConfig",
+          "to": "getEmojiConfig",
+          "caller": "render.renderCaselineNodes",
+          "reason": "➡️ Sequential (shared vars)"
+        },
+        {
+          "from": "updateControls",
+          "to": "renderTimeline",
+          "caller": "render.render",
+          "reason": "➡️ Sequential (shared vars)"
+        },
+        {
+          "from": "setContainerWidth",
+          "to": "renderYearMarkers",
+          "caller": "render.renderTimeline",
+          "reason": "➡️ Sequential (shared vars)"
+        },
+        {
+          "from": "renderYearMarkers",
+          "to": "renderCaselineNodes",
+          "caller": "render.renderTimeline",
+          "reason": "➡️ Sequential (shared vars)"
+        },
+        {
+          "from": "renderCaselineNodes",
+          "to": "createLabelsWithCollisionDetection",
+          "caller": "render.renderTimeline",
+          "reason": "➡️ Sequential (potential flow)"
+        },
+        {
+          "from": "createLabelsWithCollisionDetection",
+          "to": "renderCaseTitles",
+          "caller": "render.renderTimeline",
+          "reason": "➡️ Sequential (potential flow)"
+        },
+        {
+          "from": "renderCaseTitles",
+          "to": "drawCaselineConnections",
+          "caller": "render.renderTimeline",
+          "reason": "➡️ Sequential (shared vars)"
+        },
+        {
+          "from": "drawCaselineConnections",
+          "to": "calculateStats",
+          "caller": "render.renderTimeline",
+          "reason": "➡️ Sequential (potential flow)"
+        },
+        {
+          "from": "loadTableData",
+          "to": "parseMarkdown",
+          "caller": "state.loadData",
+          "reason": "📊 Data flow (may use return)"
+        },
+        {
+          "from": "parseMarkdown",
+          "to": "loadAllUIState",
+          "caller": "state.loadData",
+          "reason": "➡️ Sequential (no args)"
+        },
+        {
+          "from": "loadAllUIState",
+          "to": "loadFocusDate",
+          "caller": "state.loadData",
+          "reason": "➡️ Sequential (no args)"
+        },
+        {
+          "from": "loadFocusDate",
+          "to": "getDefaultCases",
+          "caller": "state.loadData",
+          "reason": "➡️ Sequential (no args)"
+        },
+        {
+          "from": "getDefaultCases",
+          "to": "applyFilters",
+          "caller": "state.loadData",
+          "reason": "➡️ Sequential (scope vars)"
+        },
+        {
+          "from": "applyFilters",
+          "to": "calculateCoordinateSystem",
+          "caller": "state.loadData",
+          "reason": "➡️ Sequential (shared vars)"
+        },
+        {
+          "from": "calculateCoordinateSystem",
+          "to": "hasActiveFilters",
+          "caller": "state.loadData",
+          "reason": "➡️ Sequential (shared vars)"
+        },
+        {
+          "from": "hasActiveFilters",
+          "to": "render",
+          "caller": "state.loadData",
+          "reason": "➡️ Sequential (shared vars)"
+        },
+        {
+          "from": "getDefaultCases",
+          "to": "saveFilterState",
+          "caller": "state.update",
+          "reason": "➡️ Sequential (scope vars)"
+        },
+        {
+          "from": "saveFilterState",
+          "to": "saveEmojiVisibility",
+          "caller": "state.update",
+          "reason": "➡️ Sequential (shared vars)"
+        },
+        {
+          "from": "saveEmojiVisibility",
+          "to": "saveScaleState",
+          "caller": "state.update",
+          "reason": "➡️ Sequential (shared vars)"
+        },
+        {
+          "from": "saveScaleState",
+          "to": "clearFocusDate",
+          "caller": "state.update",
+          "reason": "➡️ Sequential (no args)"
+        },
+        {
+          "from": "setIsolationMode",
+          "to": "getEmojiArray",
+          "caller": "state.update",
+          "reason": "➡️ Sequential (no args)"
+        },
+        {
+          "from": "getEmojiArray",
+          "to": "setIsolationMode",
+          "caller": "state.update",
+          "reason": "➡️ Sequential (scope vars)"
+        },
+        {
+          "from": "saveFilterState",
+          "to": "saveEmojiVisibility",
+          "caller": "state.update",
+          "reason": "➡️ Sequential (shared vars)"
+        },
+        {
+          "from": "saveFilterState",
+          "to": "saveEmojiVisibility",
+          "caller": "state.update",
+          "reason": "➡️ Sequential (shared vars)"
+        },
+        {
+          "from": "saveEmojiVisibility",
+          "to": "clearIsolationMode",
+          "caller": "state.update",
+          "reason": "➡️ Sequential (no args)"
+        },
+        {
+          "from": "hasActiveFilters",
+          "to": "render",
+          "caller": "state.update",
+          "reason": "➡️ Sequential (shared vars)"
+        },
+        {
+          "from": "filterByDate",
+          "to": "filterByCase",
+          "caller": "state.applyFilters",
+          "reason": "➡️ Sequential (shared vars)"
+        },
+        {
+          "from": "loadState",
+          "to": "loadState",
+          "caller": "state.loadAllUIState",
+          "reason": "➡️ Sequential (shared vars)"
+        },
+        {
+          "from": "loadState",
+          "to": "loadState",
+          "caller": "state.loadAllUIState",
+          "reason": "➡️ Sequential (shared vars)"
+        },
+        {
+          "from": "loadState",
+          "to": "loadState",
+          "caller": "state.loadAllUIState",
+          "reason": "➡️ Sequential (shared vars)"
+        },
+        {
+          "from": "loadState",
+          "to": "loadState",
+          "caller": "state.loadAllUIState",
+          "reason": "➡️ Sequential (shared vars)"
+        },
+        {
+          "from": "saveState",
+          "to": "saveState",
+          "caller": "state.saveFilterState",
+          "reason": "➡️ Sequential (shared vars)"
+        },
+        {
+          "from": "saveState",
+          "to": "saveState",
+          "caller": "state.saveFilterState",
+          "reason": "➡️ Sequential (shared vars)"
+        },
+        {
+          "from": "saveState",
+          "to": "saveState",
+          "caller": "state.saveScaleState",
+          "reason": "➡️ Sequential (shared vars)"
+        }
+      ],
+      "parallel": [],
+      "branched": [
+        {
+          "from": "saveFocusDate",
+          "to": "saveFocusDate",
+          "caller": "main.handleInput",
+          "reason": "🔀 Different branches"
+        }
+      ],
+      "iterative": [
+        {
+          "from": "findColumn",
+          "to": "findColumn",
+          "caller": "state.parseEventsOptimized",
+          "reason": "🔄 Loop/Iteration"
+        },
+        {
+          "from": "findColumn",
+          "to": "findColumn",
+          "caller": "state.parseEventsOptimized",
+          "reason": "🔄 Loop/Iteration"
+        },
+        {
+          "from": "findColumn",
+          "to": "findColumn",
+          "caller": "state.parseEventsOptimized",
+          "reason": "🔄 Loop/Iteration"
+        },
+        {
+          "from": "findColumn",
+          "to": "findColumn",
+          "caller": "state.parseEventsOptimized",
+          "reason": "🔄 Loop/Iteration"
+        },
+        {
+          "from": "findColumn",
+          "to": "findColumn",
+          "caller": "state.parseEventsOptimized",
+          "reason": "🔄 Loop/Iteration"
+        },
+        {
+          "from": "findColumn",
+          "to": "findColumn",
+          "caller": "state.parseEventsOptimized",
+          "reason": "🔄 Loop/Iteration"
+        },
+        {
+          "from": "findColumn",
+          "to": "findColumn",
+          "caller": "state.parseEventsOptimized",
+          "reason": "🔄 Loop/Iteration"
+        }
+      ],
+      "nested": [
+        {
+          "from": "getCaseTitlesContainer",
+          "to": "getCaseInfo",
+          "caller": "case-titles.renderCaseTitles",
+          "reason": "↘️ Enters nested block (2 deeper)"
+        },
+        {
+          "from": "getYPosition",
+          "to": "getNodeY",
+          "caller": "label-layout.createLabelsWithCollisionDetection",
+          "reason": "↘️ Enters nested block (1 deeper)"
+        },
+        {
+          "from": "getNodeY",
+          "to": "resolveCollisions",
+          "caller": "label-layout.createLabelsWithCollisionDetection",
+          "reason": "↗️ Exits to outer scope (2 up)"
+        },
+        {
+          "from": "saveFocusDate",
+          "to": "clearTimelineContainers",
+          "caller": "main.handleInput",
+          "reason": "↘️ Enters nested block (1 deeper)"
+        },
+        {
+          "from": "clearTimelineContainers",
+          "to": "update",
+          "caller": "main.handleInput",
+          "reason": "↗️ Exits to outer scope (2 up)"
+        },
+        {
+          "from": "getEmojiConfig",
+          "to": "getEmojiConfig",
+          "caller": "render.determineCaselineColor",
+          "reason": "↗️ Exits to outer scope (1 up)"
+        },
+        {
+          "from": "determineCaselineColor",
+          "to": "getEmojiConfig",
+          "caller": "render.renderCaselineNodes",
+          "reason": "↘️ Enters nested block (1 deeper)"
+        },
+        {
+          "from": "getEmojiConfig",
+          "to": "getEmojiConfig",
+          "caller": "render.renderCaselineNodes",
+          "reason": "↗️ Exits to outer scope (1 up)"
+        },
+        {
+          "from": "setIsolationMode",
+          "to": "saveFilterState",
+          "caller": "state.update",
+          "reason": "↗️ Exits to outer scope (1 up)"
+        },
+        {
+          "from": "getIsolationMode",
+          "to": "saveFilterState",
+          "caller": "state.update",
+          "reason": "↘️ Enters nested block (1 deeper)"
+        },
+        {
+          "from": "clearIsolationMode",
+          "to": "applyFilters",
+          "caller": "state.update",
+          "reason": "↗️ Exits to outer scope (1 up)"
+        },
+        {
+          "from": "applyFilters",
+          "to": "saveScaleState",
+          "caller": "state.update",
+          "reason": "↘️ Enters nested block (1 deeper)"
+        },
+        {
+          "from": "getDefaultCases",
+          "to": "arraysEqual",
+          "caller": "state.hasActiveFilters",
+          "reason": "↗️ Exits to outer scope (1 up)"
+        },
+        {
+          "from": "loadState",
+          "to": "loadState",
+          "caller": "state.loadAllUIState",
+          "reason": "↗️ Exits to outer scope (1 up)"
+        }
+      ]
+    }
+  }
+}

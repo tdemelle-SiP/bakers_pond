@@ -4,11 +4,10 @@
 // - Creates all DOM elements for timeline
 
 // Import existing rendering functions
-import { drawCaselineConnections } from '../js/connections.js';
 import { createLabelsWithCollisionDetection } from './label-layout.js';
 import { renderCaseTitles } from './case-titles.js';
-import { calculateStats } from '../js/stats.js';
-import { getEmojiConfig } from '../js/emoji-config.js';
+import { calculateStats } from './state.js';
+import { getEmojiConfig } from './emoji-config.js';
 
 /**
  * Set container dimensions
@@ -80,14 +79,14 @@ function determineCaselineColor(emojis) {
     
     // For multi-emoji, use the superscript (second) emoji's color
     if (emojis.length > 1) {
-        const superscriptConfig = getEmojiConfig(emojis[1], 'caseline');
+        const superscriptConfig = getEmojiConfig(emojis[1]);
         if (superscriptConfig && superscriptConfig.caselineColor) {
             return superscriptConfig.caselineColor;
         }
     }
     
     // For single emoji, use its color
-    const config = getEmojiConfig(emojis[0], 'caseline');
+    const config = getEmojiConfig(emojis[0]);
     if (!config) return '#999999';
     
     return config.caselineColor || '#999999';
@@ -122,7 +121,7 @@ function renderCaselineNodes(events, coordinateSystem) {
         if (emojis.length === 0) return; // Skip if no emojis
         
         // Get first emoji config for label and positioning
-        const primaryConfig = getEmojiConfig(emojis[0], 'caseline') || {};
+        const primaryConfig = getEmojiConfig(emojis[0]) || {};
         const caselineColor = determineCaselineColor(emojis);
         
         // Get label - prefer bold override from procedural column
@@ -135,7 +134,7 @@ function renderCaselineNodes(events, coordinateSystem) {
         // Add positioning classes based on emoji type and privacy
         const allBypass = emojis.length > 1 ? 
             emojis.every(emoji => {
-                const config = getEmojiConfig(emoji, 'caseline');
+                const config = getEmojiConfig(emoji);
                 return config && config.caselineColor === 'bypass';
             }) :
             primaryConfig.caselineColor === 'bypass';
@@ -174,7 +173,7 @@ function renderCaselineNodes(events, coordinateSystem) {
         
         // For multi-emoji, store both emoji types for visibility filtering
         if (emojis.length > 1) {
-            const secondaryConfig = getEmojiConfig(emojis[1], 'caseline');
+            const secondaryConfig = getEmojiConfig(emojis[1]);
             node.dataset.emojiType = primaryConfig.class || '';
             node.dataset.emojiType2 = secondaryConfig?.class || '';
         } else if (primaryConfig.class) {
@@ -214,7 +213,7 @@ function renderCaselineNodes(events, coordinateSystem) {
         }
         
         // Get secondary emoji type for multi-emoji nodes
-        const secondaryConfig = emojis.length > 1 ? getEmojiConfig(emojis[1], 'caseline') : null;
+        const secondaryConfig = emojis.length > 1 ? getEmojiConfig(emojis[1]) : null;
         
         // Y position for label positioning
         let yPosition;
@@ -541,5 +540,108 @@ function renderYearMarkers(container, coordinateSystem) {
             container.appendChild(tick);
         }
     });
+}
+
+/**
+ * Draw SVG connections between caseline nodes
+ * @param {Object} caseGroups - Groups of nodes by case number
+ * @param {HTMLElement} container - Container for the SVG
+ */
+function drawCaselineConnections(caseGroups, container) {
+    // Get caseline container for positioning
+    const caselineContainer = document.getElementById('caseline-container');
+    if (!caselineContainer) return;
+    
+    const sectionHeight = caselineContainer.offsetHeight;
+    const sectionTop = caselineContainer.offsetTop;
+    
+    // Create SVG for caseline connections
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.style.position = 'absolute';
+    svg.style.left = '50px';  // Match nodes-container left position
+    svg.style.top = '0';  // Changed from sectionTop since container is now relative
+    svg.style.width = 'calc(100% - 50px)';  // Adjust width to account for left offset
+    svg.style.height = sectionHeight + 'px';
+    svg.style.pointerEvents = 'none';
+    svg.style.zIndex = '5';  // Connections below nodes
+    
+    // Draw connections for each case
+    Object.entries(caseGroups).forEach(([caseNumber, nodes]) => {
+        if (nodes.length < 2) return;
+        
+        // Sort by date
+        nodes.sort((a, b) => a.date - b.date);
+        
+        // Track the active color for inheritance
+        let activeColor = '#999999'; // Default color
+        
+        // Draw lines between nodes, skipping bypass nodes
+        let lastConnectedIndex = -1;
+        
+        for (let i = 0; i < nodes.length; i++) {
+            const current = nodes[i];
+            
+            // Update color tracking (but don't draw from bypass nodes)
+            if (current.caselineColor === 'bypass') {
+                continue; // Skip bypass nodes entirely
+            } else if (current.caselineColor === 'inherit') {
+                // Keep the previous color
+            } else {
+                // Use this node's caselineColor and set it as active
+                activeColor = current.caselineColor;
+            }
+            
+            // Find the next non-bypass node to connect to
+            let nextIndex = i + 1;
+            while (nextIndex < nodes.length && nodes[nextIndex].caselineColor === 'bypass') {
+                nextIndex++;
+            }
+            
+            if (nextIndex >= nodes.length) break; // No more nodes to connect
+            
+            const next = nodes[nextIndex];
+            
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', current.x);
+            // Calculate Y positions to match CSS positioning
+            // Center of space below titles: 60px + (height - 60px) / 2
+            // Nodes use translateY(-50%) so they're vertically centered
+            const centerY = 60 + (sectionHeight - 60) / 2;
+            
+            let y1;
+            if (current.verticalPosition === 'inline') {
+                y1 = centerY; // Centered on line
+            } else if (current.verticalPosition === 'private') {
+                y1 = centerY + 25; // 25px below center
+            } else {
+                y1 = centerY - 25; // 25px above center
+            }
+            
+            let y2;
+            if (next.verticalPosition === 'inline') {
+                y2 = centerY; // Centered on line
+            } else if (next.verticalPosition === 'private') {
+                y2 = centerY + 25; // 25px below center
+            } else {
+                y2 = centerY - 25; // 25px above center
+            }
+            
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', next.x);
+            line.setAttribute('y2', y2);
+            
+            // Note: We don't add continuance class to lines anymore
+            // Lines should remain visible even when continuance nodes are hidden
+            
+            // Use the determined color for the line
+            line.setAttribute('stroke', activeColor);
+            line.setAttribute('stroke-width', '4');  // Thicker lines per original
+            line.setAttribute('stroke-opacity', '0.7'); // Match original opacity
+            
+            svg.appendChild(line);
+        }
+    });
+    
+    container.appendChild(svg);
 }
 

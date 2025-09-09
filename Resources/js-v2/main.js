@@ -5,7 +5,7 @@
 // - Handles user input
 
 import { loadData, update, checkIsolation, saveFocus } from './state.js';
-import { getEmojiArray } from '../js/emoji-config.js';
+import { getEmojiArray } from './emoji-config.js';
 
 // Wait for DOM ready
 if (document.readyState === 'loading') {
@@ -26,7 +26,7 @@ function buildLegend() {
     if (!legendContainer) return;
     
     // Get emoji configurations - only caseline for v2
-    const caselineEmojis = getEmojiArray('caseline');
+    const caselineEmojis = getEmojiArray();
     
     // Build legend HTML matching original two-row table format
     let html = '<div style="display: flex; gap: 20px; align-items: center;">';
@@ -187,13 +187,13 @@ function setupListeners() {
         }
     }, { passive: false });
     
-    // Track focus date and save to localStorage when scrolling
+    // Track scrolling as input
     if (mainContent) {
         let scrollTimeout;
         mainContent.addEventListener('scroll', () => {
             clearTimeout(scrollTimeout);
             scrollTimeout = setTimeout(() => {
-                saveFocusDate();
+                handleInput('scroll');
             }, 100);
         });
     }
@@ -342,6 +342,12 @@ function setupListeners() {
 
 function handleInput(type, providedData = null) {
     const data = providedData || {};
+    
+    // Handle scroll - just save focus and return
+    if (type === 'scroll') {
+        saveFocusDate();
+        return;
+    }
     
     // Save focus date before any operation that will clear containers
     const needsClear = ['dateFilter', 'scale', 'fit', 'reset', 'caseToggle', 'isolate', 'exitIsolation', 'emojiToggle'].includes(type);
