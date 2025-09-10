@@ -1,0 +1,15 @@
+Please read the full v2 architecture.md file, review your code changes to ensure that they are extensions of the existing v2 code, preserve the architecture and its principles and don't introduce any unnecessary redundancy.  Also review your code for over-complexity, over-defensiveness, and remove any backward compatibility code. Don't just search for strings to find offenders. Actually read the code.  Once that is done, please make sure all remnants of deprecated code, comments and documentation are removed. Finally, propose changes that should be made to the architecture.md chart so that it is up to date and accurate.
+
+The mermaid chart should show:
+
+ - containers representing files 
+	- one file = one container
+
+ - nodes within those containers representing the functions in those files 
+	- all functions in the code should be in the chart
+
+ - connections between functions 
+	- the primary purpose of this mermaid chart is to show the flow of the code; for that reason it's important to show the connection between functions serially when they occur serially for practical purposes. For example in the init function in the main.js file, there are three function calls. It's important that the flow show that these functions are called serially and only after the last one is called does the code step to the state.js file.
+	- showing the sequence of connections serially through functions also sets up the mermaid chart to show the flow between files most clearly. If the flow passes through the various function nodes within a file container, the eventual output will be on the other side of the function from the input.  If the flow bypasses the functions within the file, the output tends to be shunted off to the side effectively blocked by the monolith of functions that aren't passing the logic forward in sequence.
+
+

@@ -52,7 +52,7 @@ confidential/
 trash/
 
 # Working directory
-Resources/work/
+# Resources/work/
 
 # Claude AI workspace configuration
 .claude/
@@ -63,4 +63,3 @@ package-lock.json
 
 # Auto-generated files from Google Sheets (source of truth is Google Sheets)
 Resources/inbox/*.tsv
-\!42_Mill_St_Procedural_Dependencies.md
