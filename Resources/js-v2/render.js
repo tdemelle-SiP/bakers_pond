@@ -53,15 +53,24 @@ function calculateYearMarkers(coordinateSystem) {
                     type: 'tick',
                     x: yearStartX,
                     year: year,
-                    label: null
+                    label: null,
+                    labelX: null
                 });
             } else {
+                // Calculate label position between this year line and next year line
+                const nextYear = useDecadeMarkers ? year + 10 : year + 1;
+                const nextYearStart = new Date(nextYear, 0, 1);
+                const nextYearStartX = getXPosition(nextYearStart);
+                // Center label between the two year lines
+                const labelX = (yearStartX + nextYearStartX) / 2;
+                
                 // Show full line and label for all years in normal mode, or decades in decade mode
                 markers.push({
                     type: 'line',
                     x: yearStartX,
                     year: year,
-                    label: year.toString()
+                    label: year.toString(),
+                    labelX: labelX
                 });
             }
         }
@@ -518,13 +527,14 @@ function renderYearMarkers(container, coordinateSystem) {
             tick.style.height = '10px';
             container.appendChild(tick);
             
-            // Add year label at bottom
+            // Add year label at bottom (centered between lines)
             if (marker.label) {
                 const label = document.createElement('div');
                 label.className = 'year-label';
                 label.style.position = 'absolute';
-                label.style.left = marker.x + 'px';
+                label.style.left = (marker.labelX || marker.x) + 'px';
                 label.style.bottom = '5px';
+                label.style.transform = 'translateX(-50%)';
                 label.textContent = marker.label;
                 container.appendChild(label);
             }

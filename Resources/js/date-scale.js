@@ -193,10 +193,24 @@ export function drawYearMarkers(container, dateRange, pixelsPerDay) {
                     continue; // Skip labels for non-decade years in decade mode
                 }
                 
-                const visibleStartX = Math.max(TIMELINE_LEFT_OFFSET, yearStartX);
-                const visibleEndX = Math.min(timelineWidth + TIMELINE_LEFT_OFFSET, yearEndX);
-                // Center labels on the decade line when in decade mode, otherwise center in year span
-                const labelX = useDecadeMarkers ? yearStartX : (visibleStartX + visibleEndX) / 2;
+                // Center label between this year's line and next year's line
+                // For decade mode: center between decade lines (10 years apart)
+                let labelX;
+                if (useDecadeMarkers) {
+                    // Calculate position between this decade line and next decade line
+                    const nextDecadeStart = new Date(year + 10, 0, 1);
+                    const nextDecadeStartDays = Math.min(totalDays, (nextDecadeStart - startDate) / (1000 * 60 * 60 * 24));
+                    const nextDecadeStartX = TIMELINE_LEFT_OFFSET + (nextDecadeStartDays * pixelsPerDay);
+                    // Center between the two decade lines
+                    labelX = (yearStartX + nextDecadeStartX) / 2;
+                } else {
+                    // Calculate position between this year line and next year line
+                    const nextYearStart = new Date(year + 1, 0, 1);
+                    const nextYearStartDays = Math.min(totalDays, (nextYearStart - startDate) / (1000 * 60 * 60 * 24));
+                    const nextYearStartX = TIMELINE_LEFT_OFFSET + (nextYearStartDays * pixelsPerDay);
+                    // Center between the two year lines
+                    labelX = (yearStartX + nextYearStartX) / 2;
+                }
                 
                 // Timeline year label
                 const timelineLabel = document.createElement('div');
