@@ -15,7 +15,7 @@ export const EMOJI_CONFIG = {
         },
         '✅': { 
             legendLabel: 'Approved', 
-            displayLabel: 'APPROVED',
+            displayLabel: '',
             caselineColor: '#4caf50',
             class: 'approved',
             defaultVisible: true,
@@ -24,7 +24,7 @@ export const EMOJI_CONFIG = {
         },
         '⛔': { 
             legendLabel: 'Denied', 
-            displayLabel: 'DENIED',
+            displayLabel: '',
             caselineColor: '#f44336',
             class: 'denied',
             defaultVisible: true,
@@ -65,14 +65,14 @@ export const EMOJI_CONFIG = {
         },
         '⏰': { 
             legendLabel: 'Expired', 
-            displayLabel: 'EXPIRED',
+            displayLabel: '',
             caselineColor: '#f44336',
             class: 'expired',
             defaultVisible: true
         },
         '♻️': { 
             legendLabel: 'Extended', 
-            displayLabel: 'EXTENDED',
+            displayLabel: '',
             caselineColor: '#4caf50',
             class: 'extended',
             defaultVisible: true

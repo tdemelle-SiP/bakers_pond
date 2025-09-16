@@ -1,10 +1,10 @@
 # 42 Mill Street Development History Resource
 
-This repository is a resource documenting the decades-long history of development attempts at 42 Mill Street in Westwood, Massachusetts. This site, located next to historic Bakers Pond, has been the subject of multiple permit applications, environmental reviews, and legal proceedings for over 50 years. [Interactive Visual Timeline](https://tdemelle-sip.github.io/bakers_pond/Resources/timeline.html)
+This repository is a resource documenting the decades-long history of development attempts at 42 Mill Street in Westwood, Massachusetts. This site, located next to historic Bakers Pond, has been the subject of multiple permit applications, environmental reviews, and legal proceedings for over 50 years. [Interactive Visual Timeline](https://tdemelle-sip.github.io/bakers_pond/Resources/timeline-v2.html)
 
 ---
 
-![Bakers Pond](https://github.com/tdemelle-SiP/bakers_pond/blob/master/Research%20Images/2023-01-28_15-16.png?raw=true)
+![Bakers Pond](https://github.com/tdemelle-SiP/bakers_pond/blob/master/Resources/work/images/presentation_images/2023-01-28_15-16.png?raw=true)
 
 - **[Bakers Pond Photo Album](https://photos.app.goo.gl/K6Unm29vK9vhhPuDA)**
 
@@ -45,7 +45,7 @@ Efforts are underway to accurately assess the intent and consequences of the pro
 **[Resources/](https://github.com/tdemelle-SiP/bakers_pond/tree/master/Resources)** - Working files and timeline application
 
 ---
-![Bakers Pond](https://github.com/tdemelle-SiP/bakers_pond/blob/master/Research%20Images/IMG_2514.jpg?raw=true)
+![Bakers Pond](https://github.com/tdemelle-SiP/bakers_pond/blob/master/Resources/work/images/presentation_images/IMG_2514.jpg?raw=true)
 
 ## Drafts for Letters Raising Specific Concerns
 
