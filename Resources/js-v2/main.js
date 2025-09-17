@@ -326,16 +326,27 @@ function setupListeners() {
         });
     }
     
-    // Window resize handler for fit-to-window
+    // Window resize handler for fit-to-window and vertical resize
     let resizeTimeout;
+    let lastWindowHeight = window.innerHeight;
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
-            // Only recalculate if fit-to-window is checked
+            const currentHeight = window.innerHeight;
             const fitCheckbox = document.getElementById('fit-to-window');
+
+            // If fit-to-window is checked, do full recalculation
             if (fitCheckbox && fitCheckbox.checked) {
                 handleInput('fit');
             }
+            // If window height changed, trigger a lightweight redraw
+            else if (currentHeight !== lastWindowHeight) {
+                // Trigger a redraw through the state system
+                // This will preserve all state but recalculate container dimensions
+                handleInput('redraw');
+            }
+
+            lastWindowHeight = currentHeight;
         }, 250);
     });
 }
@@ -348,9 +359,9 @@ function handleInput(type, providedData = null) {
         saveFocusDate();
         return;
     }
-    
+
     // Save focus date before any operation that will clear containers
-    const needsClear = ['dateFilter', 'scale', 'fit', 'reset', 'caseToggle', 'isolate', 'exitIsolation', 'emojiToggle'].includes(type);
+    const needsClear = ['dateFilter', 'scale', 'fit', 'reset', 'caseToggle', 'isolate', 'exitIsolation', 'emojiToggle', 'redraw'].includes(type);
     if (needsClear) {
         saveFocusDate();
     }
@@ -372,6 +383,10 @@ function handleInput(type, providedData = null) {
                 break;
             case 'reset':
                 data.reset = true;
+                clearTimelineContainers();
+                break;
+            case 'redraw':
+                // Just clear containers, no data changes
                 clearTimelineContainers();
                 break;
         }

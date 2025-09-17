@@ -236,11 +236,16 @@ export function update(type, data) {
             if (isolation.previousState) {
                 state.filters.selectedCases = isolation.previousState.selectedCases;
                 state.emojiVisibility = isolation.previousState.emojiVisibility;
-                
+
                 saveFilterState(state.filters);
                 saveEmojiVisibility(state.emojiVisibility);
                 clearIsolationMode();
             }
+            break;
+
+        case 'redraw':
+            // No state changes, just trigger a re-render
+            // This is used when window height changes
             break;
     }
     
