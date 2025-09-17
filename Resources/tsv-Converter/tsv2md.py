@@ -106,7 +106,16 @@ for row in rows[1:]:
         document = f"[{doc_title}]({doc_url})"
     else:
         document = doc_title
-    
+
+    # Clean up cell contents - replace newlines with spaces to prevent breaking markdown table
+    date = date.replace('\n', ' ').replace('\r', ' ')
+    document = document.replace('\n', ' ').replace('\r', ' ')
+    case_num = case_num.replace('\n', ' ').replace('\r', ' ')
+    markers = markers.replace('\n', ' ').replace('\r', ' ')
+    procedural = procedural.replace('\n', ' ').replace('\r', ' ')
+    environmental = environmental.replace('\n', ' ').replace('\r', ' ')
+    notes = notes.replace('\n', ' ').replace('\r', ' ')
+
     # Build markdown table row
     new_row = f"| {date} | {document} | {case_num} | {markers} | {procedural} | {environmental} | {notes} |"
     new_table_rows.append(new_row)
