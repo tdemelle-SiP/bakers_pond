@@ -78,9 +78,12 @@ def download_and_convert():
             errors='replace',
             env=env
         )
+        print(f"DEBUG: subprocess finished with return code: {result.returncode}")
         if result.returncode == 0:
             print(result.stdout)
-            print("✨ Timeline updated successfully!")
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            print(f"DEBUG: About to print success with timestamp: {timestamp}")
+            print(f"✨ Timeline updated successfully! ({timestamp})")
             return True
         else:
             print(f"❌ Conversion error: {result.stderr}")
