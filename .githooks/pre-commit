@@ -1,0 +1,45 @@
+#!/bin/bash
+# Pre-commit hook: block large non-LFS files before they enter history.
+#
+# WHAT: rejects any staged file > 50 MB.
+# WHY: GitHub warns at 50 MB and rejects at 100 MB per file. A staged file
+#      over the threshold means LFS routing did not apply, and committing
+#      it forces a later history rewrite plus force-push. Blocking at
+#      commit time prevents that cost.
+# HOW: iterate staged blobs via git diff --cached, check each size via
+#      git cat-file -s, exit 1 with remediation on any over-threshold blob.
+#      LFS pointers are ~130 bytes so cannot exceed the threshold; if a
+#      file is over 50 MB in staged content, LFS did not route it.
+
+set -u
+
+THRESHOLD_BYTES=$((50 * 1024 * 1024))
+
+violations=()
+
+while IFS= read -r -d '' file; do
+    [ -f "$file" ] || continue
+    size=$(git cat-file -s ":0:$file" 2>/dev/null) || continue
+
+    if [ "$size" -gt "$THRESHOLD_BYTES" ]; then
+        mb=$((size / 1024 / 1024))
+        violations+=("$file (${mb} MB)")
+    fi
+done < <(git diff --cached --name-only --diff-filter=ACMR -z)
+
+if [ ${#violations[@]} -gt 0 ]; then
+    echo "ERROR: pre-commit blocked — staged file(s) over 50 MB without LFS routing:" >&2
+    for v in "${violations[@]}"; do
+        echo "  - $v" >&2
+    done
+    echo "" >&2
+    echo "GitHub warns at 50 MB and rejects at 100 MB per file." >&2
+    echo "" >&2
+    echo "To resolve, route this file type through Git LFS:" >&2
+    echo "  1. echo '*.EXT filter=lfs diff=lfs merge=lfs -text' >> .gitattributes" >&2
+    echo "  2. git add .gitattributes <path>" >&2
+    echo "  3. Retry the commit." >&2
+    exit 1
+fi
+
+exit 0
