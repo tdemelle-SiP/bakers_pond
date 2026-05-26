@@ -1,0 +1,372 @@
+# Audit Status
+
+Total files in `Dated Documents/`: **364**
+
+Checkbox marks `[x]` when a card for that file exists at `Audit/cards/<basename>.md`.
+
+---
+
+- [ ] !incoming\2025_09_03_Carby St Visit\2025-09-03 13-27.pdf
+- [ ] !incoming\2025_09_03_Carby St Visit\2025-09-03 13-32.pdf
+- [ ] !incoming\2025_09_03_Carby St Visit\Scanned from a Xerox Multifunction Printer (1).pdf
+- [ ] !incoming\2025_09_03_Carby St Visit\Scanned from a Xerox Multifunction Printer (2).pdf
+- [ ] !incoming\2025_09_03_Carby St Visit\Scanned from a Xerox Multifunction Printer (3).pdf
+- [ ] !incoming\2025_09_03_Carby St Visit\Scanned from a Xerox Multifunction Printer.pdf
+- [ ] !incoming\2025_09_03_Carby St Visit\Scanned from a Xerox Multifunction Printer1.pdf
+- [ ] !incoming\unnamed (1).png
+- [ ] !incoming\unnamed (2).png
+- [ ] !incoming\unnamed (3).png
+- [ ] !incoming\unnamed (4).png
+- [ ] !incoming\unnamed (5).png
+- [ ] !incoming\unnamed.png
+- [ ] 1909 Walker Atlas of Westwood.md
+- [ ] 1966_06_28_1355 mill st plan.PDF
+- [ ] 1969_02_05_Full_D0Z6.pdf
+- [ ] 1969_10_07_unspecified_special_permit.pdf
+- [ ] 1974_02_01_Plan_309_of_1974_Wetlands_11_43_44_45_46.png
+- [ ] 1974_02_01_Wetland_Order_Area_44.pdf
+- [ ] 1974_02_01_Wetland_Restriction_Order_Westwood_Book_5033_Pg_256.pdf
+- [ ] 2000_07_27-DEP-0706-QuitClaim_Deed.pdf
+- [ ] 2001_04_23 338-0303 Review Lot 2B Mill St.pdf
+- [ ] 2014_08_07 BVW Delineation Field Data Form.pdf
+- [ ] 2014_08_26-DEP-0594-Goddard_Wetlands_Border_Report.pdf
+- [ ] 2014_10_23_List_of_Abutters.pdf
+- [ ] 2014_10_27-DEP-0594-Delapa_Time_Waiver.pdf
+- [ ] 2014_10_27-DEP-0594-GLM_ANRAD_DELINEATION_PLAN.png
+- [ ] 2014_11_10-DEP-0594-Abutter_Notification.pdf
+- [ ] 2014_11_10_Goddard_ANRAD_to_WCC_338-0594_DOC051126.pdf
+- [ ] 2014_11_13-DEP-0594-Goddard_ANRAD_application.pdf
+- [ ] 2014_11_Abutters_Notification_Packet_42_Mill_Map28_Lot013_DOC051126.pdf
+- [ ] 2015_10_28 Conservation Commission minutes 20151028.pdf
+- [ ] 2015_11_09_ANRAD_DENIAL_FORM.pdf
+- [ ] 2015_11_20-DEP-0594-Goddard_ANRAD_Appeal.pdf
+- [ ] 2015_12_09-DEP-0594-DEP_Notice_of_Site_Visit.pdf
+- [ ] 2015_12_09_Conservation_Commission_minutes.pdf
+- [ ] 2015_12_16-DEP-0594-DEP_Site_Inpection_Record.pdf
+- [ ] 2015_12_21-DEP-0594-USGS_StreamStats.pdf
+- [ ] 2015_12_21-DEP-0594-USGS_StreamStats_02.pdf
+- [ ] 2015_12_21-DEP-0594-USGS_StreamStats_03.pdf
+- [ ] 2016_01_13 Conservation Commssion minutes .pdf
+- [ ] 2016_01_15-DEP-0594-GLM_Consultants_Goddard_Wetland_Zones.png
+- [x] 2016_01_15_GLM_Wetland_Delineation_Plan_42_Mill_DOC051126.pdf
+- [ ] 2016_01_20-DEP-0594-Goddard_SORAD_request_supplemental.pdf
+- [ ] 2016_01_20_Goddard_to_DEP_SORAD_Supplement_338-0594_DOC051126.pdf
+- [ ] 2016_01_20_Hoyt_Survey_44_Mill.pdf
+- [ ] 2016_01_27 GEC RDA Evaluation.pdf
+- [ ] 2016_01_27-DEP-0594-GEC_Report_Summary.pdf
+- [ ] 2016_01_27_GEC_Wetland_Evaluation_Summary_Report_42_Mill_DOC051126.pdf
+- [ ] 2016_02_02_MISSING_ANR_Plan_44_Mill_St_Filed.txt
+- [ ] 2016_02_11 Planning Board letter RE ANR.pdf
+- [ ] 2016_02_11_MISSING_Further_ANR_Materials_Submitted.txt
+- [ ] 2016_02_18-DEP-0594-Drought_Dates.pdf
+- [ ] 2016_02_23 Westwood Planning Board Minutes.pdf
+- [ ] 2016_02_24 Nora Loughnane Planning Board Letter.pdf
+- [ ] 2016_03_19-21 DeMelle - Catrone - Dam Ownership
+- [ ] 2016_04_29 Buckley to Abutters
+- [ ] 2016_05_03-DEP-0594-Drought_Monitor.pdf
+- [ ] 2016_06_13-DEP-0594-GLM_Consultants_Goddard_Wetland_Zones.png
+- [ ] 2016_06_13-DEP-0594-GLM_DEP_Settlement_Annotated_01.png
+- [ ] 2016_06_13-DEP-0594-GLM_DEP_Settlement_Annotated_02.png
+- [ ] 2016_08_03-DEP-0594-SORAD_Goddard request_to_DEP.pdf
+- [ ] 2016_08_03_Goddard_to_DEP_SORAD_Supplement_Letter_338-0594_DOC051126.pdf
+- [ ] 2016_08_09-DEP-0594-GIS_Map.pdf
+- [ ] 2016_08_09-DEP-0594-USGS_2014_Water_Year_Report.pdf
+- [ ] 2016_08_09-DEP-0594-USGS_Water_Year_Report_02.pdf
+- [ ] 2016_08_11-DEP-0594-2014_Drought_Monitor.pdf
+- [ ] 2016_08_25 SORAD.pdf
+- [ ] 2016_08_25-DEP-0594-SORAD_DEP_response.pdf
+- [x] 2016_08_25_MassDEP_SORAD_Decision_338-0594_DOC051126.pdf
+- [ ] 2016_08_30 Buckley to Abutters
+- [ ] 2016_09_08-DEP-0594-SORAD_Goddard_appeal.pdf
+- [ ] 2016_09_08_Goddard_Appeal_of_SORAD_338-0594_DOC051126.pdf
+- [ ] 2016_09_12_OADR_Notice_of_Claim_WET-2016-022.pdf
+- [ ] 2016_09_15_OADR_Scheduling_Order_WET-2016-022.pdf
+- [ ] 2016_09_19-20 Buckley - Catrone - Palmer
+- [ ] 2016_09_21_OADR_Applicant_Email_re_Settlement_WET-2016-022.pdf
+- [ ] 2016_09_27_OADR_Email_Canceling_PHC_WET-2016-022.pdf
+- [ ] 2016_10_02-DEP-0594-Norwood_Quad.png
+- [ ] 2016_10_03-DEP-0594-GLM_Consultants_Settlement_Plan.png
+- [ ] 2016_10_14-DEP-0594-Goddard_FORAD_Plans.pdf
+- [ ] 2016_10_14_Goddard_to_DEP_FORAD_Plan_Submission_338-0594_DOC051126.pdf
+- [ ] 2016_10_20-DEP-0594-GLM_DEP_Note.png
+- [ ] 2016_10_31_OADR_Applicant_Email_Settlement_Status_WET-2016-022.pdf
+- [ ] 2016_11_07_OADR_Email_Allowing_Settlement_Extension_WET-2016-022.pdf
+- [ ] 2016_11_09_MISSING_Executive_Session_Minutes.txt
+- [ ] 2016_11_14 Town Counsel Settlement Letter.pdf
+- [ ] 2016_11_18_OADR_DEP_Email_Settlement_Extension_Request_WET-2016-022.pdf
+- [ ] 2016_11_21-DEP-0594-WET-2016-022_Settlement_Agreement.pdf
+- [ ] 2016_11_21_OADR_DEP_Motion_to_Accept_Settlement_WET-2016-022.pdf
+- [ ] 2016_11_21_Settlement_Agreement_OADR_WET-2016-022_DOC051126-alt.pdf
+- [x] 2016_11_21_Settlement_Agreement_OADR_WET-2016-022_DOC051126.pdf
+- [ ] 2016_12_14_OADR_DEP_Draft_FORAD_WET-2016-022.pdf
+- [ ] 2016_12_14_OADR_DEP_Resubmittal_of_FORAD_WET-2016-022.pdf
+- [ ] 2016_12_19-DEP-0594-WET-2016-022_DEP_Final_Decision.pdf
+- [ ] 2016_12_19_MassDEP_Final_Decision_WET-2016-022_DOC051126.pdf
+- [ ] 2016_12_19_MassDEP_Final_Decision_with_Attachments_WET-2016-022_DOC051126-alt.pdf
+- [ ] 2016_12_19_MassDEP_Final_Decision_with_Attachments_WET-2016-022_DOC051126.pdf
+- [x] 2016_12_19_OADR_Final_Decision_and_FORAD_WET-2016-022.pdf
+- [ ] 2016_Wetland_Delineation_Plan_DEP_Settlement_Markups_DOC051126.pdf
+- [ ] 2016_Wetland_Plan_Zoom_Mill_St_ROW_Annotated_DOC051126.pdf
+- [ ] 2017_01_11 Conservation Commission Minutes.pdf
+- [ ] 2018_11_02_Site_Plan.pdf
+- [ ] 2019_11_22_Goddard_FORAD_Extension_Request_338-0594_DOC051126.pdf
+- [ ] 2019_11_25-DEP-0594-Goddard_Extension_Request.pdf
+- [ ] 2019_12_17-DEP-0706-DEP_FORAD_2.pdf
+- [ ] 2019_12_24-DEP-0594-DEP_Extension.pdf
+- [ ] 2019_12_24_MassDEP_FORAD_Extension_Permit_WPA_Form_7_338-0594_DOC051126.pdf
+- [ ] 2020_03_09-DEP-0706-Notice_of_Intent.pdf
+- [ ] 2020_03_19 Delapa NOI.pdf
+- [ ] 2020_03_19-DEP-0706-WCC_Application_Authorization.pdf
+- [ ] 2020_04_03_Mass_Covid_Extension-Chapter_53.pdf
+- [ ] 2020_04_07_Vinci_Quitclaim_Deed.pdf
+- [ ] 2020_04_13 Vinci - Board of Assessors - Abutter Request.pdf
+- [ ] 2020_04_15 Tim McGuire Abutters List.pdf
+- [ ] 2020_04_15-DEP-0706-Assessors_Abutters_List.pdf
+- [ ] 2020_05 WCC Filing Fee Schedule.pdf
+- [ ] 2020_05_11 Delapa NOI Wetland Fee Transmittal Form.pdf
+- [ ] 2020_06_18 Tim McGuire Affadavit of Service to Abutters.pdf
+- [ ] 2020_06_18-DEP-0706-Goddard_NoI.pdf
+- [ ] 2020_06_18-DEP-0706-McGuire_Affadavit.pdf
+- [ ] 2020_06_18-DEP-0706-Notice_to_Abutters.pdf
+- [ ] 2020_07_06 email from Kerry Snyder .pdf
+- [ ] 2020_07_08 Minutes  Conservation Commission.pdf
+- [ ] 2020_09_09 Minutes - Conservation Commission.pdf
+- [ ] 2020_10_08_GEC_Donahoe_Review_Summary.pdf
+- [ ] 2020_10_13 Goddard to Catrone.pdf
+- [ ] 2020_10_14 Minutes - Conservation Commission.pdf
+- [ ] 2020_10_27_Response_to_Peer_Review_Comments.pdf
+- [ ] 2020_10_28 Minutes  Conservation Commission.pdf
+- [ ] 2020_11_18 Nora Loughnane email to Catrone.pdf
+- [ ] 2020_11_18 Plot Sale Record - Salvatore - Delapa.pdf
+- [ ] 2020_11_18 WCC Hearing Continued.pdf
+- [ ] 2020_12_14_GEC_Donahoe_Review_Comments.pdf
+- [ ] 2021 Goddard Continuation Requests.pdf
+- [ ] 2021_01_04 Enviro Analysis Follow up Email from Brian Donahoe.pdf
+- [ ] 2021_01_27 WCC Hearing Continued.pdf
+- [ ] 2021_02_10 WCC Hearing Continued.pdf
+- [ ] 2021_02_24 WCC Hearing Contnued.pdf
+- [ ] 2021_03_10 Delapa Site Plan.pdf
+- [ ] 2021_03_10 WCC Hearing Continued.pdf
+- [ ] 2021_03_19 Delapa - Goddard Property owner Application Authorizatoin.pdf
+- [ ] 2021_03_19 Delapa Notice of Intent Form 3.pdf
+- [ ] 2021_03_19 Goddard Response to GEC Review.pdf
+- [ ] 2021_03_22_Goddard_NOI_Revised_DEP_338-0706.pdf
+- [ ] 2021_03_24 WCC Hearing Continued - Abutters not notified.pdf
+- [ ] 2021_04_26 Catrone email to Donahoe.pdf
+- [ ] 2021_05_05 Minutes  Conservation Commission.pdf
+- [ ] 2021_05_06 AY email to Catrone.pdf
+- [ ] 2021_05_06 Ahearn reply to Catrone re AY.pdf
+- [ ] 2021_05_25 AY TD emails.pdf
+- [ ] 2021_05_25 Buckley email.pdf
+- [ ] 2021_05_26 WCC Hearing Continued.pdf
+- [ ] 2021_06_08 email from Nora Loughnane.pdf
+- [ ] 2021_06_09 Nora Loughnane email.pdf
+- [ ] 2021_06_09 WCC Hearing Continued.pdf
+- [ ] 2021_07_03 Delapa NOI Form 3 Revision.pdf
+- [ ] 2021_07_03 Delapa Revised Site Plan.pdf
+- [ ] 2021_07_03-DEP-0706-GLM_House_Plan_Sewer.png
+- [ ] 2021_07_03-DEP-0706-GLM_House_Plan_Sewer_02.png
+- [ ] 2021_07_03-DEP-0706-GLM_House_Plan_Sewer_highlighted.png
+- [ ] 2021_07_03-DEP-0706-GLM_Manhole&Galleys_Plan_Sewer.png
+- [ ] 2021_07_03-DEP-0706-GLM_Utilities_Plan_Sewer.png
+- [ ] 2021_07_28 WCC Hearing Continued.pdf
+- [ ] 2021_09_08 Goddard response to GEC Review.jpg
+- [ ] 2021_09_08 WCC Hearing Continued.pdf
+- [ ] 2021_10_08 Goddard Revised NOI Site Plan.pdf
+- [ ] 2021_10_13 MISSING Catrone - Town Counsel.txt
+- [ ] 2021_10_13 Minutes  Conservation Commission.pdf
+- [ ] 2021_10_18 Delapa Withdrawal of NOI from Town Bylaws.pdf
+- [ ] 2021_10_27 WCC Hearing Continued - Mr Stephen David recuses himself.pdf
+- [ ] 2021_11_10 Minutes  Conservation Commission.pdf
+- [ ] 2021_11_17-DEP-0706-WCC_NoI_Denial_Form5.pdf
+- [ ] 2021_11_17_Order_of_Conditions_Denial #338-0706 - #438-0706.pdf
+- [ ] 2021_11_18 WCC Denial of NoI.pdf
+- [ ] 2021_11_18-DEP-0706-WCC_NoI_Denial.pdf
+- [ ] 2021_11_30-DEP-0706-Action_Fee.pdf
+- [ ] 2021_11_30-DEP-0706-Goddard_SOC_Request.pdf
+- [ ] 2021_12_15 DEP Site Inspection Notice.pdf
+- [ ] 2022_01_06_MISSING_DEP_Site_Visit_Notes.txt
+- [ ] 2022_01_11 DEP letter to Delapa.pdf
+- [ ] 2022_01_12_Case Details - Massachusetts Trial Court N3.pdf
+- [ ] 2022_01_12_DelapavsWCC_Docket001_OCR2.pdf
+- [ ] 2022_01_12_DelapavsWCC_Docket002_OCR2.pdf
+- [ ] 2022_02_02-DEP-0706-GLM_Revised_House_Plan.png
+- [ ] 2022_02_02-DEP-0706-GLM_Revised_Manhole&Galleys_Plan.png
+- [ ] 2022_02_02-DEP-0706-Revised_Utilities_Plan.png
+- [ ] 2022_02_07_watsky_ahearn_email.pdf
+- [ ] 2022_02_08_Goddard_Requested_Information.pdf
+- [ ] 2022_02_25-DEP-0706-Goddard_Requested_Information.pdf
+- [ ] 2022_03_07 Letter from DEP to Delapa.pdf
+- [ ] 2022_03_08-DEP-0706-GLM_Revised_House_Plan_Recvd.png
+- [ ] 2022_03_08-DEP-0706-GLM_Revised_Manhole&Galleys_Plan_Recvd.png
+- [ ] 2022_03_08-DEP-0706-GLM_Revised_Utilities_Plan_Recvd.png
+- [ ] 2022_03_14 Delapa Letter.pdf
+- [ ] 2022_03_14-DEP-0706-Goddard_Requested_Information.pdf
+- [ ] 2022_03_14_Goddard_email_to_DEP.txt
+- [ ] 2022_03_17-DEP-0706-Goddard_Requested_Information.pdf
+- [ ] 2022_03_21 Email Donahoe - Catrone .pdf
+- [ ] 2022_03_28 Brian Donahoe - Karon email.pdf
+- [ ] 2022_03_31_DelapavsWCC_Docket003_OCR2.pdf
+- [ ] 2022_03_31_DelapavsWCC_Docket004_OCR2.pdf
+- [ ] 2022_04_01 Re 338-0706 SOC Letter from Town Counsel.pdf
+- [ ] 2022_04_12 Civil Tracking Order.pdf
+- [ ] 2022_04_20_DelapavsWCC_Docket005_OCR2.pdf
+- [ ] 2022_05_06-DEP-0706-DEP_SOC.pdf
+- [ ] 2022_05_06-DEP-0706-DEP_SOC_Review.pdf
+- [ ] 2022_05_06_Superseding Order of Conditions.pdf
+- [ ] 2022_05_07 Note on SOC Covid Extension
+- [ ] 2022_05_19 338-0706 Letter from Town Counsel.pdf
+- [ ] 2022_05_23-DEP-0706-Westwood_Select_Board_Envelope.pdf
+- [ ] 2022_05_23-DEP-0706-Westwood_Town_Counsel_SOC_Letter.pdf
+- [ ] 2022_08_14_DelapavsWCC_Docket006_OCR2.pdf
+- [ ] 2022_08_23 Notice - Order of Status Review.pdf
+- [ ] 2022_09_08_DelapavsWCC_Docket007_OCR2.pdf
+- [ ] 2022_09_09_DelapavsWCC_Docket008_OCR2.pdf
+- [ ] 2022_09_12 Unsigned Settlement Agreement.pdf
+- [ ] 2022_09_12 letter from Goddard.pdf
+- [ ] 2022_10_26_42 Mill Street signed MOU 10-26-2022.pdf
+- [ ] 2022_12_20_DelapavsWCC_Docket009_OCR2.pdf
+- [ ] 2023_01_18 WCC Hearing Continued.pdf
+- [ ] 2023_03_27_DelapavsWCC_Docket010_OCR2.pdf
+- [ ] 2023_04_24_DelapavsWCC_Docket011_OCR2.pdf
+- [ ] 2023_04_24_DelapavsWCC_Docket012_OCR2.pdf
+- [ ] 2023_05_22_Dam_Restoration_Site_Plan_Figure4.pdf
+- [ ] 2023_05_23_Dam_Repair_NOI_Highlighted.pdf
+- [ ] 2023_05_23_WPA_Form_3_NOI_Dam_Restoration.pdf
+- [ ] 2023_05_27 DeMelle - Catrone Dam Ownership
+- [ ] 2023_06_14_Legal_Notice_Dam_Restoration_Hearing.pdf
+- [ ] 2023_06_22_DelapavsWCC_Docket013_OCR2.pdf
+- [ ] 2023_06_28 WCC Hearing Continued.pdf
+- [ ] 2023_06_29_FOIA_REQUEST FORMALLY FILED
+- [ ] 2023_07_12 Minutes  Conservation Commission.pdf
+- [ ] 2023_07_26 Minutes  Conservation Commission.pdf
+- [ ] 2023_09_01 - Response-booklet_Mon_Sep_11_2023_09-01-40.pdf
+- [ ] 2023_09_13  WCC Hearing Continued.pdf
+- [ ] 2023_09_27 WCC Hearing Continued.pdf
+- [ ] 2023_10_11  WCC Hearing Continued.pdf
+- [ ] 2023_10_25  WCC Hearing Continued.pdf
+- [ ] 2023_11_08  WCC Hearing Continued.pdf
+- [ ] 2023_12_13  WCC Hearing Continued.pdf
+- [ ] 2023_12_19_GEI_site_visit.txt
+- [ ] 2023_12_22_BETA_review_report.pdf
+- [ ] 2024_01_10  WCC Hearing Continued.pdf
+- [ ] 2024_11_20_MASS_LEADS_ACT_EXTENSION
+- [ ] 2025_07_03_Email_Dillon_and_Catrone.pdf
+- [ ] 2025_07_23_MISSING minutes conservation commission.pdf
+- [ ] 2025_07_29 DeMelle email to Catrone
+- [ ] 2025_07_31_1843_Todd_to_Robert_Dear_Professor_Cox_and_Ms_Libman.txt
+- [ ] 2025_08_09 Email to Westwood Planning Board re 2016 ANR.txt
+- [ ] 2025_08_10 Request sent to DEP to review files through DEP website
+- [ ] 2025_08_11 DeMelle email requesting WCC documents to Catrone
+- [ ] 2025_08_15 Initial Response to document request from DEP
+- [x] 2025_09_03_Notes_for_Carby_St_Visit.txt
+- [ ] 2025_09_05_0716_Patrick_to_DeMelle_Mr_DeMelle_Can_you_forward_the_specific_document.txt
+- [ ] 2025_09_05_1041_Todd_to_Ahearn_Thank_you_for_the_quick_reply_I_ve.txt
+- [ ] 2025_09_05_1045_TD_email_to_DEP_Catrone Status inquiry - FORAD for 42 Mill St.pdf
+- [ ] 2025_09_05_TD_email_to_Donahoe.txt
+- [ ] 2025_09_06_1112_TD_email_to_McCabe question re Mill St planning board determination.pdf
+- [ ] 2025_09_12_1347_Todd_to_Ahearn_Dear_Mr_Ahearn_Just_a_follow_up_to.txt
+- [ ] 2025_09_13_1347_TD_email_to_Ahearn question about your letter to the DEP re Mill Pond.pdf
+- [ ] 2025_09_14_TD_email_to_TF-DEP.txt
+- [ ] 2025_09_15_1103_Patrick_to_DeMelle_I_have_not_been_able_to_locate_a.txt
+- [ ] 2025_09_15_1158_Todd_to_Ahearn_Thank_you_Mr_Ahearn_I_appreciate_the_follow.txt
+- [ ] 2025_09_15_PA_email_TD question about your letter to the DEP re Mill Pond.pdf
+- [ ] 2025_09_16_1015_Todd_to_DeMelle_Fyi_I_received_a_response_from_Tyler_at.txt
+- [ ] 2025_09_16_1128_Patrick_to_DeMelle_It_is_possible_they_never_received_it.txt
+- [ ] 2025_09_16_1503_DD_Goddard_email_KC_WCC_9-17-25 meeting.pdf
+- [ ] 2025_09_17_0933_KC_WCC_emailResponse_TD 9-17-25 meeting.pdf
+- [ ] 2025_09_17_1644_TD_email_KC_WCC 9-17-25 meeting.pdf
+- [ ] 2025_10_01_1531_TD_email_to_KS_Section 40A Restriction.pdf
+- [ ] 2025_10_01_1626_TD_email_to_KS_1982_MAPC_wetland_maps.pdf
+- [x] 2025_10_06_1341_TD_email_KC_2022_SOC_338-0706.pdf
+- [ ] 2025_10_06_1406_KC_WCC_emailReply_TD 2022 SOC 338-0706.pdf
+- [ ] 2025_10_07_1316_KC_WCC_emailReply_TD_01 Section 40A Restriction - Area 44.pdf
+- [ ] 2025_10_07_1318_KC_WCC_emailReply_TD_02 Section 40A Restriction - Area 44.pdf
+- [ ] 2025_10_09_1105_TD_email_BD_GEC 42 Mill St-Bakers Pond Development in Westwood.pdf
+- [ ] 2025_10_14_1600_TD_email_KC_WCC presentation for 10-15 hearing.pdf
+- [ ] 2025_10_14_1619_KC_WCC_emailReply_TD presentation for 10-15 hearing.pdf
+- [ ] 2025_10_14_42_Mill_Brook_Erroneous_Lot_Lines_Presentation_Slide.pdf
+- [ ] 2025_10_15_1237_TD_email_KC_WCC presentation for 10-15 hearing.pdf
+- [ ] 2025_10_15_1312_KC_WCC_emailReply_TD presentation for 10-15 hearing.pdf
+- [ ] 2025_10_15_1446_TD_email_TF_DEP Status Inquiry = FORAD for 42 Mill St.pdf
+- [ ] 2025_10_16_1002_TF_DEP_emailReply_TD Status Inquiry - FORAD for 42 Mill St.pdf
+- [ ] 2025_10_16_1209_TD_email_GB_DEP Question about 2016 Mill Brook Analysis.pdf
+- [ ] 2026_03_27_1135_Todd_to_Romulus_Letter_to_Planning_Board_property_being_sold.txt
+- [ ] 2026_03_27_1144_Todd_to_Loughnane_Resending_letter_after_Romulus_bounce.txt
+- [ ] 2026_03_27_1221_Nora_to_DeMelle_Letter_received_Building_Commissioner_determines_buildable_lot.txt
+- [ ] 2026_03_27_1233_Todd_to_AY_FYI_forward_of_Loughnane_reply.txt
+- [ ] 2026_03_27_Letter_Planning_Board_re_42Mill.docx
+- [ ] 2026_04_07_2320_Todd_to_Eric_Please_find_attached_a_formal_letter_regarding_42.txt
+- [x] 2026_04_07_DeMelle_Letter_to_DEP_42_Mill_Street.pdf
+- [ ] 2026_04_07_Exhibit_A_SORAD_DEP_338-0594.pdf
+- [ ] 2026_04_07_Exhibit_B_Provencal_Correspondence.pdf
+- [ ] 2026_04_07_Exhibit_C_Part1_Town_Counsel_Letter.pdf
+- [ ] 2026_04_07_Exhibit_C_Part2_Ferrick_Correspondence.pdf
+- [ ] 2026_04_08_0943_Todd_to_AY_FYI_sent_this_to_the_DEP_yesterday.txt
+- [ ] 2026_04_08_0953_Todd_to_Donahoe_Dear_Mr_Donahoe_Given_your_history_with_the.txt
+- [ ] 2026_04_08_1000_A_to_DeMelle_Very_well_written_I_don_t_think_I.txt
+- [ ] 2026_04_08_1247_Todd_to_Catrone_Following_up_on_my_letter_to_DEP_yesterday.txt
+- [ ] 2026_04_08_1434_Brian_to_DeMelle_Thanks_for_the_update_Still_have_the_same.txt
+- [ ] 2026_04_14-338-0756-Order_of_Conditions_Denial.pdf
+- [ ] 2026_04_24_1719_Todd_to_Philip_Thank_you_for_returning_my_call_regarding_the.txt
+- [ ] 2026_04_25_1957_Mail_to_Tdemelle_Delivery_incomplete.txt
+- [ ] 2026_04_25_2313_Todd_to_Philip_got_your_email_address_wrong_first_time_thanks.txt
+- [ ] 2026_04_26_2027_Mail_to_Tdemelle_Delivery_incomplete.txt
+- [ ] 2026_04_27_1725_Todd_to_Ahearn_Mr_Ahearn.txt
+- [ ] 2026_04_27_1812_Patrick_to_DeMelle_Mr_DeMelle.txt
+- [ ] 2026_04_27_1839_Todd_to_Ahearn_Mr_Ahearn_Thank_you_for_the_clarification_and.txt
+- [ ] 2026_04_27_2354_Mail_to_Tdemelle_Message_not_delivered.txt
+- [ ] 2026_04_28_Withdrawal_DEP_338-0756.pdf
+- [ ] 2026_05_01_0854_Todd_to_Eric_This_letter_supplements_my_April_7_2026_letter.txt
+- [ ] 2026_05_05_1301_Jill_to_DeMelle_Mr_DeMelle.txt
+- [ ] 2026_05_05_1425_DeMelle_to_Provencal_Supplement_to_April_7_Letter_1974_40A_Restriction.pdf
+- [ ] 2026_05_05_1425_Todd_to_Provencal_Thank_you_for_sending_the_April_28_2026.txt
+- [ ] 2026_05_05_1434_Todd_to_Ahearn_Mr_Ahearn.txt
+- [ ] 2026_05_05_1452_Patrick_to_DeMelle_We_are_reviewing_our_options.txt
+- [ ] 2026_05_05_1502_Todd_to_Ahearn_Mr_Ahearn_Thank_you_I_appreciate_the_update.txt
+- [ ] 2026_05_05_1505_Todd_to_Loughnane_Ahearn_NOI_withdrawal_renews_SOC_reliance_concerns.txt
+- [ ] 2026_05_05_1511_Todd_to_AY_Begin_forwarded_message.txt
+- [ ] 2026_05_05_1623_Todd_to_Marc_I_am_requesting_public_records_for_DEP_File.txt
+- [ ] 2026_05_06_0829_Marc_to_DeMelle_Mr_DeMelle.txt
+- [ ] 2026_05_14_0949_Marc_On_May_5_2026_the_Massachusetts_Department_of.txt
+- [ ] 2026_05_15_0045_Todd_to_LaPlante_Thank_you_for_sending_these_records_This_follow-up.txt
+- [ ] 2026_05_15_1415_Marc_to_LaPlante_Mr_DeMelle.txt
+- [ ] 2026_05_15_1514_Doreen_Good_Afternoon_Mr_DeMelle.txt
+- [ ] 2026_05_17_0949_Gmail - 187-26 Pub Rec Req 42 Mill Street, Westwood.pdf
+- [ ] 2026_05_18_1258_Todd_to_Kearney_Good_afternoon_Ms_Kearney.txt
+- [ ] 2026_05_19_1218_Doreen_Good_Afternoon_Mr_DeMelle.txt
+- [ ] 2026_05_20_1527_Todd_to_Kearney_Good_Afternoon_Ms_Kearney_Thank_your_for_the.txt
+- [ ] 2026_05_21_1606_Todd_to_AY_FYI_with_withdrawal_supplement_and_lot_lines_attachments.txt
+- [x] 2026_05_21_1606_Todd_to_Loughnane_Ahearn_OADR_record_explains_run_of_river_reversal.txt
+- [ ] 2026_05_21_1612_Todd_to_Donahoe_FYI_forward_with_OADR_WET-2016-022_records.txt
+- [ ] 2026_05_21_1725_Brian_to_DeMelle_Suggests_alerting_Rachel_Freed.txt
+- [ ] 2026_05_22_1112_Todd_to_Donahoe_Asks_if_Brian_knows_Rachel_Freed.txt
+- [ ] 2026_05_22_1153_Brian_to_DeMelle_Background_on_Freed_suggests_escalation_to_director.txt
+- [ ] 2026_05_23_1350_Brian_to_DeMelle_Town_absent_at_SOC_pond_unnamed_on_USGS.txt
+- [x] 2026_05_25_1215_Brian_to_DeMelle_Topo_map_attachment_no_name_on_pond.txt
+- [ ] 2026_05_26_Case_Status_Summary.md
+- [ ] 2026_05_26_Freed_Email_Summary.md
+- [ ] DEP-0594-Loose_Map.pdf
+- [ ] DEP-0594-Loose_Maps.pdf
+- [ ] DEP-0594-Loose_Photos.pdf
+- [ ] DEP-0594-Unknown_Detail_Alternate_Wetland_Zones_2016.png
+- [ ] DEP-0706-Attachments_A_through_H.pdf
+- [ ] DEP-0706-Loose_Maps.pdf
+- [ ] DEP-0706-Sketch_Plan_Goldman_Env_Peer_Review.png
+- [ ] Gmail - 187-26 Pub Rec Req 42 Mill Street, Westwood.pdf
+- [ ] Gmail - Public Records Request — 42 Mill Street, Westwood — DEP #338-0594.pdf
+- [ ] Gmail - RE_ Westwood Town Site Email - question about your letter to the DEP re_ Mill Pond.pdf
+- [ ] Gmail - Re_ 42 Mill Street — Settlement Agreement _ Timing Issue Before Transfer.pdf
+- [ ] Gmail - Re_ 42 Mill Street, Westwood, MA — DEP Files #338-0594, #338-0706, #338-0756 Request for written response before property transfer.pdf
+- [ ] Gmail - Request for Clinic Support – Wetlands NOI (DEP #338-0756, Lot 2B Mill St).pdf
+- [ ] Gmail - Supplement to April 7, 2026 Letter - 42 Mill Street - DEP #338-0594 _ #338-0706 _ #338-0756 — 1974 §40A Wetland Restriction Order.pdf
+- [ ] Gmail 187-26 Pub Rec Req 42 Mill Street, Westwood.pdf
+- [ ] Letter_Commission_FINAL.docx
+- [ ] Letter_MassDEP_FINAL.docx
+- [ ] USGIS Orthophoto View of Locus Site - Lot 2B Mill St.pdf
+- [ ] USGS Site Locus - Lot 2B Mill St.pdf
+- [ ] Undated message from Abby McCabe.pdf
+- [ ] undated_Bakers_Pond_MassDEP_Surface_Water_Map_4220000-03G_DOC051126.pdf
+- [ ] undated_Delapa_Plan.pdf
+- [ ] undated_Figure_1_Topo_Map.pub
+- [ ] undated_acceptance_of_service.pdf

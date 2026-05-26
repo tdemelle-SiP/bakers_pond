@@ -1,0 +1,18 @@
+Mail Delivery Subsystem <mailer-daemon@googlemail.com> To: tdemelle@gmail.com
+
+Mon, Apr 27, 2026 at 11:54 PM
+
+Message not delivered
+There was a problem delivering your message to Philip.dipietro@ma.gov. See the technical details below.
+LEARN MORE
+
+
+5/26/26, 4:40 PM
+
+Gmail - Re: 42 Mill Street, Westwood, MA -- DEP Files #338-0594, #338-0706, #338-0756 Request for written response before pro...
+
+The response was:
+The recipient server did not accept our requests to connect. For more information, go to https://support.google.com/mail/answer/7720 [ma.gov 13.248.160.110: timed out] [ma.gov 76.223.33.104: timed out]
+
+Final-Recipient: rfc822; Philip.dipietro@ma.gov Action: failed Status: 4.4.1 Diagnostic-Code: smtp; The recipient server did not accept our requests to connect. For more information, go to https://support.google.com/mail/answer/7720 [ma.gov 13.248.160.110: timed out] [ma.gov 76.223.33.104: timed out] Last-Attempt-Date: Mon, 27 Apr 2026 20:54:26 -0700 (PDT)
+noname 5K

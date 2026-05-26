@@ -1,0 +1,20 @@
+Mail Delivery Subsystem <mailer-daemon@googlemail.com> To: tdemelle@gmail.com
+
+Sun, Apr 26, 2026 at 8:27 PM
+
+
+
+5/26/26, 4:40 PM
+
+Gmail - Re: 42 Mill Street, Westwood, MA -- DEP Files #338-0594, #338-0706, #338-0756 Request for written response before pro...
+
+Delivery incomplete
+There was a temporary problem delivering your message to Philip.dipietro@ma.gov. Gmail will retry for 20 more hours. You'll be notified if the delivery fails permanently.
+LEARN MORE
+
+The response was:
+The recipient server did not accept our requests to connect. For more information, go to https://support.google.com/mail/answer/7720 [ma.gov 13.248.160.110: timed out] [ma.gov 76.223.33.104: timed out]
+
+Final-Recipient: rfc822; Philip.dipietro@ma.gov Action: delayed Status: 4.4.1 Diagnostic-Code: smtp; The recipient server did not accept our requests to connect. For more information, go to https://support.google.com/mail/answer/7720 [ma.gov 13.248.160.110: timed out] [ma.gov 76.223.33.104: timed out] Last-Attempt-Date: Sun, 26 Apr 2026 17:27:30 -0700 (PDT) Will-Retry-Until: Mon, 27 Apr 2026 14:20:04 -0700 (PDT)
+
+noname 5K
